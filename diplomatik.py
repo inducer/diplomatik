@@ -543,6 +543,8 @@ class tMainAppServer(appserver.tAppServer):
                 mime_type = "text/css"
             elif ext == "png":
                 mime_type = "image/png"
+            elif ext == "html":
+                mime_type = "text/html"
             else:
                 mime_type = "application/octet-stream"
                 
