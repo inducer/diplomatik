@@ -32,12 +32,16 @@ Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\
   #end &
   #if ($exam.CountedResult)##
     #if ($exam.NativeResult)##
-      $exam.NativeResult (=$h.formatNumber("%.1f", $exam.CountedResult))##
+      $h.escapeTeX($exam.NativeResult) (=$h.formatNumber("%.1f", $exam.CountedResult))##
     #else ##
       $h.formatNumber("%.1f", $exam.CountedResult)##
     #end
   #else ##
-    - ##
+    #if ($exam.NativeResult)##
+      $h.escapeTeX($exam.NativeResult)
+    #else##
+      - ##
+    #end##
   #end \\\\*
   & \multicolumn{2}{p{9cm}|}{
     #if ($exam.Examiner)##

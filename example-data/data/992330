@@ -30,18 +30,18 @@ Degrees:
                 Counted: True
                 CountedResult: 1.1
                 Credits: 16.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 16
                     month: 10
                     year: 2000
                 DegreeComponent: "zusatz"
-                Description: "Informatik I-IV"
+                Description: Informatik I-IV
                 Examiner: "Prautzsch"
-                NativeResult: ""
-                Remarks: ""
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '2041044': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.0
@@ -58,6 +58,22 @@ Degrees:
                 Remarks: ''
                 Source: "uni"
                 SourceDescription: ''
+            '2452563': !!datamodel.tExam
+                Counted: True
+                CountedResult: ~
+                Credits: 4.0
+                CreditsPrintable: ""
+                Date:
+                    day: 9
+                    month: 3
+                    year: 2005
+                DegreeComponent: "mrp"
+                Description: "Mikrorechnerpraktikum"
+                Examiner: "Kerl"
+                NativeResult: "70"
+                Remarks: ""
+                Source: "uni"
+                SourceDescription: ""
             '2463974': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.0
@@ -428,8 +444,8 @@ SpecialSemesters:
             Year: 2002
         Type: "urlaub"
     '9061954': !!datamodel.tSpecialSemester
-        Remark: "1. Semester UNCC"
+        Remark: '1. Semester UNCC'
         Semester: !!semester.tSemester
-            Term: "w"
+            Term: w
             Year: 2001
         Type: "urlaub"
