@@ -248,6 +248,33 @@ class tGlobalReportHandler(tReportHandler):
                  "pz_median": pz_median,
                  "ausland_count": ausland_count,
                  })
+        elif report_id == "what-became-of":
+            year = int(form_data.Year)
+            students = tools.sortBy(
+                [student
+                 for student in self.StudentDB.values()
+                 if datamodel.academicYearOfStart(student) == year],
+                "LastName")
+
+            begun = {}
+            finished = {}
+
+            for student in students:
+                for degree in student.Degrees.values():
+                    drs_id = degree.DegreeRuleSet
+                    begun[drs_id] = begun.setdefault(drs_id, 0) + 1
+                    if degree.FinishedDate:
+                        finished[drs_id] = finished.setdefault(drs_id, 0) + 1
+
+            return tools.runLatexOnTemplate(
+                "what-became-of.tex",
+                {"year": year,
+                 "students": students,
+                 "begun": begun,
+                 "finished": finished,
+                 "drs_map": self.DRSMap},
+                ["header.tex"])
+
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
 

@@ -44,6 +44,17 @@ def escapeTeX(value):
 
 
 
+def sortBy(list, field):
+    def cmp_func(a, b):
+        return cmp(getattr(a, field), getattr(b, field))
+    
+    result = list[:]
+    result.sort(cmp_func)
+    return result
+
+
+
+
 def uniq(list):
     seen_keys = sets.Set()
     result = []
@@ -199,12 +210,7 @@ def _expandTemplate(dir, filename, globals_dict):
             return result
 
         def sortBy(self, list, field):
-            def cmp_func(a, b):
-                return cmp(getattr(a, field), getattr(b, field))
-
-            result = list[:]
-            result.sort(cmp_func)
-            return result
+            return sortBy(list, field)
 
         def filterBy(self, list, field, value):
             return [v for v in list if getattr(v, field) == value]

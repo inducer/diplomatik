@@ -28,8 +28,8 @@ Degrees:
                 Source: "uni"
                 SourceDescription: ''
         FinishedDate: ~
-        MinorSubject: ""
-        Remark: ""
+        MinorSubject: ''
+        Remark: ''
     '5635708': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
         EnrolledDate:

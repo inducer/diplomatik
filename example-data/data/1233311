@@ -3,7 +3,17 @@ DateOfBirth:
     day: 17
     month: 2
     year: 2005
-Degrees: {}
+Degrees:
+    '879223': !!datamodel.tDegree
+        DegreeRuleSet: tema-vd-alt
+        EnrolledDate:
+            day: 1
+            month: 10
+            year: 1998
+        Exams: {}
+        FinishedDate: ~
+        MinorSubject: ''
+        Remark: "Nach Australien ausgewandert"
 Email: ''
 FirstName: Albert
 Gender: m
