@@ -1,0 +1,40 @@
+\input header
+\def\DATUM{$helper.formatDate($degree.EnrolledDate)}% Datum der Akten-Anlage (xx.xx.xxxx)
+\def\NAME{$student.LastName}% 
+\def\VORNAME{$student.FirstName}% 
+\def\GEBDAT{$helper.formatDate($student.DateOfBirth)}% 
+\def\GEBORT{$student.PlaceOfBirth}% Geburtsort
+\def\MATRIKEL{$student.ID}%
+\def\STUDBEG{$studienbeginn_sem}% Semester des Studienbeginns (WS xx/xx oder SS xx)
+\def\VORDIPL{$helper.formatDate($vddat)}% Datum der Vordiplompruefung (xx.xx.xxxx)
+\def\TECHFACH{$degree.MinorSubject}% Technisches Fach, Abkuerzungen:
+    % BAUINGW, CHEMIE, ETECHNIK, MASCHBAU, MECHANIK, PHYSIK
+\def\ZUSFACH{}% Zusatzfach, optional
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Abschluss
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\Semesterzahl{$semzahl}%
+\def\RMdatum{24.01.05}\def\RMnoteZ{1.3}%
+    \def\RMpruefer{K\"uhnlein, Lemmert, UNCC*}%
+\def\AMdatum{23.07.01}\def\AMnoteZ{1.0}%
+    \def\AMpruefer{Lemmert, Kadelka, UNCC*}%
+\def\TFdatum{28.07.03}\def\TFnoteZ{2.0}%
+    \def\TFpruefer{Jondral, Krebs, UNCC*}%
+\def\AIdatum{21.07.01}\def\AInoteZ{1.1}%
+    \def\AIpruefer{Nagel, Schmitt, UNCC*}%
+\def\ZFdatum{}\def\ZFnoteZ{}%
+    \def\ZFpruefer{}%
+\def\DAabgabe{30.09.04}\def\DAref{Prof.~W. D\"orfler}\def\DAnote{1.0}
+    \def\DAtitel{On the computation of maximally localized Wannier Functions}
+\def\Abschlussdatum{24.01.2005}%
+\def\Bemerkung{*Teile der Pr\"ufung wurden an der University of
+North Carolina at Charlotte (UNCC) abgelegt.}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Sonstiges
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\PRUEFORDDAT{$podatum}% 
+\def\PRUEFORDPARA{$popara}% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\input $form
+\end{document}
