@@ -552,11 +552,19 @@ class tDatabaseHandler:
                         except KeyError:
                             # found an unused key
                             pass
+                    else:
+                        if new_key in self.Database:
+                            raise tools.tSubjectError(
+                                "Object key %s already in use" % new_key)
                     self.Database[new_key] = obj
                 else:
                     if new_key is None:
                         pass
                     elif key != new_key:
+                        if new_key in self.Database:
+                            raise tools.tSubjectError(
+                                "Object key %s already in use" % new_key)
+
                         del self.Database[key]
                         self.Database[new_key] = obj
                     else:

@@ -80,6 +80,9 @@ class tDataStore:
     def iteritems(self):
         return self.Students.iteritems()
 
+    def __contains__(self, key):
+        return key in self.Students
+
     def __getitem__(self, key):
         return self.Students[key]
 
