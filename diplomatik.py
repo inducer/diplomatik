@@ -655,7 +655,7 @@ class tMainAppServer(appserver.tAppServer):
                 mime_type = "application/octet-stream"
                 
             try:
-                inf = file(complete_fn, "r")
+                inf = file(complete_fn, "rb")
                 content = inf.read()
                 inf.close()
                 
