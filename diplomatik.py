@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import BaseHTTPServer
@@ -422,7 +423,6 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                             degree.Exams,
                                             [
             appserver.tDateField("Date", "Datum"),
-            appserver.tStringField("Description", "Beschreibung"),
             appserver.tChoiceField("DegreeComponent", 
                                    "Komponente",
                                    shown_in_overview = True,
@@ -432,6 +432,7 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                    shown_in_overview = True,
                                    choices = degree_rule_sets_map[degree.DegreeRuleSet].examSources()
                                    ),
+            appserver.tStringField("Description", "Fach"),
             appserver.tStringField("SourceDescription", "Herkunft (ausf&uuml;hrlich)",
                                    shown_in_overview = False),
             appserver.tStringField("Examiner", "Pr&uuml;fer"),
@@ -708,7 +709,8 @@ class tMainAppServer(appserver.tAppServer):
 opts, args = getopt.getopt(sys.argv[1:], [], 
                            ["allow-non-local",
                             "start-browser",
-                            "create"])
+                            "create",
+                            "debug-tex"])
 if len(args) != 1:
     print "Benutzung: %s [Optionen] <Verzeichnis mit Studentendaten>" % sys.argv[0]
     print
@@ -716,10 +718,12 @@ if len(args) != 1:
     print "  --allow-non-local"
     print "      Nichtlokalen Zugriff erlauben (gefaehrlich!)"
     print "  --start-browser"
-    print "      Automatische einen Webbrowser starten"
+    print "      Automatisch einen Webbrowser starten"
     print "  --create"
     print "      Im angegebenen Verzeichnis eine Datenumgebung erzeugen,"
     print "      falls nicht vorhanden"
+    print "  --debug-tex"
+    print "      TeX-Dateien nach Bearbeitung nicht loeschen"
     sys.exit(1)
 
 ALLOW_CREATE = False
@@ -732,6 +736,8 @@ for opt, value in opts:
         DO_START_BROWSER = True
     if opt == "--create":
         ALLOW_CREATE = True
+    if opt == "--debug-tex":
+        tools.TEX_DEBUG_MODE.set(True)
 
 
 degree_rule_sets = [

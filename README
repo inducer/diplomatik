@@ -1,0 +1,52 @@
+Diplomatik
+----------
+
+Installation:
+-------------
+
+1. Python von www.python.org herunterladen.
+   (Falls noch nicht vorhanden)
+
+2. Das Archiv diplomatik-X.XX.tar.gz auspacken.
+
+   WICHTIG unter Windows: Die Zeilenenden
+   (LF) duerfen vom Entpacker (z.B. Winzip)
+   nicht in das Windows-typische CR/LF umgewandelt
+   werden.
+
+3. Mittels 
+
+   diplomatik.py --create <Verzeichnisname>
+
+   eine Studentendatenbank anlegen. Im Verzeichnis
+   example-data unter dem Quellbaum finden sich
+   Test-Daten zum Ausprobieren.
+
+4. Im Webbrowser die Adresse
+
+   http://localhost:8000
+
+   eingeben. Fertig.
+
+Benutzung:
+----------
+
+1. Einfach
+
+   diplomatik.py <Verzeichnisname>
+
+   starten.
+
+2. Im Webbrowser die Adresse
+
+   http://localhost:8000
+
+   eingeben. Fertig.
+
+Aendern:
+--------
+
+Eine Uebersicht ueber den Quellbaum sowie Aenderungs-
+Anleitungen finden sich unter static/hacking.html.
+Diese Seite kann auch aus dem Programm heraus aufgerufen
+werden (von der Uebersicht aus).

@@ -40,7 +40,7 @@ class tDataStore:
                 os.mkdir(self.DataDir)
                 os.mkdir(self.ExportDir)
             else:
-                raise RuntimeError, "No valid archive found at %s" \
+                raise RuntimeError, "No valid archive found at %s -- Did WinZip mess up your line endings?" \
                       % directory
 
         self.Directory = directory
@@ -136,7 +136,8 @@ class tDataStore:
                 except OSError:
                     pass
         except KeyError:
-            # we do not have a previous filename for new keys
+            # we do not have a previous filename for new keys,
+            # that's ok.
             pass
 
         if not tools.doesDirExist(new_export_dir):

@@ -311,6 +311,8 @@ class tFloatField(tField):
 
     def _getValueFromInput(self, form_input):
         v = form_input[self.Name]
+        v = v.replace(",", ".")
+        print "V!!", v
         if v == "":
             if self.NoneOK:
                 return None

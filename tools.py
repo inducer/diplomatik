@@ -301,6 +301,24 @@ def copyFile(dest, src):
 
 
 
+def removeDirRecursively(dir):
+    for name in os.listdir(dir):
+        fullname = os.path.join(dir, name)
+        statbuf = os.stat(fullname)
+        if stat.S_ISDIR(statbuf.st_mode):
+            removeDirRecursively(fullname)
+        else:
+            os.unlink(fullname)
+    os.rmdir(dir)
+
+
+
+
+TEX_DEBUG_MODE = tReference(False)
+
+
+
+
 def runLatex(text, included_files):
     temp_dir_name = os.tempnam(None, "diplomatik")
     print "*** PROCESSING TeX JOB under", temp_dir_name
@@ -332,6 +350,8 @@ def runLatex(text, included_files):
         return pdf_string
     finally:
         os.chdir(previous_wd)
+        if not TEX_DEBUG_MODE.get():
+            removeDirRecursively(temp_dir_name)
 
 
 

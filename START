@@ -1,2 +1,2 @@
 #! /bin/bash
-python diplomatik.py example-data
+./diplomatik.py example-data
