@@ -30,6 +30,9 @@ class tSemesterField(appserver.tField):
                         shown_in_overview)
         self.NoneOK = none_ok
 
+    def isMandatory(self):
+        return not self.NoneOK
+
     def getDisplayHTML(self, object):
         sem = self.getValue(object)
         if sem is None:
@@ -647,6 +650,10 @@ class tMainAppServer(appserver.tAppServer):
 
 
 # Main program ---------------------------------------------
+if len(sys.argv) != 2:
+    print "Benutzung: %s <Verzeichnis mit Studentendaten>" % sys.argv[0]
+    sys.exit(0)
+
 degree_rule_sets = [
     degreeruleset.tTemaVDAltDegreeRuleSet(),
     degreeruleset.tTemaHDAltDegreeRuleSet()
@@ -658,7 +665,7 @@ for drs in degree_rule_sets:
 
 print "Lade Studentendaten...",
 sys.stdout.flush()
-store = datamodel.tDataStore("example-data", 
+store = datamodel.tDataStore(sys.argv[1], 
                              degree_rule_sets)
 print "erledigt"
 httpd = BaseHTTPServer.HTTPServer(('', LISTEN_PORT), 

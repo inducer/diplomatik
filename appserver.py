@@ -9,6 +9,7 @@ import datetime
 import random
 import traceback
 import socket
+import urlparse
 
 from tools import expandHTMLTemplate
 import tools
@@ -36,6 +37,9 @@ class tField:
 
     def description(self):
         return self.Description
+
+    def isMandatory(self):
+        return False
 
     def isShownInOverview(self):
         return self.ShownInOverview
@@ -89,6 +93,10 @@ class tStringField(tField):
                         shown_in_overview)
         self.ValidationRE = validation_re
 
+    def isMandatory(self):
+        return self.ValidationRE is not None and \
+               self.ValidationRE.match("") is None
+
     def getDisplayHTML(self, object):
         return self.getValue(object)
 
@@ -122,6 +130,9 @@ class tDateField(tField):
         tField.__init__(self, name, description,
                         shown_in_overview)
         self.NoneOK = none_ok
+
+    def isMandatory(self):
+        return not self.NoneOK
 
     def getDisplayHTML(self, object):
         date = self.getValue(object)
@@ -205,6 +216,9 @@ class tChoiceField(tField):
         self.ChoicesDict = dict(choices)
         self.NoneOK = none_ok
 
+    def isMandatory(self):
+        return not self.NoneOK
+
     def isValid(self, input):
         return True
 
@@ -212,11 +226,21 @@ class tChoiceField(tField):
         v = form_input[self.Name]
         if self.NoneOK:
             if v[0] == "-":
-                return v[1:]
+                supposed_value = v[1:]
             else:
-                return None
+                supposed_value = None
         else:
-            return v
+            supposed_value = v
+        
+        if supposed_value is not None:
+            try:
+                tools.alistLookup(self.Choices, supposed_value)
+                return supposed_value
+            except KeyError:
+                raise ValueError, "Invalid input in choice field"
+        else:
+            return supposed_value
+
 
     def getDisplayHTML(self, object):
         value = self.getValue(object)
@@ -275,6 +299,9 @@ class tFloatField(tField):
         self.Minimum = min
         self.Maximum = max
         self.NoneOK = none_ok
+
+    def isMandatory(self):
+        return not self.NoneOK
 
     def isValid(self, input):
         try:
@@ -335,6 +362,9 @@ class tCheckField(tField):
         tField.__init__(self, name, description,
                         shown_in_overview)
 
+    def isMandatory(self):
+        return True
+
     def isValid(self, input):
         return True
 
@@ -383,6 +413,9 @@ class tChangeOnCreateAdapter(tField):
                         slave.Description,
                         slave.ShownInOverview)
         self.Slave = slave
+
+    def isMandatory(self):
+        return self.Slave.isMandatory()
 
     def getValue(self, object):
         return self.Slave.getValue(object)
@@ -595,12 +628,19 @@ class tDatabaseHandler:
 
 def parseQuery(query):
     result = {}
+    if query == "":
+        return result
     for part in query.split("&"):
-        key, value = part.split("=")
-        key = key.replace("+", " ")
-        value = value.replace("+", " ")
-        result[key] = unicode(urllib.unquote(value), 
-                              "utf-8")
+        kvlist = part.split("=")
+        if len(kvlist) == 1:
+            key = kvlist[0]
+            value = None
+        else:
+            key = kvlist[0].replace("+", " ")
+            value = unicode(urllib.unquote(
+                kvlist[1].replace("+", " ")),
+                "utf-8")
+        result[key] = value
     return result
 
 
@@ -650,21 +690,25 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
         raise NotImplementedError
 
     def do_GET(self):
-        # FIXME implement GET query
+        scheme, host, path, param, query, fragment = urlparse.urlparse(self.path)
         request = tHTTPRequest(
             "GET",
             self.headers,
-            {},
-            self.path)
+            parseQuery(query),
+            path)
         self.handlePage(request)
 
     def do_POST(self):
         clength = int(self.headers["Content-Length"])
         post_data = self.rfile.read(clength)
+        scheme, host, path, param, query, fragment = urlparse.urlparse(self.path)
+
+        form_input = parseQuery(post_data)
+        form_input.update(parseQuery(query))
         request = tHTTPRequest(
             "POST",
             self.headers,
-            parseQuery(post_data),
+            form_input,
             self.path)
         self.handlePage(request)
 

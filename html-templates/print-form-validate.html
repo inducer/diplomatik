@@ -15,7 +15,7 @@ $doctype
       <table>
         #foreach ($field in $fields)
           <tr>
-            <td class="Label">$field.description()</td>
+            <td class="Label">$field.description()#if ($field.isMandatory())*#end</td>
             <td #if ($field.isValid($input))#else class="InvalidEntry"#end>
               $field.getWidgetHTMLFromInput($none, $obj, $input)
             </td>
