@@ -13,7 +13,7 @@ mkdir $DESTDIR/static
 cp static/*.{html,css} $DESTDIR/static
 mkdir $DESTDIR/yaml
 cp yaml/*.py $DESTDIR/yaml
-mkdir -p $DESTDIR/example-data/{data,export}
+mkdir -p $DESTDIR/example-data/data
 cp -R example-data/version-tag $DESTDIR/example-data
 cp -R example-data/data/* $DESTDIR/example-data/data
 tar cfz $DESTDIR.tar.gz --owner=nobody --group=nogroup $DESTDIR

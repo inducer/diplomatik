@@ -71,10 +71,8 @@ def roundGrade(grade, places = 1):
     multiplied = float(grade*factor)
     floor = math.floor(multiplied)
     if multiplied - floor > 0.999:
-        print "ROUND", grade,(floor+1) / factor
         return (floor+1) / factor
     else:
-        print "ROUND", grade,(floor) / factor
         return floor / factor
 
 

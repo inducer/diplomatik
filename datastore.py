@@ -43,6 +43,9 @@ class tDataStore:
                 raise RuntimeError, "No valid archive found at %s -- Did WinZip mess up your line endings?" \
                       % directory
 
+        if not tools.doesDirExist(self.ExportDir):
+            os.mkdir(self.ExportDir)
+
         self.Directory = directory
         self.Students = {}
         for fn in os.listdir(self.DataDir):
