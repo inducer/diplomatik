@@ -131,7 +131,10 @@ class tDataStore:
         try:
             prev_export_filename = self.ExportFilenames[key]
             if prev_export_filename != new_export_filename:
-                os.unlink(prev_export_filename)
+                try:
+                    os.unlink(prev_export_filename)
+                except OSError:
+                    pass
         except KeyError:
             # we do not have a previous filename for new keys
             pass

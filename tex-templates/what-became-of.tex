@@ -18,7 +18,7 @@
 \hline
 \endhead
 #foreach ($student in $students)##
-  #set ($have_had_hline = 0)##
+  #set ($had_hline = 0)##
   \multicolumn{3}{|l|}{$h.escapeTeX($student.FirstName) $h.escapeTeX($student.LastName)} 
   #if ($student.Notes)
     #newline()#set ($had_hline = 1)##
@@ -34,8 +34,8 @@
       & $h.escapeTeX($drs.description()) abgeschlossen 
       & $h.formatDate($degree.FinishedDate)
     #else##
-      #newline()#set ($had_hline = 1)##
       #if ($degree.Remark)##
+        #newline()#set ($had_hline = 1)##
         & $h.escapeTeX($degree.Remark) &
       #end##
     #end##
