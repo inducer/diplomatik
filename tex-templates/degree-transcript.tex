@@ -1,6 +1,5 @@
-\documentclass[11pt]{article}
+\documentclass[10pt]{article}
 \batchmode
-\usepackage{fp}
 \usepackage[latin1]{inputenc}
 \usepackage{longtable}
 
@@ -18,3 +17,10 @@
 \setlength{\oddsidemargin}{0.0cm}%
 \setlength{\evensidemargin}{0.0cm}%
 \pagestyle{empty}%
+\begin{document}
+{\huge\bfseries Notenauszug (teilweise)}
+\vskip 0.5cm%
+#parse ("transcript-header.tex")
+\vskip 0.5cm%
+#parse ("transcript-degree.tex")
+\end{document}

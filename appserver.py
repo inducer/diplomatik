@@ -471,7 +471,7 @@ class tDatabaseHandler:
     def generateEditPage(self, path, form_input, key, obj):
         if len(form_input):
             if not "save" in form_input:
-                return tHTTPResponse("", 302, {"Location": ".."})
+                return tHTTPResponse("", 302, {"Location": "../overview"})
 
             valid = True
             for field in self.Fields:
@@ -504,7 +504,7 @@ class tDatabaseHandler:
                         self.inPlaceWriteHook(new_key)
                 self.writeHook(new_key)
 
-                return tHTTPResponse("", 302, {"Location": ".."})
+                return tHTTPResponse("", 302, {"Location": "../overview"})
             else:
                 return tHTTPResponse(
                     expandHTMLTemplate("db-edit-validate.html",
@@ -552,7 +552,7 @@ class tDatabaseHandler:
             if "delete" in form_input:
                 del self.Database[key]
                 self.deleteHook(key)
-            return tHTTPResponse("", 302, {"Location": ".."})
+            return tHTTPResponse("", 302, {"Location": "../overview"})
 
     def getPage(self, path, form_input):
         sort_re = re.compile("^sortBy([a-zA-Z0-9_]+)$")
@@ -564,6 +564,13 @@ class tDatabaseHandler:
 
         if path == "":
             if self.defaultSortField() is None:
+                return tHTTPResponse("", 302, 
+                                     {"Location": "overview"})
+            else:
+                return tHTTPResponse("", 302, 
+                                     {"Location": "sortBy%s" % self.defaultSortField()})
+        if path == "overview":
+            if self.defaultSortField() is None:
                 return self.handleOverviewPage(path, form_input, None)
             else:
                 return tHTTPResponse("", 302, 
@@ -571,7 +578,7 @@ class tDatabaseHandler:
         elif sort_match:
             return self.handleOverviewPage(path, form_input, 
                                            sort_match.group(1))
-        elif path == "new/":
+        elif path == "new/create":
             return self.handleNewPage(path, form_input)
         elif edit_match:
             return self.handleEditPage(path, form_input, 

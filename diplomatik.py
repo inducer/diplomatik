@@ -2,6 +2,7 @@ import BaseHTTPServer
 import re
 import sys
 
+import tools
 import degreeruleset
 import datamodel
 import appserver
@@ -126,11 +127,23 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
         if element == "title":
             return "Studierendendatenbank"
 
+        if element == "extra-commands":
+            return '<a href="/quit">Diplomatik beenden</a>'
+
         if element == "header":
             result = expandHTMLTemplate("main-header.html")
+
             if situation == "overview":
                 result += expandHTMLTemplate("welcome.html",
                                              {"version": __VERSION__})
+
+            if situation == "edit" and db_key:
+                result += expandHTMLTemplate(
+                    "student-reports.html",
+                    {"student": self.Database[db_key],
+                     "reports": degreeruleset.perStudentReports()
+                     })
+
             return result
         return ""
 
@@ -302,6 +315,21 @@ class tMainAppServer(appserver.tAppServer):
             return tDegreeDatabaseHandler(self.resolveStudent(stud_id))\
                    .getPage(path[stud_id_match.end():], form_input)
 
+        def handleExamDatabase(path, form_input):
+            id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/")
+            id_match = id_re.match(path)
+            if not id_match:
+                raise appserver.tNotFoundError, \
+                      "Invalid exams request %s" % path
+            stud_id = id_match.group(1)
+            degree_id = id_match.group(2)
+            student, degree = self.resolveDegree(stud_id,
+                                                 degree_id)
+              
+            return tExamsDatabaseHandler(student, degree_id, degree)\
+                   .getPage(path[id_match.end():], 
+                            form_input)
+        
         def handlePerDegreeReports(path, form_input):
             id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)$")
             id_match = id_re.match(path)
@@ -326,26 +354,25 @@ class tMainAppServer(appserver.tAppServer):
                 200,
                 {"Content-type": "application/pdf"})
 
-        def handleExamDatabase(path, form_input):
-            id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/")
+        def handlePerStudentReports(path, form_input):
+            id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)$")
             id_match = id_re.match(path)
             if not id_match:
                 raise appserver.tNotFoundError, \
-                      "Invalid exams request %s" % path
-            stud_id = id_match.group(1)
-            degree_id = id_match.group(2)
-            student, degree = self.resolveDegree(stud_id,
-                                                 degree_id)
+                      "Invalid per-student report request %s" % path
+            report_id = id_match.group(1)
+            format_id = id_match.group(2)
+            student_id = id_match.group(3)
+
+            if format_id != "pdf":
+                return "Formats besides PDF currently unsupported"
+
+            student = self.resolveStudent(student_id)
               
-            return tExamsDatabaseHandler(student, degree_id, degree)\
-                   .getPage(path[id_match.end():], 
-                            form_input)
-        
-        def generatePDF(path, form_input):
             return appserver.tHTTPResponse(
-                texpdf.runLatex(r"\documentclass{article}"+
-                                r"\begin{document}Hallo $\pi$"+
-                                r"\end{document}"),
+                degreeruleset.doPerStudentReport(report_id,
+                                                 student,
+                                                 degree_rule_sets_map),
                 200,
                 {"Content-type": "application/pdf"})
 
@@ -353,12 +380,22 @@ class tMainAppServer(appserver.tAppServer):
             return appserver.tHTTPResponse(
                 "", 302, {"Location": "/students/"})
 
+        def doQuit(path, form_input):
+            quitflag.set(True)
+            return appserver.tHTTPResponse(
+                "OK, wird beendet.",
+                200,
+                {"Content-type": "text/plain"})
+
+
         return [
             ("^/students/", handleStudentDatabase),
             ("^/degrees/", handleDegreeDatabase),
             ("^/exams/", handleExamDatabase),
+            ("^/report/perstudent/", handlePerStudentReports),
             ("^/report/perdegree/", handlePerDegreeReports),
             ("^/students$", redirectToStart),
+            ("^/quit$", doQuit),
             ("^/$", redirectToStart)
             ]
 
@@ -380,4 +417,8 @@ store = datamodel.tDataStore("example-data",
                              degree_rule_sets)
 httpd = BaseHTTPServer.HTTPServer(('', 8000), 
                                   tMainAppServer)
-httpd.serve_forever()
+quitflag = tools.tReference(False)
+while not quitflag.get():
+    httpd.handle_request()
+
+print "Diplomatik wurde ordnungsgemaess beendet."

@@ -7,6 +7,19 @@ import airspeed
 
 
 
+class tReference:
+    def __init__(self, value):
+        self.Value = value
+
+    def set(self, value):
+        self.Value = value
+
+    def get(self):
+        return self.Value
+
+
+
+
 def escapeTeX(value):
     value = value.replace("\\", "--BS-ESCAPE--")
     value = value.replace("&", "\\&")
@@ -74,6 +87,16 @@ def alistLookup(alist, sought_key):
 
 
 
+def _expandTemplate(dir, filename, globals_dict):
+    template = codecs.open(os.path.join(dir, filename),
+                           "r", "utf-8").read()
+    loader = airspeed.CachingFileLoader(dir)
+    return airspeed.Template(template).merge(globals_dict,
+                                             loader)
+
+
+
+
 def expandHTMLTemplate(filename, globals_dict = {}):
     my_dict = globals_dict.copy()
     my_dict["none"] = None
@@ -81,12 +104,13 @@ def expandHTMLTemplate(filename, globals_dict = {}):
     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'+ \
     '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
 
+
     template = codecs.open(os.path.join("html-templates",
                                         filename),
                            "r", "utf-8").read()
     
-    return airspeed.Template(template).merge(my_dict)
-
+    return _expandTemplate("html-templates", filename, 
+                           my_dict)
 
 
 
@@ -95,10 +119,9 @@ def runLatexOnTemplate(filename, globals_dict,
                        included_files = []):
     my_dict = globals_dict.copy()
     my_dict["none"] = None
-    template = codecs.open(os.path.join("tex-templates",
-                                        filename),
-                           "r", "utf-8").read()
-    return runLatex(airspeed.Template(template).merge(my_dict),
+    return runLatex(_expandTemplate("tex-templates",
+                                    filename,
+                                    my_dict),
                     included_files)
 
 
@@ -131,22 +154,23 @@ def runLatex(text, included_files):
                  os.path.join("tex-templates", i))
 
     os.chdir(temp_dir_name)
-    
-    outf = codecs.open("output.tex", "wb", "latin1")
-    outf.write(text)
-    outf.close()
+    try:
+        outf = codecs.open("output.tex", "wb", "latin1")
+        outf.write(text)
+        outf.close()
 
-    # three times so that the .aux can settle
-    if os.system("pdflatex output") != 0:
-        raise RuntimeError, "LaTeX run failed"
-    if os.system("pdflatex output") != 0:
-        raise RuntimeError, "LaTeX run failed"
-    if os.system("pdflatex output") != 0:
-        raise RuntimeError, "LaTeX run failed"
+        # three times so that the .aux can settle
+        if os.system("pdflatex output") != 0:
+            raise RuntimeError, "LaTeX run failed"
+        if os.system("pdflatex output") != 0:
+            raise RuntimeError, "LaTeX run failed"
+        if os.system("pdflatex output") != 0:
+            raise RuntimeError, "LaTeX run failed"
 
-    pdff = file("output.pdf", "rb")
-    pdf_string = pdff.read()
-    pdff.close()
+        pdff = file("output.pdf", "rb")
+        pdf_string = pdff.read()
+        pdff.close()
 
-    os.chdir(previous_wd)
-    return pdf_string
+        return pdf_string
+    finally:
+        os.chdir(previous_wd)

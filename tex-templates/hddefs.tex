@@ -2,7 +2,11 @@
 \def\DATUM{$h.formatDate($degree.EnrolledDate)}
 \def\NAME{$h.escapeTeX($student.LastName)}
 \def\VORNAME{$h.escapeTeX($student.FirstName)}
-\def\GEBDAT{$h.formatDate($student.DateOfBirth)}
+#if ($student.DateOfBirth)
+  \def\GEBDAT{$h.formatDate($student.DateOfBirth)}
+#else
+  \def\GEBDAT{}
+#end
 \def\GEBORT{$h.escapeTeX($student.PlaceOfBirth)}
 \def\MATRIKEL{$student.ID}
 \def\STUDBEG{$studienbeginn_sem}

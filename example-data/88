@@ -1,0 +1,40 @@
+--- !!datamodel.tStudent
+DateOfBirth:
+    day: 7
+    month: 2
+    year: 1966
+Degrees:
+    '3336612': !!datamodel.tDegree
+        DegreeRuleSet: "tema-hd-alt"
+        EnrolledDate:
+            day: 7
+            month: 2
+            year: 2005
+        Exams: {}
+        FinishedDate:
+            day: 7
+            month: 2
+            year: 2005
+        MinorSubject: "MASCHBAU"
+        Remark: ""
+    '7438291': !!datamodel.tDegree
+        DegreeRuleSet: "tema-vd-alt"
+        EnrolledDate:
+            day: 7
+            month: 2
+            year: 2000
+        Exams: {}
+        FinishedDate:
+            day: 7
+            month: 2
+            year: 2004
+        MinorSubject: "MASCHBAU"
+        Remark: ""
+Email: "amelie@poulain.fr"
+FirstName: "Am\xe9lie"
+ID: "88"
+LastName: "Poulain"
+MiddleName: ""
+Notes: ""
+PlaceOfBirth: "Paris"
+VacationSemesters: []

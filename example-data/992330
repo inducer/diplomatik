@@ -380,40 +380,40 @@ Degrees:
                 Counted: True
                 CountedResult: 1.0
                 Credits: 12.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 7
                     month: 2
                     year: 2000
-                DegreeComponent: "ana"
-                Description: "Analysis I-III"
-                Examiner: "Herzog"
-                NativeResult: ""
-                Remarks: ""
+                DegreeComponent: ana
+                Description: Analysis I-III
+                Examiner: Herzog
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '993550': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.7
                 Credits: 8.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 7
                     month: 10
                     year: 1999
-                DegreeComponent: "la"
-                Description: "Lineare Algebra I-II"
+                DegreeComponent: la
+                Description: Lineare Algebra I-II
                 Examiner: "Drumm"
-                NativeResult: ""
-                Remarks: ""
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
         FinishedDate:
             day: 16
             month: 10
             year: 2000
-        MinorSubject: ''
-        Remark: ''
+        MinorSubject: "ETECHNIK"
+        Remark: ""
 Email: mathem@tiker.net
 FirstName: Andreas
 ID: '992330'

@@ -1,0 +1,48 @@
+{\Large\bfseries $drs.description()}
+
+\begin{tabular}{lp{10cm}}
+Begonnen & $h.formatDate($degree.EnrolledDate) \\\\
+Abgeschlossen & 
+#if ($degree.FinishedDate) $h.formatDate($degree.FinishedDate) #else \textit{noch nicht} #end \\\\
+Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\
+\end{tabular}
+
+\begin{longtable}[l]{|l|p{5cm}p{4cm}|p{1cm}p{1.5cm}|}
+\hline
+\textbf{Datum} & 
+  \textbf{Pr\"ufung} & 
+  \textbf{Komponente} & 
+  \textbf{SWS} & 
+  \textbf{Note} \\\\
+& \multicolumn{2}{l|}{\textbf{Pr\"ufer, Universit\"at}} & & \\\\
+\hline
+\endhead
+#foreach ($exam in $h.sortBy($degree.Exams.values(), "Date"))##
+  $h.formatDate($exam.Date) &
+  $h.escapeTeX($exam.Description) &
+  $h.alistLookup($drs.degreeComponents(), $exam.DegreeComponent) &
+  #if ($exam.Credits)##
+    #if ($exam.CreditsPrintable)##
+      $h.escapeTeX($exam.CreditsPrintable) ##
+    #else ##
+      $h.formatNumber("%.0f", $exam.Credits) ##
+    #end ##
+  #else
+    - ##
+  #end &
+  #if ($exam.CountedResult)##
+    #if ($exam.NativeResult)##
+      $exam.NativeResult (=$h.formatNumber("%.1f", $exam.CountedResult))##
+    #else ##
+      $h.formatNumber("%.1f", $exam.CountedResult)##
+    #end
+  #else ##
+    - ##
+  #end \\\\*
+  & \multicolumn{2}{p{9cm}|}{$exam.Examiner, $h.alistLookup($drs.examSources(), $exam.Source) 
+  #if ($exam.SourceDescription)##
+    ($h.escapeTeX($exam.SourceDescription))## 
+  #end} & & \\\\
+  \hline
+#end##
+\end{longtable}

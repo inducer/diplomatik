@@ -14,6 +14,24 @@ class tReportHelper:
     def escapeTeX(self, value):
         return tools.escapeTeX(value)
 
+    def dump(self, value):
+        print "*** DEBUG DUMP", repr(value)
+        return ""
+
+    def add(self, value, value2):
+        return value + value2
+
+    def alistLookup(self, alist, key):
+        return tools.alistLookup(alist, key)
+
+    def sortBy(self, list, field):
+        def cmp_func(a, b):
+            return cmp(getattr(a, field), getattr(b, field))
+
+        result = list[:]
+        result.sort(cmp_func)
+        return result
+
     def gradeToWords(self, grade):
         if grade < 1.5:
             return "sehr gut"
@@ -76,7 +94,7 @@ class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
         return "tema-vd-alt"
 
     def description(self):
-        return "TeMa VD alt"
+        return "Technomathematik Vordiplom/PO vom 03.06.1983"
         
     def degreeComponents(self):
         return [
@@ -89,7 +107,7 @@ class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
 
     def examSources(self):
         return [
-            ("uni", "Uni KA, regul&auml;r"),
+            ("uni", "Uni Karlsruhe"),
             ("ausland", "Ausland"),
             ("andere", "Andere dt. Hochschule"),
             ]
@@ -108,7 +126,7 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
         return "tema-hd-alt"
 
     def description(self):
-        return "TeMa HD alt"
+        return "Technomathematik Hauptdiplom/PO vom 03.06.1983"
         
     def degreeComponents(self):
         return [
@@ -117,16 +135,16 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             ("1nf", "Erstes Nebenfach"),
             ("2nf", "Angewandte Informatik"),
             ("diplomarbeit", "Diplomarbeit"),
-            ("ueb-rein", "&Uuml;bungsschein reine Mathematik"),
-            ("ueb-angewandt", "&Uuml;bungsschein angewandte Mathematik"),
-            ("seminar", "Seminarschein"),
+            ("ueb-rein", u"Übung Reine Mathematik"),
+            ("ueb-angewandt", u"Übung Angewandte Mathematik"),
+            ("seminar", "Seminar"),
             ("zusatz", "Zusatzfach"),
             ]
 
     def examSources(self):
         return [
-            ("uni", "Uni KA, regul&auml;r"),
-            ("freischuss", "Uni KA, studienbegleitend"),
+            ("uni", "Uni Karlsruhe"),
+            ("freischuss", "Uni Karlsruhe, studienbegleitend"),
             ("ausland", "Ausland"),
             ("industrie", "Industrie"),
             ("andere", "Andere dt. Hochschule"),
@@ -137,7 +155,8 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
 
     def perDegreeReports(self):
         return [
-            ("hdfinal", "Ausfertigung f&uuml;r die Pr&uuml;fungsabteilung...")
+            ("transcript", "Notenauszug (teilweise)"),
+            ("hdfinal", u"Ausfertigung für die Prüfungsabteilung...")
             ]
 
     def doPerDegreeReport(self, id, student, degree):
@@ -230,6 +249,10 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             nf2 = gatherComponent("2nf")
             zusatz = gatherComponent("zusatz")
 
+            if not (rein and angewandt and nf1 and nf2):
+                raise RuntimeError, "In einem der Pruefungsfaecher wurde " + \
+                      "keine Pruefung absolviert."
+
             all_remarks = rein.Remarks + \
                           angewandt.Remarks + \
                           nf1.Remarks + \
@@ -245,25 +268,54 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                 raise RuntimeError, "Anzahl Diplomarbeiten ist ungleich eins"
             da = diplomarbeiten[0]
             
-            return tools.runLatexOnTemplate("hddefs.tex",
-                                            {"student": student,
-                                             "degree": degree,
-                                             "podatum": "03.06.1983",
-                                             "popara": "\S 10 (2)",
-                                             "vddat": vordiplom.FinishedDate,
-                                             "semzahl": semzahl,
-                                             "studienbeginn_sem": studienbeginn_sem,
-                                             "rein": rein,
-                                             "angewandt": angewandt,
-                                             "nf1": nf1,
-                                             "nf2": nf2,
-                                             "zusatz": zusatz,
-                                             "da": da,
-                                             "remarks": remarks,
-
-                                             "form": "noten-hd.tex",
-                                             "h": tReportHelper(),
-                                             },
-                                            ["noten-hd.tex", "header.tex"])
+            return tools.runLatexOnTemplate(
+                "hddefs.tex",
+                {"student": student,
+                 "degree": degree,
+                 "podatum": "03.06.1983",
+                 "popara": "\S 10 (2)",
+                 "vddat": vordiplom.FinishedDate,
+                 "semzahl": semzahl,
+                 "studienbeginn_sem": studienbeginn_sem,
+                 "rein": rein,
+                 "angewandt": angewandt,
+                 "nf1": nf1,
+                 "nf2": nf2,
+                 "zusatz": zusatz,
+                 "da": da,
+                 "remarks": remarks,
+                 
+                 "form": "noten-hd.tex",
+                 "h": tReportHelper(),
+                 },
+                ["noten-hd.tex", "header.tex"])
+        elif id == "transcript":
+            return tools.runLatexOnTemplate(
+                "degree-transcript.tex",
+                {"student": student,
+                 "degree": degree,
+                 "h": tReportHelper(),
+                 "drs": self})
         else:
             raise KeyError, id
+
+
+
+
+def perStudentReports():
+    return [
+        ("transcript", "Notenauszug")
+        ]
+
+
+
+
+def doPerStudentReport(id, student, drs_map):
+    if id == "transcript":
+        return tools.runLatexOnTemplate("complete-transcript.tex",
+                                        {"student": student,
+                                         "h": tReportHelper(),
+                                         "drs_map": drs_map})
+    else:
+        return KeyError, id
+

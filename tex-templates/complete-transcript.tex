@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[10pt]{article}
 \batchmode
 \usepackage{fp}
 \usepackage[latin1]{inputenc}
@@ -18,3 +18,13 @@
 \setlength{\oddsidemargin}{0.0cm}%
 \setlength{\evensidemargin}{0.0cm}%
 \pagestyle{empty}%
+\begin{document}
+{\huge\bfseries Notenauszug}
+\vskip 0.5cm%
+#parse ("transcript-header.tex")
+\vskip 0.5cm%
+#foreach ($degree in $h.sortBy($student.Degrees.values(), "EnrolledDate"))
+  #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))
+  #parse ("transcript-degree.tex")
+#end
+\end{document}
