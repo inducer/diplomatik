@@ -89,7 +89,7 @@ class tDataStore:
 
     def __delitem__(self, key):
         del self.Students[key]
-        filename = os.path.join(self.Directory, key)
+        filename = os.path.join(self.DataDir, key)
         os.unlink(filename)
 
     def getExportData(self, student):
@@ -125,15 +125,16 @@ class tDataStore:
         # maintain exported data
         export_data = self.getExportData(student)
 
-        prev_export_filename = self.ExportFilenames[key]
         new_export_filename = self.getExportFilename(student)
         new_export_dir = self.getExportDir(student)
 
-        if prev_export_filename != new_export_filename:
-            try:
+        try:
+            prev_export_filename = self.ExportFilenames[key]
+            if prev_export_filename != new_export_filename:
                 os.unlink(prev_export_filename)
-            except OSError:
-                pass
+        except KeyError:
+            # we do not have a previous filename for new keys
+            pass
 
         if not tools.doesDirExist(new_export_dir):
             os.mkdir(new_export_dir)
