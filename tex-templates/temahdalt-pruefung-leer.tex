@@ -1,0 +1,114 @@
+\input header
+
+\def\VORNAME{$student.FirstName}
+\def\NAME{$student.LastName}
+\def\MATRIKEL{$student.ID}
+\def\TECHFACH{$degree.MinorSubject}
+\def\PRUEFORDDAT{$podatum}
+\def\PRUEFORDPARA{$popara}
+
+
+\begin{document}
+\begin{tabular}{ccrl}
+{\bf UNIVERSIT\"AT KARLSRUHE (TH)}& \hspace{3.4cm}  & Karlsruhe,
+den \makebox[2.0cm]{\dotfill\hspace*{0.25cm}} \\\\
+{\bf Fakult\"at f\"ur Mathematik } & & &   \\\\
+\end{tabular}
+
+\vspace*{1.3cm}
+
+{\large Herrn/Frau Professor/in \dotfill
+\vspace*{0.4cm}
+
+\begin{center}
+{\Large\underline{Zulassung zur Diplom--Hauptpr\"ufung TECHNOMATHEMATIK}}\\
+\end{center}
+\vspace*{0.5cm}
+
+{\large Name, Vorname: \makebox[7.2cm]{\dotfill\qh{\tt\NAME,
+ \VORNAME}\qh\dotfill}\hspace{0.25cm}
+ Matrikelnummer: \hfill{\tt\MATRIKEL}}
+\vspace*{0.3cm}
+
+\def\Box{\circ}%
+
+\renewcommand{\arraystretch}{1.4}
+\begin{center}
+\begin{tabular}{|c|p{14.6cm}|}
+\hline
+\hspace*{0.3cm} 
+& {\large Reine Mathematik} \\\\
+\hline
+& {\large Angewandte Mathematik }\\\\
+\hline 
+& {\large Technisches Fach: {\tt\TECHFACH}}\\\\
+  %$\qquad \Box$ Bauingenieurwesen, $\qquad \Box$ Elektrotechnik,}\\
+  %& {\large $\qquad\Box$ Maschinenbau, $\qquad \Box$ Mechanik,
+  %$\qquad \Box$ Physik }\\
+\hline
+& {\large Angewandte Informatik}\\\\
+\hline
+& {\large Zusatzfach} \\\\
+\hline
+\end{tabular}
+\end{center}
+\renewcommand{\arraystretch}{1}
+\normalsize
+
+Sie werden gebeten, im angekreuzten Fach die Pr\"ufung (SWS)\\\\
+
+\dotfill \\\\
+
+bis zum \makebox[4cm][c]{\dotfill} abzunehmen.
+
+\vspace*{0.35cm}
+
+\hspace*{7cm} \dotfill \\\\
+\hspace*{8.5cm} {\small F\"ur den Pr\"ufungsausschuss{} f\"ur
+ Mathematik}\\\\
+\hspace*{10.0cm} {\small Prof.~Dr.~W. D\"orfler} \\\\
+
+\fbox{\fbox{\parbox{15.5cm}{
+
+\vspace*{0.2cm}
+
+   {\quad \bf \underline{Bewertung der Pr\"ufung}:}
+
+\vspace*{0.5cm}
+
+\qquad \dotfill \qquad \\\\
+\qquad \hspace*{\fill} (Note) \hfill \hfill (in Worten)
+     \hfill \hfill (Datum der Pr\"ufung) \hspace*{\fill} \\\\
+
+\qquad \qquad
+  \dotfill \dotfill \qquad \qquad \\\\
+  \hspace*{\fill} (Unterschrift der Pr\"ufer bzw. Pr\"ufer und
+Beisitzer) \hspace*{\fill}
+ }}}
+
+\vspace*{0.3cm}
+[\PRUEFORDPARA\ der Pr\"ufungsordnung vom \PRUEFORDDAT: \\\\
+Die Leistungen in den einzelnen F\"achern sind mit den folgenden Noten
+zu bewerten: \\\\
+\hspace*{3cm} {\bf 1} = sehr gut; \hspace*{2cm} {\bf 2} = gut; \hspace*{2cm}
+{\bf 3} = befriedigend; \\\\
+\hspace*{3cm} {\bf 4} = ausreichend; \hspace*{1.4cm} {\bf 5} =
+nicht ausreichend. \\\\
+Im Zeugnis d\"urfen nur diese Noten verwendet werden. Die Notenziffern
+im Protokoll \\\\
+k\"onnen zur Differenzierung um 0.3 erh\"oht oder erniedrigt werden.
+Die Noten \\\\
+0.7, \ 4.3 \ und \ 5.3 \ sind ausgeschlossen.] \\\\
+\rule{15.8cm}{0.03in} \\\\
+%\rule{15.8cm}{0.03in} \\
+Bitte senden Sie dieses Blatt sofort nach der Pr\"ufung an den
+Verantwortlichen f\"ur Technomathematik im Pr\"ufungsausschu\ss{} f\"ur
+Mathematik:
+
+\vspace*{-0.3cm}
+\begin{tabbing}
+{\bf Adresse:} \ \= Prof. Dr. W. D\"orfler, Inst.~Angewandte Mathematik II, \\\\
+\> Universit\"at Karlsruhe, Englerstr.\ 2 (Geb.~20.30), 76128
+Karlsruhe.
+\end{tabbing}
+\end{document}
