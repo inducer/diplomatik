@@ -482,6 +482,10 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                 studienbeginn_sem,
                 studienende_sem)
 
+            urlaubssem = len([1 for specsem in self.Student.SpecialSemesters.values()
+                              if specsem.Type == "urlaub"])
+            fachsem = semzahl - urlaubssem
+
             return tools.runLatexOnTemplate(
                 "hddefs.tex",
                 {"student": self.Student,
@@ -492,6 +496,8 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                  "studienbeginn_sem": studienbeginn_sem,
                  "zeugnis_defs": self.getZeugnisTeXDefs(),
                  "form": "noten-hd.tex",
+                 "urlaubssem": urlaubssem,
+                 "fachsem": fachsem,
                  },
                 ["noten-hd.tex", "header.tex"])
 

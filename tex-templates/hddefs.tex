@@ -12,10 +12,18 @@
 \def\STUDBEG{$studienbeginn_sem}
 \def\VORDIPL{$h.formatDate($vddat)}
 \def\TECHFACH{$h.escapeTeX($degree.MinorSubject)}
+\def\URLAUBSSEMSTER{$urlaubssem}
+\def\HOCHSCHULSEMESTER{$semzahl}
+\def\FACHSEMESTER{$fachsem}
+#if ($urlaubssem)
+  \def\URLAUBSSEMESTERTEXT{ (+$urlaubssem Urlaubssem.)}
+#else
+  \def\URLAUBSSEMESTERTEXT{}
+#end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Abschluss
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\Semesterzahl{$semzahl}
+\def\Semesterzahl{\HOCHSCHULSEMESTER}
 
 $zeugnis_defs
 
