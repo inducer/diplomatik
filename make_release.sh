@@ -4,7 +4,7 @@ DESTDIR=diplomatik-$VERSION
 
 rm -Rf $DESTDIR
 mkdir $DESTDIR
-cp VERSION LICENSE-* *.py $DESTDIR
+cp START start.bat VERSION LICENSE-* *.py $DESTDIR
 mkdir $DESTDIR/tex-templates
 cp tex-templates/*.tex $DESTDIR/tex-templates
 mkdir $DESTDIR/html-templates
