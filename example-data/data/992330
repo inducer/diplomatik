@@ -52,7 +52,7 @@ Degrees:
                     day: 7
                     month: 2
                     year: 2001
-                DegreeComponent: '2nf'
+                DegreeComponent: inf
                 Description: Formale Systeme
                 Examiner: Schmitt
                 NativeResult: ''
@@ -100,7 +100,7 @@ Degrees:
                     day: 15
                     month: 5
                     year: 2002
-                DegreeComponent: '2nf'
+                DegreeComponent: inf
                 Description: Robotics
                 Examiner: Xiao
                 NativeResult: A
@@ -116,7 +116,7 @@ Degrees:
                     day: 15
                     month: 5
                     year: 2002
-                DegreeComponent: '1nf'
+                DegreeComponent: ing
                 Description: "Analog Integrated Circuits"
                 Examiner: Binkley
                 NativeResult: A
@@ -180,7 +180,7 @@ Degrees:
                     day: 7
                     month: 7
                     year: 2001
-                DegreeComponent: '2nf'
+                DegreeComponent: inf
                 Description: Kognitive Systeme
                 Examiner: Nagel
                 NativeResult: ''
@@ -212,7 +212,7 @@ Degrees:
                     day: 7
                     month: 7
                     year: 2003
-                DegreeComponent: '1nf'
+                DegreeComponent: ing
                 Description: "Nachrichten\xfcbertragung"
                 Examiner: Jondral
                 NativeResult: ''
@@ -228,7 +228,7 @@ Degrees:
                     day: 7
                     month: 2
                     year: 2001
-                DegreeComponent: "ueb-angewandt"
+                DegreeComponent: "uebangewandt"
                 Description: Stochastik II
                 Examiner: Kadelka
                 NativeResult: ''
@@ -260,7 +260,7 @@ Degrees:
                     day: 15
                     month: 12
                     year: 2001
-                DegreeComponent: '2nf'
+                DegreeComponent: inf
                 Description: Intelligent Systems
                 Examiner: Xiao
                 NativeResult: A
@@ -276,7 +276,7 @@ Degrees:
                     day: 15
                     month: 7
                     year: 2000
-                DegreeComponent: "ueb-rein"
+                DegreeComponent: "uebrein"
                 Description: "Funktionentheorie I"
                 Examiner: "K\xfchnlein"
                 NativeResult: ''
@@ -340,7 +340,7 @@ Degrees:
                     day: 7
                     month: 2
                     year: 2001
-                DegreeComponent: '1nf'
+                DegreeComponent: ing
                 Description: System Dynamics and Control Engineering
                 Examiner: Krebs
                 NativeResult: ''
@@ -356,7 +356,7 @@ Degrees:
                     day: 15
                     month: 12
                     year: 2001
-                DegreeComponent: '1nf'
+                DegreeComponent: ing
                 Description: "Intro to Semiconductor Physics"
                 Examiner: Hasan
                 NativeResult: A

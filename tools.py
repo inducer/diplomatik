@@ -1,6 +1,7 @@
 from __future__ import division
 
 import codecs
+import stat
 import os
 import sets
 import urllib
@@ -98,6 +99,12 @@ def alistLookup(alist, sought_key):
 
 
 
+def alistKeys(alist):
+    return [key for key, value in alist]
+
+
+
+
 def median(list):
     if len(list) == 0:
         raise ValueError, "median() of empty list"
@@ -124,9 +131,7 @@ def histogram(values, start = {}):
 
 
 
-def gradeToWords(grade, use_distinction = False):
-    if use_distinction and grade < 1.1:
-        return "mit Auszeichnung"
+def gradeToWords(grade):
     if grade < 1:
         return "?"
     elif grade < 1.5:
@@ -154,6 +159,12 @@ def _expandTemplate(dir, filename, globals_dict):
         def formatNumber(self, format, number):
             return format % number
 
+        def formatBool(self, value):
+            if value:
+                return "1"
+            else:
+                return "0"
+
         def escapeTeX(self, value):
             return escapeTeX(value)
 
@@ -166,6 +177,9 @@ def _expandTemplate(dir, filename, globals_dict):
 
         def alistLookup(self, alist, key):
             return alistLookup(alist, key)
+
+        def alistKeys(self, alist):
+            return alistKeys(alist)
 
         def sort(self, list):
             result = list[:]
@@ -180,6 +194,9 @@ def _expandTemplate(dir, filename, globals_dict):
             result.sort(cmp_func)
             return result
 
+        def filterBy(self, list, field, value):
+            return [v for v in list if getattr(v, field) == value]
+
         def len(self, value):
             return len(value)
 
@@ -192,9 +209,24 @@ def _expandTemplate(dir, filename, globals_dict):
         def composeQuery(self, key, value, previous):
             return composeQuery({key: value}, previous)
 
+        def eletterate(self, list, element_count, blank):
+            return [makeObject(
+                {"Letter": chr(97+i),
+                 "Data": v,
+                 "Active": True})
+                    for i, v in enumerate(list)] \
+                    + \
+                    [makeObject(
+                {"Letter": chr(97+i),
+                 "Data": blank,
+                 "Active": False})
+                    for i in range(len(list), element_count)]
+
+
     my_dict = globals_dict.copy()
     my_dict["h"] = _tTemplateHelper()
     my_dict["none"] = None
+    my_dict["emptylist"] = []
     template = codecs.open(os.path.join(dir, filename),
                            "r", "utf-8").read()
     loader = airspeed.CachingFileLoader(dir)
@@ -210,12 +242,17 @@ def expandHTMLTemplate(filename, globals_dict = {}):
     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'+ \
     '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
 
-
-    template = codecs.open(os.path.join("html-templates",
-                                        filename),
-                           "r", "utf-8").read()
-    
     return _expandTemplate("html-templates", filename, 
+                           my_dict)
+
+
+
+
+def expandTeXTemplate(filename, globals_dict):
+    my_dict = globals_dict.copy()
+    my_dict["none"] = None
+    return _expandTemplate("tex-templates",
+                           filename,
                            my_dict)
 
 
@@ -223,11 +260,8 @@ def expandHTMLTemplate(filename, globals_dict = {}):
 
 def runLatexOnTemplate(filename, globals_dict, 
                        included_files = []):
-    my_dict = globals_dict.copy()
-    my_dict["none"] = None
-    return runLatex(_expandTemplate("tex-templates",
-                                    filename,
-                                    my_dict),
+    return runLatex(expandTeXTemplate(filename,
+                                      globals_dict),
                     included_files)
 
 
@@ -317,3 +351,9 @@ def composeQuery(items, previous_query = {}):
 
 
 
+def doesDirExist(directory):
+    try:
+        statbuf = os.stat(directory)
+        return stat.S_ISDIR(statbuf.st_mode)
+    except OSError:
+        return False

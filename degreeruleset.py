@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import tools
-import semester
 import reports
+import datetime
 
 from tools import tSubjectError
 
 
 
 
-class tDegreeRuleSet:
+class tDegreeRuleSet(object):
     def __init__(self):
         pass
 
@@ -20,10 +20,29 @@ class tDegreeRuleSet:
         return "base"
         
     def degreeComponents(self):
-        return {} # [(id(str), description(str))]
+        """Returns an associative array (i.e. a list of tuples)
+        that enumerates the types of exams that count towards 
+        this degree.
+
+        An example:
+        [("applied", "Applied Mathematics"),
+         ("pure", "Pure Mathematics"),
+         ]
+        
+        Note that the identifiers must be usable as TeX
+        control sequence names and may thus only
+        consist of upper and lower case letters.
+        """
+        return {} # [(id:str, description:str)]
 
     def examSources(self):
-        return {} # [(id(str), description(str))]
+        return {} # [(id:str, description:str)]
+
+    def expectedExamCount(self, component):
+        raise NotImplementedError
+
+    def getExportData(self, student, degree):
+        return ""
 
     def getComponentAverageGrade(self, student, degree, component):
         exams = [exam
@@ -54,6 +73,10 @@ class tDegreeRuleSet:
     def getPerDegreeReportHandler(self, student, degree):
         return reports.tPerDegreeReportHandler(
             student, degree, self)
+
+    def ruleSetDate(self):
+        raise NotImplementedError
+
 
 
    
@@ -86,6 +109,14 @@ class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
             ("andere", "Andere dt. Hochschule"),
             ]
 
+    def expectedExamCount(self, component):
+        if component == "scheine":
+            return 2
+        else:
+            return 1
+
+    def ruleSetDate(self):
+        return datetime.date(1983, 6, 3)
 
 
 
@@ -103,11 +134,11 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
         return [
             ("rein", "Reine Mathematik"),
             ("angewandt", "Angewandte Mathematik"),
-            ("1nf", "Erstes Nebenfach"),
-            ("2nf", "Angewandte Informatik"),
+            ("ing", "Erstes Nebenfach"),
+            ("inf", "Angewandte Informatik"),
             ("diplomarbeit", "Diplomarbeit"),
-            ("ueb-rein", u"Übung Reine Mathematik"),
-            ("ueb-angewandt", u"Übung Angewandte Mathematik"),
+            ("uebrein", u"Übung Reine Mathematik"),
+            ("uebangewandt", u"Übung Angewandte Mathematik"),
             ("seminar", "Seminar"),
             ("mrp", "Mikrorechnerpraktikum"),
             ("zusatz", "Zusatzfach"),
@@ -121,6 +152,23 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             ("industrie", "Industrie"),
             ("andere", "Andere dt. Hochschule"),
             ]
+
+    def expectedExamCount(self, component):
+        if component in ["rein",
+                         "angewandt",
+                         "ing",
+                         "inf"]:
+            return 5
+        else:
+            return 1
+
+    def getExportData(self, student, degree):
+        rephand = self.getPerDegreeReportHandler(
+            student, degree)
+        try:
+            return rephand.getZeugnisTeXDefs()
+        except tSubjectError:
+            return "% degree-specific export failed"
 
     def getVordiplom(self, student):
         vds = [degree
@@ -144,7 +192,7 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                           if exam.Counted and exam.CountedResult]
         if len(diplomarbeiten) != 1:
             raise tSubjectError, \
-                  "Student %s: Anzahl benotete Diplomarbeiten ist ungleich eins" \
+                  "Student %s: Anzahl benoteter Diplomarbeiten ist ungleich eins" \
                   % student.LastName
         return diplomarbeiten[0]
 
@@ -153,8 +201,8 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
 
         rm = self.getComponentAverageGrade(student, degree, "rein")
         am = self.getComponentAverageGrade(student, degree, "angewandt")
-        nf1 = self.getComponentAverageGrade(student, degree, "1nf")
-        nf2 = self.getComponentAverageGrade(student, degree, "2nf")
+        nf1 = self.getComponentAverageGrade(student, degree, "ing")
+        nf2 = self.getComponentAverageGrade(student, degree, "inf")
         da = self.getDiplomarbeit(student, degree)
         return round((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
 
@@ -165,4 +213,7 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
     def getPerExamReportHandler(self, student, degree, exam):
         return reports.tTeMaHDAltPerExamReportHandler(
             student, degree, self, exam)
+
+    def ruleSetDate(self):
+        return datetime.date(1983, 6, 3)
 

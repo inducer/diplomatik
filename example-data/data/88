@@ -5,7 +5,7 @@ DateOfBirth:
     year: 1966
 Degrees:
     '4836878': !!datamodel.tDegree
-        DegreeRuleSet: "tema-hd-alt"
+        DegreeRuleSet: tema-hd-alt
         EnrolledDate:
             day: 7
             month: 2
@@ -15,84 +15,84 @@ Degrees:
                 Counted: True
                 CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 16
                     month: 2
                     year: 2005
-                DegreeComponent: "rein"
+                DegreeComponent: rein
                 Description: "Funktionalanalysis I"
-                Examiner: "Schmoeger"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Schmoeger
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '4785646': !!datamodel.tExam
                 Counted: True
                 CountedResult: 2.0
                 Credits: 4.0
-                CreditsPrintable: "3+1"
+                CreditsPrintable: '3+1'
                 Date:
                     day: 16
                     month: 2
                     year: 2005
-                DegreeComponent: "2nf"
+                DegreeComponent: inf
                 Description: "Bildfolgenauswertung"
-                Examiner: "Zitterbart"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Zitterbart
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '5387816': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.7
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 13
                     month: 2
                     year: 2005
-                DegreeComponent: "angewandt"
-                Description: "Stochastik II"
-                Examiner: "Henze"
-                NativeResult: ""
-                Remarks: ""
+                DegreeComponent: angewandt
+                Description: Stochastik II
+                Examiner: Henze
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '554919': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.7
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 13
                     month: 2
                     year: 2005
-                DegreeComponent: "angewandt"
-                Description: "Markovketten"
-                Examiner: "Henze"
-                NativeResult: ""
-                Remarks: ""
+                DegreeComponent: angewandt
+                Description: Markovketten
+                Examiner: Henze
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '5976136': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: "3+1"
+                CreditsPrintable: '3+1'
                 Date:
                     day: 16
                     month: 2
                     year: 2005
-                DegreeComponent: "1nf"
+                DegreeComponent: ing
                 Description: "Verbrennungsmotoren I"
                 Examiner: "M\xfcller"
-                NativeResult: ""
-                Remarks: ""
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '8616441': !!datamodel.tExam
-                Counted: True
+                Counted: False
                 CountedResult: 1.3
                 Credits: ~
                 CreditsPrintable: ""
@@ -106,29 +106,29 @@ Degrees:
                 NativeResult: ""
                 Remarks: ""
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: "False"
             '8871044': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 16
                     month: 2
                     year: 2005
-                DegreeComponent: "rein"
+                DegreeComponent: rein
                 Description: "Funktionalanalysis II"
-                Examiner: "Schmoeger"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Schmoeger
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
         FinishedDate:
             day: 16
             month: 2
             year: 2005
-        MinorSubject: "MASCHBAU"
-        Remark: ""
+        MinorSubject: MASCHBAU
+        Remark: ''
     '7438291': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
         EnrolledDate:
@@ -140,8 +140,8 @@ Degrees:
             day: 7
             month: 2
             year: 2002
-        MinorSubject: "MASCHBAU"
-        Remark: ""
+        MinorSubject: MASCHBAU
+        Remark: ''
 Email: "amelie@poulain.fr"
 FirstName: "Am\xe9lie"
 Gender: w

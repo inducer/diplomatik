@@ -3,6 +3,7 @@ import string
 from types import StringType, UnicodeType, IntType, FloatType
 from types import DictType, ListType, TupleType, InstanceType
 from yaml.klass import hasMethod, isDictionary
+import implicit
 import re
 
 """
@@ -268,6 +269,10 @@ def needsSingleQuote(data):
         return 1
     if data[-1] == ' ':
         return 1
+    if implicit.TRUE_REGEX.match(data):
+        return 1
+    if implicit.FALSE_REGEX.match(data):
+        return 1
     return (re.search(r'[:]', data) or re.search(r'(\d\.){2}', data))
 
 def hasSpecialChar(data):
@@ -285,8 +290,8 @@ def isUnicode(data):
     return type(data) == unicode
     
 def sloppyIsUnicode(data):
-        # XXX - hack to make tests pass for 2.1
-        return repr(data)[:2] == "u'" and repr(data) != data
+    # XXX - hack to make tests pass for 2.1
+    return repr(data)[:2] == "u'" and repr(data) != data
 
 import sys
 if sys.hexversion < 0x20200000:

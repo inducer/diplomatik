@@ -1,0 +1,115 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% per-student data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\MATRIKEL{$student.ID}
+\def\NAME{$h.escapeTeX($student.LastName)}
+\def\MITTELNAME{$h.escapeTeX($student.MiddleName)}
+\def\VORNAME{$h.escapeTeX($student.FirstName)}
+\def\GESCHLECHT{$student.Gender}
+#if ($student.Gender == "m")##
+  \def\ANREDE{Herr}
+#else
+  \def\ANREDE{Frau}
+#end##
+\def\BEMERKUNG{$h.escapeTeX($student.Notes)}
+\def\EMAIL{$h.escapeTeX($student.Email)}
+#if ($student.DateOfBirth)##
+  \def\GEBDAT{$h.formatDate($student.DateOfBirth)}
+#else##
+  \def\GEBDAT{}
+#end##
+\def\GEBORT{$h.escapeTeX($student.PlaceOfBirth)}
+\def\HOCHSCHULSEMESTER{$semesters}
+\def\URLAUBSSEMESTER{$urlaubssem}
+\def\STUDBEG{$beginn}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% per-degree data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#foreach ($deg_loop in $h.eletterate($h.sortBy($student.Degrees.values(), "EnrolledDate"), 3, $none))##
+  #set ($dletter = $deg_loop.Letter)##
+  #if ($deg_loop.Active)##
+    #set ($degree = $deg_loop.Data)##
+
+    \def\ABSCH${dletter}GUELTIG{1}
+    \def\ABSCH${dletter}BEGINN{$h.formatDate($degree.EnrolledDate)}
+    #if ($degree.FinishedDate)
+      \def\ABSCH${dletter}ENDE{$h.formatDate($degree.FinishedDate)}##
+    #else
+      \def\ABSCH${dletter}ENDE{}##
+    #end##
+
+    \def\ABSCH${dletter}NF{$h.escapeTeX($degree.MinorSubject)}
+    \def\ABSCH${dletter}REGELN{$h.escapeTeX($degree.DegreeRuleSet)}
+    \def\ABSCH${dletter}BEMERKUNG{$h.escapeTeX($degree.Remark)}
+    #set ($exams = $h.sortBy($degree.Exams.values(), "Date"))##
+    #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))##
+    #set ($components = $h.alistKeys($drs.degreeComponents()))##
+    #foreach ($component in $components)##
+      #foreach ($ex_loop in $h.eletterate($h.filterBy($exams, "DegreeComponent", $component), $drs.expectedExamCount($component), $none))##
+        #set ($eletter = $ex_loop.Letter)##
+          #if ($ex_loop.Active)##
+            #set ($exam = $ex_loop.Data)##
+
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}GUELTIG{1}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}DATUM{$h.formatDate($exam.Date)}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}NAME{$h.escapeTeX($exam.Description)}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}PRUEFER{$h.escapeTeX($exam.Examiner)}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}GEZAEHLT{$h.formatBool($exam.Counted)}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNG{$h.escapeTeX($h.alistLookup($drs.examSources(), $exam.Source))}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNGGENAU{$h.escapeTeX($exam.SourceDescription)}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNGRESULTAT{$h.escapeTeX($exam.NativeResult)}
+            #if ($exam.CountedResult)
+              \def\ABSCH${dletter}KOMP${component}PRF${eletter}RESULTAT{$h.formatNumber("%.1f", $exam.CountedResult)}##
+            #else
+              \def\ABSCH${dletter}KOMP${component}PRF${eletter}RESULTAT{}##
+            #end
+            #if ($exam.Credits)
+              \def\ABSCH${dletter}KOMP${component}PRF${eletter}SWS{$h.formatNumber("%d", $exam.Credits)}##
+            #else
+              \def\ABSCH${dletter}KOMP${component}PRF${eletter}SWS{}##
+            #end
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}SWSDRUCK{$h.escapeTeX($exam.CreditsPrintable)}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}BEMERKUNG{$h.escapeTeX($exam.Remarks)}
+
+          #else
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}GUELTIG{0}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}DATUM{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}NAME{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}PRUEFER{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}GEZAEHLT{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNG{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNGGENAU{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNGRESULTAT{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}RESULTAT{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}SWS{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}SWSDRUCK{}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}BEMERKUNG{}
+          #end##
+      #end##
+    #end##
+
+    $drs.getExportData($student, $degree)
+  #else
+    \def\ABSCH${dletter}GUELTIG{0}
+    \def\ABSCH${dletter}BEGINN{}
+    \def\ABSCH${dletter}ENDE{}
+    \def\ABSCH${dletter}NF{}
+    \def\ABSCH${dletter}REGELN{}
+    \def\ABSCH${dletter}BEMERKUNG{}
+  #end
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% compatibility
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\DATUM{\ABSCHLUSSbBEGINN}
+\def\VORDIPL{\ABSCHLUSSaENDE}
+\def\TECHFACH{\ABSCHLUSSaNF}
+\def\Semesterzahl{\HOCHSCHULSEMESTER}
+\def\Abschlussdatum{\ABSCHLUSSbENDE}
+\def\PRUEFORDDAT{03.06.1983}% Datum der rel. Pruefungsordnung
+\def\PRUEFORDPARA{\S 10 (2)}% Pruefungsparagraph
+

@@ -1,0 +1,15 @@
+--- !!datamodel.tStudent
+DateOfBirth:
+    day: 17
+    month: 2
+    year: 2005
+Degrees: {}
+Email: ""
+FirstName: "Albert"
+Gender: "m"
+ID: "1233311"
+LastName: "Karl"
+MiddleName: ""
+Notes: ""
+PlaceOfBirth: ""
+SpecialSemesters: {}

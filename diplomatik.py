@@ -12,11 +12,12 @@ import semester
 import degreeruleset
 import reports
 import datamodel
+import datastore
 import appserver
 
 from tools import expandHTMLTemplate
 
-__VERSION__ = file("VERSION").read()
+__VERSION__ = file("VERSION").read().strip()
 LISTEN_PORT = 8000
 ALLOW_NON_LOCAL = False
 DO_START_BROWSER = False
@@ -698,7 +699,8 @@ class tMainAppServer(appserver.tAppServer):
 # Main program ---------------------------------------------
 opts, args = getopt.getopt(sys.argv[1:], [], 
                            ["allow-non-local",
-                            "start-browser"])
+                            "start-browser",
+                            "create"])
 if len(args) != 1:
     print "Benutzung: %s [Optionen] <Verzeichnis mit Studentendaten>" % sys.argv[0]
     print
@@ -707,7 +709,12 @@ if len(args) != 1:
     print "      Nichtlokalen Zugriff erlauben (gefaehrlich!)"
     print "  --start-browser"
     print "      Automatische einen Webbrowser starten"
+    print "  --create"
+    print "      Im angegebenen Verzeichnis eine Datenumgebung erzeugen,"
+    print "      falls nicht vorhanden"
     sys.exit(1)
+
+ALLOW_CREATE = False
 
 for opt, value in opts:
     if opt == "--allow-non-local":
@@ -715,6 +722,8 @@ for opt, value in opts:
         ALLOW_NON_LOCAL = True
     if opt == "--start-browser":
         DO_START_BROWSER = True
+    if opt == "--create":
+        ALLOW_CREATE = True
 
 
 degree_rule_sets = [
@@ -728,8 +737,9 @@ for drs in degree_rule_sets:
 
 print "Lade Studentendaten...",
 sys.stdout.flush()
-store = datamodel.tDataStore("example-data", 
-                             degree_rule_sets)
+store = datastore.tDataStore(args[0], 
+                             degree_rule_sets_map,
+                             allow_create = ALLOW_CREATE)
 print "erledigt"
 httpd = BaseHTTPServer.HTTPServer(('', LISTEN_PORT), 
                                   tMainAppServer)

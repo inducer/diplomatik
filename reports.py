@@ -4,6 +4,7 @@ import re
 import datetime
 import math
 
+import datamodel
 import semester
 import appserver
 import tools
@@ -122,10 +123,10 @@ class tGlobalReportHandler(tReportHandler):
                        form_data.From <= degree.FinishedDate <= form_data.To:
                         stud_deg.append((student, degree))
 
-            def cmp_func(a, b):
+            def cmp_func_by_date(a, b):
                 return cmp(a[1].FinishedDate,
                            b[1].FinishedDate)
-            stud_deg.sort(cmp_func)
+            stud_deg.sort(cmp_func_by_date)
 
             return tools.runLatexOnTemplate(
                 "abschluesse.tex",
@@ -145,8 +146,8 @@ class tGlobalReportHandler(tReportHandler):
                         da = drs.getDiplomarbeit(student, degree)
                         rm = drs.getComponentAverageGrade(student, degree, "rein")
                         am = drs.getComponentAverageGrade(student, degree, "angewandt")
-                        nf1 = drs.getComponentAverageGrade(student, degree, "1nf")
-                        nf2 = drs.getComponentAverageGrade(student, degree, "2nf")
+                        nf1 = drs.getComponentAverageGrade(student, degree, "ing")
+                        nf2 = drs.getComponentAverageGrade(student, degree, "inf")
                         pn = (rm+am+nf1+nf2)/4.
                         gesamt = drs.getOverallGrade(student, degree)
 
@@ -191,8 +192,7 @@ class tGlobalReportHandler(tReportHandler):
                 {"m": 0, "w": 0})
 
             gesamt_hist = tools.histogram(
-                [tools.gradeToWords(sd.Gesamt,
-                                    use_distinction = True)
+                [tools.gradeToWords(sd.Gesamt)
                  for sd in stud_deg],
                 {"mit Auszeichnung": 0, 
                  "sehr gut": 0,
@@ -289,7 +289,7 @@ class tPerDegreeReportHandler(tReportHandler):
                  "degree": self.Degree,
                  "drs": self.DegreeRuleSet})
         else:
-            return tReportHandler.getPDF(self, report_id)
+            return tReportHandler.getPDF(self, report_id, form_data)
 
 
 
@@ -311,61 +311,96 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
             ("zulassung-leer", u"Zulassung zur Prüfung (blanko)"),
             ]
 
+    def getZeugnisTeXDefs(self):
+        def gatherComponent(comp):
+            def getExaminer(exam):
+                if exam.Source == "ausland":
+                    return exam.Examiner+"*"
+                else:
+                    return exam.Examiner
+
+            def getRemark(exam):
+                if exam.Source == "ausland":
+                    return u"""
+                    (*) Teile der Prüfung wurden 
+                    an der %s abgelegt.""" % exam.SourceDescription
+                else:
+                    return None
+
+            exams = [exam
+                     for exam in self.Degree.Exams.values()
+                     if exam.DegreeComponent == comp
+                     if exam.Counted]
+
+            def date_sort_func(a, b):
+                return cmp(a.Date, b.Date)
+            exams.sort(date_sort_func)
+
+            return tools.makeObject({
+                "Exams": u", ".join([
+                exam.Description
+                for exam in exams]),
+
+                "AvgGrade": drs.getComponentAverageGrade(
+                self.Student, self.Degree, comp),
+
+                "Examiners": u", ".join(tools.uniq(
+                [getExaminer(exam) for exam in exams])), 
+
+                "EndDate": 
+                max([exam.Date for exam in exams]), 
+
+                "Remarks": [ 
+                getRemark(exam)
+                for exam in exams
+                if getRemark(exam)]
+                })
+
+        drs = self.DegreeRuleSet
+
+        rein = gatherComponent("rein")
+        angewandt = gatherComponent("angewandt")
+        nf1 = gatherComponent("ing")
+        nf2 = gatherComponent("inf")
+
+        all_remarks = rein.Remarks + \
+                      angewandt.Remarks + \
+                      nf1.Remarks + \
+                      nf2.Remarks
+        try:
+            zusatz = gatherComponent("zusatz")
+            all_remarks += zusatz.Remarks
+        except tSubjectError:
+            zusatz = False
+
+        remarks = u"\\\\".join(tools.uniq(all_remarks))
+
+        da = drs.getDiplomarbeit(self.Student, self.Degree)
+        overall_grade = drs.getOverallGrade(self.Student, self.Degree)
+
+        return tools.expandTeXTemplate(
+                "hddefs-zeugnis.tex",
+                {"student": self.Student,
+                 "degree": self.Degree,
+                 "rein": rein,
+                 "angewandt": angewandt,
+                 "nf1": nf1,
+                 "nf2": nf2,
+                 "zusatz": zusatz,
+                 "da": da,
+                 "remarks": remarks,
+                 "overall_grade": overall_grade,
+                 })
+
     def getPDF(self, report_id, form_data):
         if report_id == "hdfinal":
-            def gatherComponent(comp):
-                def getExaminer(exam):
-                    if exam.Source == "ausland":
-                        return exam.Examiner+"*"
-                    else:
-                        return exam.Examiner
-
-                def getRemark(exam):
-                    if exam.Source == "ausland":
-                        return u"""
-                        (*) Teile der Prüfung wurden 
-                        an der %s abgelegt.""" % exam.SourceDescription
-                    else:
-                        return None
-
-                exams = [exam
-                         for exam in self.Degree.Exams.values()
-                         if exam.DegreeComponent == comp
-                         if exam.Counted]
-
-                def date_sort_func(a, b):
-                    return cmp(a.Date, b.Date)
-                exams.sort(date_sort_func)
-
-                return tools.makeObject({
-                    "Exams": u", ".join([
-                    exam.Description
-                    for exam in exams]),
-
-                    "AvgGrade": drs.getComponentAverageGrade(
-                    self.Student, self.Degree, comp),
-
-                    "Examiners": u", ".join(tools.uniq(
-                    [getExaminer(exam) for exam in exams])), 
-
-                    "EndDate": 
-                    max([exam.Date for exam in exams]), 
-
-                    "Remarks": [ 
-                    getRemark(exam)
-                    for exam in exams
-                    if getRemark(exam)]
-                    })
-
             drs = self.DegreeRuleSet
 
             vordiplom = drs.getVordiplom(self.Student)
             if not vordiplom.FinishedDate:
                 raise tSubjectError, "Vordiplom nicht abgeschlossen"
 
-            studienbeginn = start = min([
-                deg.EnrolledDate
-                for deg in self.Student.Degrees.values()])
+            studienbeginn = datamodel.firstEnrollment(self.Student)
             studienbeginn_sem = semester.tSemester.fromDate(
                 studienbeginn)
             if not self.Degree.FinishedDate:
@@ -376,61 +411,26 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                 studienbeginn_sem,
                 studienende_sem)
 
-            rein = gatherComponent("rein")
-            angewandt = gatherComponent("angewandt")
-            nf1 = gatherComponent("1nf")
-            nf2 = gatherComponent("2nf")
-
-            all_remarks = rein.Remarks + \
-                          angewandt.Remarks + \
-                          nf1.Remarks + \
-                          nf2.Remarks
-            try:
-                zusatz = gatherComponent("zusatz")
-                all_remarks += zusatz.Remarks
-            except tSubjectError:
-                zusatz = False
-
-            remarks = u"\\\\".join(tools.uniq(all_remarks))
-
-            da = drs.getDiplomarbeit(
-                self.Student, self.Degree)
-            overall_grade = drs.getOverallGrade(
-                self.Student, self.Degree)
-            
             return tools.runLatexOnTemplate(
                 "hddefs.tex",
                 {"student": self.Student,
                  "degree": self.Degree,
-                 "podatum": "03.06.1983",
-                 "popara": "\S 10 (2)",
+                 "drs": drs,
                  "vddat": vordiplom.FinishedDate,
                  "semzahl": semzahl,
                  "studienbeginn_sem": studienbeginn_sem,
-                 "rein": rein,
-                 "angewandt": angewandt,
-                 "nf1": nf1,
-                 "nf2": nf2,
-                 "zusatz": zusatz,
-                 "da": da,
-                 "remarks": remarks,
-                 "overall_grade": overall_grade,
-                 
+                 "zeugnis_defs": self.getZeugnisTeXDefs(),
                  "form": "noten-hd.tex",
                  },
                 ["noten-hd.tex", "header.tex"])
-            return tools.runLatexOnTemplate(
-                "complete-transcript.tex",
-                {"student": self.Student,
-                 "drs_map": self.DRSMap})
+
         elif report_id == "zulassung-leer":
             return tools.runLatexOnTemplate(
                 "temahdalt-pruefung-leer.tex",
                 {"student": self.Student,
                  "degree": self.Degree,
+                 "drs": self.DegreeRuleSet,
                  "today": datetime.date.today(),
-                 "podatum": "03.06.1983",
-                 "popara": "\S 10 (2)",
                  },
                 ["header.tex"])
 
@@ -456,8 +456,6 @@ class tTeMaHDAltPerExamReportHandler(tPerExamReportHandler):
                  "degree": self.Degree,
                  "exam": self.Exam,
                  "today": datetime.date.today(),
-                 "podatum": "03.06.1983",
-                 "popara": "\S 10 (2)",
                  },
                 ["header.tex"])
         else:

@@ -1,8 +1,5 @@
-import yaml
-import os
-import os.path
-import stat
 import datetime
+import semester
 
 
 
@@ -57,6 +54,7 @@ class tExam:
 
 
 
+
 class tDegree:
     def __init__(self):
         self.EnrolledDate = None 
@@ -87,6 +85,7 @@ class tDegree:
         self.EnrolledDate = dateFromYaml(self.EnrolledDate)
         self.FinishedDate = dateFromYaml(self.FinishedDate)
         return self
+
 
 
 
@@ -141,49 +140,6 @@ class tStudent:
 
 
 
-class tDataStore:
-    def __init__(self, directory, degree_rule_sets):
-        self.Directory = directory
-        self.Students = {}
-        for fn in os.listdir(directory):
-            complete_fn = os.path.join(directory, fn)
-            if stat.S_ISREG(os.stat(complete_fn).st_mode):
-                student = yaml.loadFile(complete_fn).next() 
-                self.Students[student.ID] = student
-           
-    def keys(self):
-        return self.Students.keys()
-
-    def values(self):
-        return self.Students.values()
-
-    def iteritems(self):
-        return self.Students.iteritems()
-
-    def __getitem__(self, key):
-        return self.Students[key]
-
-    def __setitem__(self, key, student):
-        self.Students[student.ID] = student
-        self.writeStudent(key)
-
-    def __delitem__(self, key):
-        del self.Students[key]
-        filename = os.path.join(self.Directory, key)
-        os.unlink(filename)
-
-    def writeStudent(self, key):
-        student = self.Students[key]
-        assert key == student.ID
-        
-        filename = os.path.join(self.Directory, student.ID)
-        outf = file(filename, "wb")
-        yaml.dumpToFile(outf, student)
-        outf.close()
-
-
-
-
 
 def firstEnrollment(student):
     enrollment_dates = [deg.EnrolledDate
@@ -193,3 +149,32 @@ def firstEnrollment(student):
     else:
         return min(enrollment_dates)
 
+def lastEnrollment(student):
+    enrollment_dates = [deg.FinishedDate
+                        for deg in student.Degrees.values()]
+    if None in enrollment_dates:
+        return datetime.date.today()
+    elif len(enrollment_dates) == 0:
+        return None
+    else:
+        return max(enrollment_dates)
+
+def academicYearOfStart(student):
+    fe = firstEnrollment(student) 
+    if fe is None:
+        return None
+    else:
+        return semester.getAcademicYear(fe)
+
+def countStudySemesters(student):
+    fe = firstEnrollment(student)
+    le = lastEnrollment(student)
+
+    if not (fe and le):
+        raise tools.tSubjectError(
+            "Trying to count the study semesters of someone "+
+            "who has never been enrolled")
+
+    fe_sem = semester.tSemester.fromDate(fe)
+    le_sem = semester.tSemester.fromDate(le)
+    return semester.countSemesters(fe_sem, le_sem)

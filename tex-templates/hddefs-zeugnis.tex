@@ -1,0 +1,43 @@
+\def\RMdatum{$h.formatDate($rein.EndDate)}
+    \def\RMnoteZ{$h.formatNumber("%.1f", $rein.AvgGrade)}
+    \def\RMnoteW{$h.gradeToWords($rein.AvgGrade)}
+    \def\RMpruefer{$h.escapeTeX($rein.Examiners)}
+
+\def\AMdatum{$h.formatDate($angewandt.EndDate)}
+    \def\AMnoteZ{$h.formatNumber("%.1f", $angewandt.AvgGrade)}
+    \def\AMnoteW{$h.gradeToWords($angewandt.AvgGrade)}
+    \def\AMpruefer{$h.escapeTeX($angewandt.Examiners)}
+
+\def\TFdatum{$h.formatDate($nf1.EndDate)}
+    \def\TFnoteZ{$h.formatNumber("%.1f", $nf1.AvgGrade)}
+    \def\TFnoteW{$h.gradeToWords($nf1.AvgGrade)}
+    \def\TFpruefer{$h.escapeTeX($nf1.Examiners)}
+
+\def\AIdatum{$h.formatDate($nf2.EndDate)}
+    \def\AInoteZ{$h.formatNumber("%.1f", $nf2.AvgGrade)}
+    \def\AInoteW{$h.gradeToWords($nf2.AvgGrade)}
+    \def\AIpruefer{$h.escapeTeX($nf2.Examiners)}
+
+#if ($zusatz)
+  \def\ZUSFACH{$h.escapeTeX($zusatz.Exams)}
+  \def\ZFdatum{$h.formatDate($zusatz.EndDate)}
+  \def\ZFnoteZ{$h.formatNumber("%.1f", $zusatz.AvgGrade)}
+  \def\ZFnoteW{$h.gradeToWords($zusatz.AvgGrade)}
+  \def\ZFpruefer{$h.escapeTeX($zusatz.Examiners)}
+#else
+  \def\ZUSFACH{}
+  \def\ZFdatum{}
+  \def\ZFnoteZ{}
+  \def\ZFnoteW{}
+  \def\ZFpruefer{}
+#end
+
+\def\DAabgabe{$h.formatDate($da.Date)}
+    \def\DAref{$h.escapeTeX($da.Examiner)}
+    \def\DAnote{$h.formatNumber("%.1f", $da.CountedResult)}
+    \def\DAtitel{$h.escapeTeX($da.Description)}
+
+\def\Enote{$h.formatNumber("%.1f", $overall_grade)}
+    \def\EnoteW{$h.gradeToWords($overall_grade).upper()}
+
+\def\Bemerkung{$h.escapeTeX($remarks)}

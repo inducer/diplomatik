@@ -2,6 +2,8 @@ import re
 import string
 from timestamp import timestamp, matchTime
 
+TRUE_REGEX   = re.compile("^(y|Y|yes|Yes|YES|true|True|TRUE|on|On|ON)$")
+FALSE_REGEX   = re.compile("^(n|N|no|No|NO|false|False|FALSE|off|Off|OFF)$")
 DATETIME_REGEX   = re.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
 FLOAT_REGEX      = re.compile("^[-+]?[0-9][0-9,]*\.[0-9]*$")
 SCIENTIFIC_REGEX = re.compile("^[-+]?[0-9]+(\.[0-9]*)?[eE][-+][0-9]+$")
@@ -26,6 +28,10 @@ def convertImplicit(val):
         return unescapedStr
     if matchTime.match(val):
         return timestamp(val)
+    if TRUE_REGEX.match(val):
+        return True
+    if FALSE_REGEX.match(val):
+        return False
     if INT_REGEX.match(val):
         return int(cleanseNumber(val))
     if OCTAL_REGEX.match(val):

@@ -383,6 +383,7 @@ class tCheckField(tField):
             return "-"
 
     def _getWidget(self, value):
+        print "YYYAAA", value
         if value:
             svalue = " checked=\"checked\""
         else:
