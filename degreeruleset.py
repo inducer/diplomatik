@@ -27,10 +27,19 @@ class tDegreeRuleSet:
         raise KeyError, id
 
     def perDegreeReports(self):
-        return [] # [(id:str, description:str)]
+        return [
+            ("transcript", "Notenauszug (teilweise)")
+            ] # [(id:str, description:str)]
 
     def doPerDegreeReport(self, id, student, degree):
-        raise KeyError, id
+        if id == "transcript":
+            return tools.runLatexOnTemplate(
+                "degree-transcript.tex",
+                {"student": student,
+                 "degree": degree,
+                 "drs": self})
+        else:
+            raise KeyError, id
 
    
 
@@ -98,8 +107,7 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             ]
 
     def perDegreeReports(self):
-        return [
-            ("transcript", "Notenauszug (teilweise)"),
+        return tDegreeRuleSet.perDegreeReports(self)+ [
             ("hdfinal", u"Ausfertigung für die Prüfungsabteilung...")
             ]
 
@@ -232,14 +240,8 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                  "form": "noten-hd.tex",
                  },
                 ["noten-hd.tex", "header.tex"])
-        elif id == "transcript":
-            return tools.runLatexOnTemplate(
-                "degree-transcript.tex",
-                {"student": student,
-                 "degree": degree,
-                 "drs": self})
         else:
-            raise KeyError, id
+            tDegreeRuleSet.doPerDegreeReport(self, id, student, degree)
 
 
 
