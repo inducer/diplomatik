@@ -1,0 +1,24 @@
+#if ($student.ID)
+  <table class="WidgetTable">
+    <tr>
+      <th>Semester</th>
+      <th>Art</th>
+      <th>Bemerkung</th>
+    </tr>
+
+    #foreach ($sem in $sems)
+      <tr>
+        <td>$sem.Semester.__str__()</td>
+        <td>$sem.Type</td>
+        <td>$sem.Remark</td>
+      </tr>
+    #end
+  </table>
+
+  <p>
+    <a href="/specsem/$student.ID/overview">Bearbeiten</a>
+  </p>
+#else
+  Spezielle Semester k&ouml;nnen erst nach dem ersten
+  Speichern bearbeitet werden.
+#end

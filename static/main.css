@@ -1,0 +1,29 @@
+a:link {
+  color: blue;
+}
+a:visited {
+  color: blue;
+}
+th { 
+  background-color: #b0b0b0;
+}
+th {
+  text-align: left;
+}
+th a:link { 
+  color: #000000; 
+  text-decoration: none;
+}
+th a:visited { 
+  color: #000000; 
+  text-decoration: none;
+}
+td.CommandBox {
+  background-color: #e0e0e0;
+}
+td.DataBox {
+  background-color: #f8f8f8;
+}
+td.Label {
+  background-color: #e0e0e0;
+}

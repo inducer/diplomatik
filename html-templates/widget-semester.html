@@ -1,0 +1,22 @@
+#if ($none_ok)
+  <input type="radio" name="${name}-null" 
+    value="1" id="${name}-null-yes"
+    #if ($is_none)checked="checked"#end/>
+  <label for="${name}-null-yes">ungesetzt</label>
+
+  <input type="radio" name="${name}-null" 
+    value="0" id="${name}-null-no"
+    #if ($is_none)#else checked="checked"#end/>
+  <label for="${name}-null-no">gesetzt:</label>
+#end
+
+<select name="${name}-t">
+  <option value="w" 
+    #if ($term == "w")selected="selected"#end
+    >Winter</option>
+  <option value="s" 
+    #if ($term == "s")selected="selected"#end
+    >Sommer</option>
+</select>
+
+<input type="text" name="${name}-y" value="$year"/>

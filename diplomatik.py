@@ -1,6 +1,8 @@
 import BaseHTTPServer
 import re
 import sys
+import os
+import os.path
 
 import tools
 import semester
@@ -526,6 +528,36 @@ class tMainAppServer(appserver.tAppServer):
                 200,
                 {"Content-type": "application/pdf"})
 
+        def handleStaticContent(path, form_input):
+            fn_re = re.compile(r"^[-_a-zA-Z0-9]+\.([-_a-zA-Z0-9]+)$")
+            fn_match = fn_re.match(path)
+            print path
+            if not fn_match:
+                raise appserver.tNotFoundError, \
+                      "Invalid static content request %s" % path
+
+            complete_fn = os.path.join("static",
+                                       path)
+            ext = fn_match.group(1)
+            if ext == "css":
+                mime_type = "text/css"
+            elif ext == "png":
+                mime_type = "image/png"
+            else:
+                mime_type = "application/octet-stream"
+                
+            try:
+                inf = file(complete_fn, "r")
+                content = inf.read()
+                inf.close()
+                
+                return appserver.tHTTPResponse(
+                    content, 200,
+                    {"Content-type": mime_type})
+            except IOError:
+                raise appserver.tNotFoundError, \
+                      "Static content `%s' not found" % path
+
         def redirectToStart(path, form_input):
             return appserver.tHTTPResponse(
                 "", 302, {"Location": "/students/"})
@@ -545,6 +577,7 @@ class tMainAppServer(appserver.tAppServer):
             ("^/exams/", handleExamDatabase),
             ("^/report/perstudent/", handlePerStudentReports),
             ("^/report/perdegree/", handlePerDegreeReports),
+            ("^/static/", handleStaticContent),
             ("^/students$", redirectToStart),
             ("^/quit$", doQuit),
             ("^/$", redirectToStart)

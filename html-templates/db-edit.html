@@ -2,6 +2,7 @@ $doctype
 <html>
   <head>
     <title>$handler.getCustomization("title", "edit", $key)</title>
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
   </head>
   <body>
     <h1>$handler.getCustomization("title", "edit", $key)</h1>
@@ -10,7 +11,7 @@ $doctype
       <table>
         #foreach ($field in $fields)
           <tr>
-            <td>$field.description()</td>
+            <td class="Label">$field.description()</td>
             <td>$field.getWidgetHTML($key, $obj)</td>
           </tr>
         #end

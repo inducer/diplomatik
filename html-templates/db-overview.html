@@ -2,6 +2,7 @@ $doctype
 <html>
   <head>
     <title>$handler.getCustomization("title", "overview", $none)</title>
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
   </head>
   <body>
     <h1>$handler.getCustomization("title", "overview", $none)</h1>
@@ -10,25 +11,28 @@ $doctype
       <tr>
         #foreach ($field in $fields)
           #if ($field.isShownInOverview())
-            <td>
+            <th>
               #if ($field.isSortable())
                 <a href="sortBy$field.name()">$field.description()</a>
               #else
-                <u>$field.description()<u>
+                $field.description()
               #end
-            </td>
+            </th>
           #end
         #end
+        <th>Befehle</th>
       </tr>
     #foreach ($row_key in $keys)
       #set ($row_obj = $database.__getitem__($row_key))
       <tr>
         #foreach ($field in $fields)
           #if ($field.isShownInOverview())
-            <td>$field.getDisplayHTML($row_obj)</td>
+            <td class="DataBox">
+              $field.getDisplayHTML($row_obj)
+            </td>
           #end
         #end
-        <td>
+        <td class="CommandBox">
           <a href="edit/$row_key">Bearbeiten</a>
           <a href="delete/$row_key">L&ouml;schen</a>
         </td>
