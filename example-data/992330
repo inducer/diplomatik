@@ -1,17 +1,62 @@
 --- !!datamodel.tStudent
-DateOfBirth: ~
+DateOfBirth:
+    day: 5
+    month: 8
+    year: 1977
 Degrees:
     '3271585': !!datamodel.tDegree
-        DegreeRuleSet: ~
+        DegreeRuleSet: tema-hd-alt
         EnrolledDate:
             day: 17
             month: 10
             year: 2000
-        Exams: {}
+        Exams:
+            '4827520': !!datamodel.tExam
+                CountedResult: ~
+                Credits: ~
+                CreditsPrintable: ''
+                Date:
+                    day: 24
+                    month: 1
+                    year: 2005
+                DegreeComponent: rein
+                Description: "Funktionalanalysis II"
+                Examiner: Schmoeger
+                NativeResult: '1,7'
+                Remarks: ''
+                Semester: ~
+            '8110132': !!datamodel.tExam
+                CountedResult: ~
+                Credits: ~
+                CreditsPrintable: ""
+                Date:
+                    day: 4
+                    month: 2
+                    year: 2005
+                DegreeComponent: "diplomarbeit"
+                Description: "On the Computation of Maximally Localized Wannier Functions"
+                Examiner: "D\xf6rfler"
+                NativeResult: "1,0"
+                Remarks: ""
+                Semester: ~
+            '954992': !!datamodel.tExam
+                CountedResult: ~
+                Credits: ~
+                CreditsPrintable: ''
+                Date:
+                    day: 24
+                    month: 1
+                    year: 2005
+                DegreeComponent: rein
+                Description: "Funktionentheorie I"
+                Examiner: "K\xfchnlein"
+                NativeResult: '1,7'
+                Remarks: ''
+                Semester: ~
         FinishedDate: ~
         Remark: ''
     '5802243': !!datamodel.tDegree
-        DegreeRuleSet: ~
+        DegreeRuleSet: tema-vd-alt
         EnrolledDate:
             day: 1
             month: 10
@@ -21,10 +66,11 @@ Degrees:
             day: 16
             month: 10
             year: 2000
-        Remark: Vordiplom
-FirstName: "Andreas"
-ID: "992330"
+        Remark: ''
+Email: mathem@tiker.net
+FirstName: Andreas
+ID: '992330'
 LastName: "Kl\xf6ckner"
 MiddleName: "Paul Eberhard"
-Notes: ""
+Notes: ''
 VacationSemesters: []

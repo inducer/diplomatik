@@ -1,0 +1,13 @@
+--- !!datamodel.tStudent
+DateOfBirth:
+    day: 13
+    month: 2
+    year: 1978
+Degrees: {}
+Email: "hans@wurst.de"
+FirstName: "Hans"
+ID: "7347373"
+LastName: "Wurst"
+MiddleName: "Friedrich"
+Notes: "kann gar nix, ausser Wurst machen"
+VacationSemesters: []

@@ -9,8 +9,8 @@ import datetime
 import random
 import traceback
 
-import airspeed
-
+from tools import expandHTMLTemplate
+import tools
 
 
 
@@ -19,22 +19,6 @@ class tNotFoundError(Exception):
         self.Value = value
     def __str__(self):
         return str(self.Value)
-
-
-
-
-def expandHTMLTemplate(filename, globals_dict):
-    my_dict = globals_dict.copy()
-    my_dict["none"] = None
-    my_dict["doctype"] = \
-    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'+ \
-    '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-
-    template = codecs.open(os.path.join("html-templates",
-                                        filename),
-                           "r", "utf-8").read()
-    
-    return airspeed.Template(template).merge(my_dict)
 
 
 
@@ -50,17 +34,32 @@ class tField:
     def getDisplayHTML(self, object):
         raise NotImplementedError
 
-    def getWidgetHTML(self, object):
+    def getWidgetHTML(self, key, object):
         raise NotImplementedError
 
-    def getWidgetHTMLFromInput(self, object, form_input):
+    def getWidgetHTMLFromInput(self, key, object, form_input):
         raise NotImplementedError
 
+    def isValid(self, form_input):
+        raise NotImplementedError
+
+    def setValue(self, form_input, object):
+        raise NotImplementedError
+        
+
+
+
+
+class tDisplayField(tField):
+    def __init__(self, name, description):
+        self.Name = name
+        self.Description = description
+        
     def isValid(self, form_input):
         return True
 
     def setValue(self, form_input, object):
-        raise NotImplementedError
+        pass
         
 
 
@@ -77,14 +76,14 @@ class tStringField(tField):
     def getDisplayHTML(self, object):
         return self.getValue(object)
 
-    def getWidgetHTML(self, object):
+    def getWidgetHTML(self, key, object):
         value = self.getValue(object)
         if value is None:
             value = ""
         return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % (
             self.Name, value.replace('"', "&quot;"))
 
-    def getWidgetHTMLFromInput(self, object, form_input):
+    def getWidgetHTMLFromInput(self, key, object, form_input):
         return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % (
             self.Name, form_input[self.Name].replace('"', "&quot;"))
 
@@ -108,9 +107,6 @@ class tDateField(tField):
     def isValid(self, input):
         return True
 
-    def description(self):
-        return self.Description
-
     def getValue(self, object):
         return getattr(object, self.Name)
 
@@ -119,6 +115,7 @@ class tDateField(tField):
         if date is None:
             return "-/-"
         else:
+            print repr(date)
             return date.isoformat()
 
     def _getHTML(self, is_none, y, m, d):
@@ -133,7 +130,7 @@ class tDateField(tField):
                                    "monthrange": range(1,13),
                                    })
 
-    def getWidgetHTML(self, object):
+    def getWidgetHTML(self, key, object):
         date = self.getValue(object)
         is_none = date is None
         if date is None:
@@ -143,7 +140,7 @@ class tDateField(tField):
                              date.month,
                              date.day)
 
-    def getWidgetHTMLFromInput(self, object, form_input):
+    def getWidgetHTMLFromInput(self, key, object, form_input):
         today = datetime.date.today()
         y = today.year
         m = today.month
@@ -187,6 +184,78 @@ class tDateField(tField):
 
 
 
+class tChoiceField(tField):
+    def __init__(self, name, description, choices, none_ok = False):
+        tField.__init__(self, name, description)
+        self.Choices = choices
+        self.ChoicesDict = dict(choices)
+        self.NoneOK = none_ok
+
+    def isValid(self, input):
+        return True
+
+    def _getValue(self, object):
+        return getattr(object, self.Name)
+    
+    def _getValueFromInput(self, form_input):
+        v = form_input[self.Name]
+        if self.NoneOK:
+            if v[0] == "-":
+                return v[1:]
+            else:
+                return None
+        else:
+            return v
+
+    def getDisplayHTML(self, object):
+        value = self._getValue(object)
+        if value is None:
+            return "-/-"
+        else:
+            return self.ChoicesDict[value]
+
+    def _getHTML(self, choice):
+        values = [c[0] for c in self.Choices]
+        descriptions = [c[1] for c in self.Choices]
+
+        if self.NoneOK:
+            values.insert(0, "None")
+            values = ["-"+value for value in values]
+            if choice is None:
+                sel_index = 0
+            else:
+                sel_index = tools.find(values, "-"+choice)
+        else:
+            if choice is None:
+                sel_index = 0
+            else:
+                sel_index = tools.find(values, choice)
+
+        return expandHTMLTemplate(
+            "choice.html",
+            {"name": self.Name,
+             "indices": range(len(values)),
+             "values": values,
+             "descriptions": descriptions,
+             "sel_index": sel_index })
+
+    def getWidgetHTML(self, key, object):
+        value = self._getValue(object)
+        print "YOOHOO", value
+        return self._getHTML(value)
+
+    def getWidgetHTMLFromInput(self, key, object, form_input):
+        value = self._getValueFromInput(form_input)
+        return self._getHTML(value)
+
+
+    def setValue(self, form_input, object):
+        value = self._getValueFromInput(form_input)
+        setattr(object, self.Name, value)
+
+
+
+
 class tDatabaseHandler:
     def __init__(self, database, fields):
         self.Database = database
@@ -207,7 +276,7 @@ class tDatabaseHandler:
     def deleteHook(self, key):
         pass
 
-    def getCustomization(self, element, situation, used_key):
+    def getCustomization(self, element, situation, db_key):
         return ""
 
     def handleOverviewPage(self, path, form_input):

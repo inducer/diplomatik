@@ -30,13 +30,23 @@ class tExam:
         self.Date = None # timestamp
         self.Semester = None
         self.Description = "" # str
-        self.Examiners = [] # list of str
+        self.DegreeComponent = None # str
+        self.Examiner = "" # str
         self.NativeResult = None # str
         self.CountedResult = None # float
         self.Credits = None # float, like SWS
         self.CreditsPrintable = None # str, like "3+1"
         self.Remarks = "" # str
 
+    def to_yaml(self):
+        result = self.__dict__.copy()
+        result["Date"] = dateToYaml(self.Date)
+        return (result, "!!datamodel.tExam")
+
+    def from_yaml(self, new_dict):
+        self.__dict__.update(new_dict)
+        self.Date = dateFromYaml(self.Date)
+        return self
 
 
 
@@ -79,6 +89,7 @@ class tStudent:
         self.DateOfBirth = None
         self.Degrees = {}
         self.Notes = "" # str
+        self.Email = "" # str
 
     def to_yaml(self):
         result = self.__dict__.copy()
@@ -88,6 +99,8 @@ class tStudent:
     def from_yaml(self, new_dict):
         if "Notes" not in new_dict:
             self.Notes = ""
+        if "Email" not in new_dict:
+            self.Email = ""
         self.__dict__.update(new_dict)
         self.DateOfBirth = dateFromYaml(self.DateOfBirth)
         return self
@@ -124,5 +137,5 @@ class tDataStore:
         assert key == student.ID
         
         filename = os.path.join(self.Directory, student.ID)
-        yaml.dumpToFile(file(filename, "w+b"), 
+        yaml.dumpToFile(file(filename, "wb"), 
                         student)

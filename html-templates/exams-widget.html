@@ -1,0 +1,8 @@
+#if ($student.ID)
+  <p>
+    <a href="/exams/$student.ID/$degree_id/">Bearbeiten</a>
+  </p>
+#else
+  Pr&uuml;fungen k&ouml;nnen erst nach dem ersten
+  Speichern bearbeitet werden.
+#end

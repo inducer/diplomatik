@@ -5,11 +5,30 @@
       <td>Begonnen</td>
       <td>Abgeschlossen</td>
       <td>Vollst&auml;ndig?</td>
-      <td>Pr&uuml;fungen</td>
     </tr>
+    #foreach ($degree in $degrees)
+      <tr>
+        <td>$rulesets.__getitem__($degree.DegreeRuleSet).description()</td>
+        <td>$degree.EnrolledDate.isoformat()</td>
+        <td>
+          #if ($degree.FinishedDate)
+            $degree.FinishedDate.isoformat()
+          #else
+            -/-
+          #end
+        </td>
+        <td>
+          #if ($degree.isComplete())
+            ja
+          #else
+            nein
+          #end
+        </td>
+      </tr>
+    #end
   </table>
 
-    <p>
+  <p>
     <a href="/degrees/$student.ID/">Bearbeiten</a>
   </p>
 #else

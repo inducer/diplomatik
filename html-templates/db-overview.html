@@ -6,10 +6,10 @@ $doctype
   <body>
     <h1>$handler.getCustomization("title", "overview", $none)</h1>
     $handler.getCustomization("header", "overview", $none)
-    <table border="1">
+    <table>
       <tr>
         #foreach ($field in $fields)
-          <td>$field.description()</td>
+          <td><u><b>$field.description()</b></u></td>
         #end
       </tr>
     #foreach ($row_key in $database.keys())

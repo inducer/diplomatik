@@ -11,7 +11,7 @@ $doctype
         #foreach ($field in $fields)
           <tr>
             <td>$field.description()</td>
-            <td>$field.getWidgetHTML($obj)</td>
+            <td>$field.getWidgetHTML($key, $obj)</td>
           </tr>
         #end
       </table>
