@@ -1,3 +1,8 @@
+import datetime
+
+
+
+
 class tSemester:
     def __init__(self):
         self.Term = None # "w"/"s"
@@ -5,31 +10,38 @@ class tSemester:
 
     def __str__(self):
         if self.Term == "w":
-            return "Winter %d/%02d" % (self.Year, (self.Year+1)%100)
+            return "WS %d/%02d" % (self.Year, (self.Year+1)%100)
         elif self.Term == "s":
-            return "Sommer %d" % self.Year
+            return "SS %d" % self.Year
         else:
             raise RuntimeError, "Invalid term in semester: %s" % self.Term
 
-    def loadCurrent(self):
-        raise NotImplemented
+    def now(cls):
+        cls.loadFromDate(datetime.date.today())
+    now = classmethod(now)
     
-    def loadFromDate(self, date):
-        raise NotImplemented
+    def fromDate(cls, date):
+        result = cls()
+        result.Year = date.year
+        if 4 <= date.month < 10:
+            result.Term = "s"
+        else:
+            result.Term = "w"
+            if date.month < 4:
+                result.Year -= 1
+        return result
+    fromDate = classmethod(fromDate)
 
-    def dumpStructure(self):
-        return { "term": self.Term, "year", self.Year }
-
-    def loadStructure(self, structure):
-        self.Term = structure["term"]
-        self.Year = structure["year"]
-        return self
 
 
 
-
-def countSemesters(from, to):
-    pass
+def countSemesters(start, stop):
+    if start.Term == stop.Term:
+        return (stop.Year - start.Year) * 2 + 1
+    elif start.Term == "w":
+        return (stop.Year - start.Year - 1) * 2
+    elif start.Term == "s":
+        return (stop.Year - start.Year + 1) * 2
 
 
 

@@ -1,3 +1,16 @@
+import tools
+import semester
+
+
+
+
+class tReportHelper:
+    def formatDate(self, date):
+        return date.strftime("%d.%m.%Y")
+
+
+
+
 class tDegreeRuleSet:
     def __init__(self):
         pass
@@ -20,27 +33,22 @@ class tDegreeRuleSet:
     def perExamReports(self):
         return [] # [(id:str, description:str)]
 
-    def doPerExamReport(self, id, student, exam):
-        pass
+    def doPerExamReport(self, id, student, degree, exam):
+        raise KeyError, id
 
-    def perStudentReports(self):
+    def perDegreeReports(self):
         return [] # [(id:str, description:str)]
 
-    def doPerStudentReport(self, id, student):
-        pass
+    def doPerDegreeReport(self, id, student, degree):
+        raise KeyError, id
 
-    def globalReports(self):
-        return [] # [(id:str, description:str)]
-    
-    def doGlobalReport(self, name):
-        pass
+   
 
 
 
-
-class tTemaVDAltDegreeRuleSet:
+class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
     def __init__(self):
-        pass
+        tDegreeRuleSet.__init__(self)
 
     def id(self):
         return "tema-vd-alt"
@@ -67,30 +75,12 @@ class tTemaVDAltDegreeRuleSet:
     def isComplete(self, student):
         return False
 
-    def perExamReports(self):
-        return []
-
-    def doPerExamReport(self, id, student, exam):
-        pass
-
-    def perStudentReports(self):
-        return []
-
-    def doPerStudentReport(self, id, student):
-        pass
-
-    def globalReports(self):
-        return []
-    
-    def doGlobalReport(self, name):
-        pass
 
 
 
-
-class tTemaHDAltDegreeRuleSet:
+class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
     def __init__(self):
-        pass
+        tDegreeRuleSet.__init__(self)
 
     def id(self):
         return "tema-hd-alt"
@@ -108,6 +98,7 @@ class tTemaHDAltDegreeRuleSet:
             ("ueb-rein", "&Uuml;bungsschein reine Mathematik"),
             ("ueb-angewandt", "&Uuml;bungsschein angewandte Mathematik"),
             ("seminar", "Seminarschein"),
+            ("zusatz", "Zusatzfach"),
             ]
 
     def examSources(self):
@@ -122,20 +113,47 @@ class tTemaHDAltDegreeRuleSet:
     def isComplete(self, student):
         return False
 
-    def perExamReports(self):
-        return []
+    def perDegreeReports(self):
+        return [
+            ("hdfinal", "Ausfertigung f&uuml;r die Pr&uuml;fungsabteilung...")
+            ]
 
-    def doPerExamReport(self, id, student, exam):
-        pass
+    def doPerDegreeReport(self, id, student, degree):
+        if id == "hdfinal":
+            vordiplome = [deg
+                          for deg in student.Degrees.values()
+                          if deg.DegreeRuleSet == "tema-vd-alt"]
+            if len(vordiplome) != 1:
+                raise RuntimeError, "Anzahl Vordiplome ist ungleich eins"
+            vordiplom = vordiplome[0]
+            if not vordiplom.FinishedDate:
+                raise RuntimeError, "Vordiplom nicht abgeschlossen"
 
-    def perStudentReports(self):
-        return []
+            studienbeginn = start = min([
+                deg.EnrolledDate
+                for deg in student.Degrees.values()])
+            studienbeginn_sem = semester.tSemester.fromDate(
+                studienbeginn)
+            if not degree.FinishedDate:
+                raise RuntimeError, "Enddatum HD nicht eingetragen"
+            studienende_sem = semester.tSemester.fromDate(
+                degree.FinishedDate)
+            semzahl = semester.countSemesters(
+                studienbeginn_sem,
+                studienende_sem)
+            
+            return tools.runLatexOnTemplate("hddefs.tex",
+                                            {"student": student,
+                                             "degree": degree,
+                                             "podatum": "03.06.1983",
+                                             "popara": "\S 10 (2)",
+                                             "vddat": vordiplom.FinishedDate,
+                                             "semzahl": semzahl,
+                                             "studienbeginn_sem": studienbeginn_sem,
 
-    def doPerStudentReport(self, id, student):
-        pass
-
-    def globalReports(self):
-        return []
-    
-    def doGlobalReport(self, name):
-        pass
+                                             "form": "noten-hd.tex",
+                                             "helper": tReportHelper(),
+                                             },
+                                            ["noten-hd.tex", "header.tex"])
+        else:
+            raise KeyError, id

@@ -61,6 +61,7 @@ class tDegree:
     def __init__(self):
         self.EnrolledDate = None 
         self.FinishedDate = None
+        self.MinorSubject = ""
         self.Exams = {}
         self.DegreeRuleSet = None # str-key
         self.Remark = "" # str
@@ -79,6 +80,9 @@ class tDegree:
         return (result, "!!datamodel.tDegree")
 
     def from_yaml(self, new_dict):
+        if "MinorSubject" not in new_dict:
+            self.MinorSubject = ""
+
         self.__dict__.update(new_dict)
         self.EnrolledDate = dateFromYaml(self.EnrolledDate)
         self.FinishedDate = dateFromYaml(self.FinishedDate)
@@ -94,6 +98,7 @@ class tStudent:
         self.LastName = ""
         self.VacationSemesters = [] # list of semesters
         self.DateOfBirth = None
+        self.PlaceOfBirth = ""
         self.Degrees = {}
         self.Notes = "" # str
         self.Email = "" # str
@@ -108,6 +113,8 @@ class tStudent:
             self.Notes = ""
         if "Email" not in new_dict:
             self.Email = ""
+        if "PlaceOfBirth" not in new_dict:
+            self.PlaceOfBirth = ""
         self.__dict__.update(new_dict)
         self.DateOfBirth = dateFromYaml(self.DateOfBirth)
         return self

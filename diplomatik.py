@@ -7,29 +7,14 @@ import datamodel
 import appserver
 import texpdf
 
-
+from tools import expandHTMLTemplate
 
 __VERSION__ = "0.90"
 
 
 
 
-from tools import expandHTMLTemplate
-
-degree_rule_sets = [
-    degreeruleset.tTemaVDAltDegreeRuleSet(),
-    degreeruleset.tTemaHDAltDegreeRuleSet()
-    ]
-
-degree_rule_sets_map = {}
-for drs in degree_rule_sets:
-    degree_rule_sets_map[drs.id()] = drs
-
-store = datamodel.tDataStore("example-data", 
-                             degree_rule_sets)
-
-
-
+# Custom fields implementations ----------------------------
 class tDegreesField(appserver.tDisplayField):
     def __init__(self, name, description):
         appserver.tDisplayField.__init__(self, name, description)
@@ -99,6 +84,7 @@ class tExamsField(appserver.tDisplayField):
 
 
 
+# Database handlers ----------------------------------------
 class tStudentDatabaseHandler(appserver.tDatabaseHandler):
     def __init__(self, store):
         appserver.tDatabaseHandler.__init__(self,
@@ -115,6 +101,8 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             appserver.tDateField("DateOfBirth", "Geburtsdatum", 
                                  shown_in_overview = False,
                                  none_ok = True),
+            appserver.tStringField("PlaceOfBirth", "Geburtsort",
+                                   shown_in_overview = False),
             tDegreesField("Degrees", "Abschl&uuml;sse"),
             appserver.tStringField("Notes", "Notizen",
                                    shown_in_overview = False),
@@ -164,6 +152,8 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
             appserver.tDateField("EnrolledDate", "Begonnen"),
             appserver.tDateField("FinishedDate", "Abgeschlossen", 
                                  none_ok = True),
+            appserver.tStringField("MinorSubject", "1. Nebenfach",
+                                   shown_in_overview = False),
             tExamsField("Exams", "Pr&uuml;fungen", student),
             appserver.tStringField("Remark", "Bemerkungen",
                                    shown_in_overview = False),
@@ -186,9 +176,21 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
             return "Abschl&uuml;sse f&uuml;r %s" % self.Student.ID
 
         if element == "header":
-            return expandHTMLTemplate(
+            result = expandHTMLTemplate(
                 "degrees-header.html",
                 {"student": self.Student})
+
+            if situation == "edit":
+                degree = self.Database[db_key]
+                drs = degree_rule_sets_map[degree.DegreeRuleSet]
+                result += expandHTMLTemplate(
+                    "degree-reports.html",
+                    {"student": self.Student,
+                     "degree_id": db_key,
+                     "reports": drs.perDegreeReports()
+                     })
+            return result
+
         return ""
 
 
@@ -262,29 +264,69 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
 
 
 
+
+# Request dispatcher ---------------------------------------
 class tMainAppServer(appserver.tAppServer):
+    def resolveStudent(self, stud_id):
+        try:
+            student = store[stud_id]
+        except KeyError:
+            raise appserver.tNotFoundError, \
+                  "Unknown student ID: %s" % stud_id
+        return student
+    
+    def resolveDegree(self, stud_id, degree_id):
+        student = self.resolveStudent(stud_id)
+
+        try:
+            degree = student.Degrees[degree_id]
+        except KeyError:
+            raise appserver.tNotFoundError, \
+                  "Unknown degree ID: %s" % degree_id
+        
+        return student, degree
+
     def pageHandlers(self):
-        def handleStudents(path, form_input):
+        def handleStudentDatabase(path, form_input):
             return tStudentDatabaseHandler(
                 store).getPage(path, form_input)
         
-        def handleDegrees(path, form_input):
+        def handleDegreeDatabase(path, form_input):
             stud_id_re = re.compile("^([a-zA-Z0-9]+)/")
             stud_id_match = stud_id_re.match(path)
             if not stud_id_match:
                 raise appserver.tNotFoundError, \
                       "Invalid degrees request %s" % path
             stud_id = stud_id_match.group(1)
-            try:
-                student = store[stud_id]
-            except KeyError:
-                raise appserver.tNotFoundError, \
-                      "Unknown student ID: %s" % stud_id
               
-            return tDegreeDatabaseHandler(student)\
+            return tDegreeDatabaseHandler(self.resolveStudent(stud_id))\
                    .getPage(path[stud_id_match.end():], form_input)
 
-        def handleExams(path, form_input):
+        def handlePerDegreeReports(path, form_input):
+            id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)$")
+            id_match = id_re.match(path)
+            if not id_match:
+                raise appserver.tNotFoundError, \
+                      "Invalid per-degree report request %s" % path
+            report_id = id_match.group(1)
+            format_id = id_match.group(2)
+            student_id = id_match.group(3)
+            degree_id = id_match.group(4)
+
+            if format_id != "pdf":
+                return "Formats besides PDF currently unsupported"
+
+            student, degree = self.resolveDegree(student_id, degree_id)
+              
+            drs = degree_rule_sets_map[degree.DegreeRuleSet]
+            return appserver.tHTTPResponse(
+                drs.doPerDegreeReport(report_id,
+                                      student,
+                                      degree),
+                200,
+                {"Content-type": "application/pdf"})
+
+        def handleExamDatabase(path, form_input):
             id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/")
             id_match = id_re.match(path)
             if not id_match:
@@ -292,16 +334,8 @@ class tMainAppServer(appserver.tAppServer):
                       "Invalid exams request %s" % path
             stud_id = id_match.group(1)
             degree_id = id_match.group(2)
-            try:
-                student = store[stud_id]
-            except KeyError:
-                raise appserver.tNotFoundError, \
-                      "Unknown student ID: %s" % stud_id
-            try:
-                degree = student.Degrees[degree_id]
-            except KeyError:
-                raise appserver.tNotFoundError, \
-                      "Unknown degree ID: %s" % stud_id
+            student, degree = self.resolveDegree(stud_id,
+                                                 degree_id)
               
             return tExamsDatabaseHandler(student, degree_id, degree)\
                    .getPage(path[id_match.end():], 
@@ -320,14 +354,30 @@ class tMainAppServer(appserver.tAppServer):
                 "", 302, {"Location": "/students/"})
 
         return [
-            ("^/students/", handleStudents),
-            ("^/degrees/", handleDegrees),
-            ("^/exams/", handleExams),
-            ("^/pdf$", generatePDF),
+            ("^/students/", handleStudentDatabase),
+            ("^/degrees/", handleDegreeDatabase),
+            ("^/exams/", handleExamDatabase),
+            ("^/report/perdegree/", handlePerDegreeReports),
             ("^/students$", redirectToStart),
             ("^/$", redirectToStart)
             ]
 
+
+
+
+
+# Main program ---------------------------------------------
+degree_rule_sets = [
+    degreeruleset.tTemaVDAltDegreeRuleSet(),
+    degreeruleset.tTemaHDAltDegreeRuleSet()
+    ]
+
+degree_rule_sets_map = {}
+for drs in degree_rule_sets:
+    degree_rule_sets_map[drs.id()] = drs
+
+store = datamodel.tDataStore("example-data", 
+                             degree_rule_sets)
 httpd = BaseHTTPServer.HTTPServer(('', 8000), 
                                   tMainAppServer)
 httpd.serve_forever()

@@ -159,18 +159,18 @@ Degrees:
                 Counted: True
                 CountedResult: ~
                 Credits: 2.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 7
                     month: 2
                     year: 2001
                 DegreeComponent: "ueb-angewandt"
-                Description: "Stochastik II"
-                Examiner: "Kadelka"
-                NativeResult: ""
-                Remarks: ""
+                Description: Stochastik II
+                Examiner: Kadelka
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '6563978': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.0
@@ -299,8 +299,12 @@ Degrees:
                 Remarks: ''
                 Source: "ausland"
                 SourceDescription: University of North Carolina at Charlotte
-        FinishedDate: ~
-        Remark: ''
+        FinishedDate:
+            day: 26
+            month: 1
+            year: 2005
+        MinorSubject: "Elektrotechnik"
+        Remark: ""
     '4269868': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
         EnrolledDate:
@@ -312,6 +316,7 @@ Degrees:
             day: 16
             month: 10
             year: 2000
+        MinorSubject: ''
         Remark: ''
 Email: mathem@tiker.net
 FirstName: Andreas
@@ -319,4 +324,5 @@ ID: '992330'
 LastName: "Kl\xf6ckner"
 MiddleName: "Paul Eberhard"
 Notes: ''
+PlaceOfBirth: Konstanz
 VacationSemesters: []
