@@ -1,8 +1,5 @@
 --- !!datamodel.tStudent
-DateOfBirth:
-    day: 5
-    month: 8
-    year: 1977
+DateOfBirth: ~
 Degrees:
     '3271585': !!datamodel.tDegree
         DegreeRuleSet: ~
@@ -12,7 +9,7 @@ Degrees:
             year: 2000
         Exams: {}
         FinishedDate: ~
-        Remark: ""
+        Remark: ''
     '5802243': !!datamodel.tDegree
         DegreeRuleSet: ~
         EnrolledDate:
@@ -24,7 +21,7 @@ Degrees:
             day: 16
             month: 10
             year: 2000
-        Remark: "Vordiplom"
+        Remark: Vordiplom
 FirstName: "Andreas"
 ID: "992330"
 LastName: "Kl\xf6ckner"

@@ -1,12 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+$doctype
 <html>
   <head>
-    <title>Datensatz bearbeiten</title>
+    <title>$handler.getCustomization("title", "validate", $key)</title>
   </head>
   <body>
-    <h1>Datensatz bearbeiten</h1>
+    <h1>$handler.getCustomization("title", "validate", $key)</h1>
+
+    $handler.getCustomization("header", "validate", $key)
 
     <p>Bei der Verarbeitung Ihrer Eingaben sind Fehler 
     aufgetreten. Bitte korrigieren Sie die rot 
@@ -14,23 +14,24 @@
 
     <form method="POST" accept-charset="UTF-8">
       <table>
-        @[for field in fields]
+        #foreach ($field in $fields)
           <tr>
             <td>
-              @[if field.isValid(input)]
-                @(field.description())
-              @[else]
-                <span style="color:red">@(field.description())</span>
-              @[end if]
+              #if ($field.isValid($input))
+                $field.description()
+              #else
+                <span style="color:red">$field.description()</span>
+              #end
             </td>
-            <td>@(field.getWidgetHTMLFromInput(input))</td>
+            <td>$field.getWidgetHTMLFromInput($obj, $input)</td>
           </tr>
-        @[end for]
+        #end
       </table>
       <p>
         <input type="submit" name="save" value="Speichern">
         <input type="submit" name="cancel" value="Abbrechen">
       </p>
     </form>
+    $handler.getCustomization("footer", "validate", $key)
   </body>
 </html>

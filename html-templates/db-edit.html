@@ -1,20 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+$doctype
 <html>
   <head>
-    <title>Datensatz bearbeiten</title>
+    <title>$handler.getCustomization("title", "edit", $key)</title>
   </head>
   <body>
-    <h1>Datensatz bearbeiten</h1>
+    <h1>$handler.getCustomization("title", "edit", $key)</h1>
+    $handler.getCustomization("header", "edit", $key)
     <form method="POST" accept-charset="UTF-8">
       <table>
-        @[for field in fields]
+        #foreach ($field in $fields)
           <tr>
-            <td>@(field.description())</td>
-            <td>@(field.getWidgetHTML(obj))</td>
+            <td>$field.description()</td>
+            <td>$field.getWidgetHTML($obj)</td>
           </tr>
-        @[end for]
+        #end
       </table>
       <p>
         <input type="submit" name="save" value="Speichern">

@@ -1,6 +1,7 @@
 import yaml
 import os
 import os.path
+import stat
 import codecs
 import datetime
 
@@ -98,8 +99,10 @@ class tDataStore:
         self.Directory = directory
         self.Students = {}
         for fn in os.listdir(directory):
-            student = yaml.loadFile(os.path.join(directory, fn)).next() 
-            self.Students[student.ID] = student
+            complete_fn = os.path.join(directory, fn)
+            if stat.S_ISREG(os.stat(complete_fn).st_mode):
+                student = yaml.loadFile(complete_fn).next() 
+                self.Students[student.ID] = student
            
     def keys(self):
         return self.Students.keys()

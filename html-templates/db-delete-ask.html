@@ -1,19 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+$doctype
 <html>
   <head>
-    <title>Datensatz l&ouml;schen</title>
+    <title>$handler.getCustomization("title", "delete", $key)</title>
   </head>
   <body>
-    <h1>Datensatz l&ouml;schen</h1>
+    <h1>$handler.getCustomization("title", "delete", $key)</h1>
+
+    $handler.getCustomization("header", "delete", $key)
+
     <table border="1">
-      @[for field in fields]
+      #foreach ($field in $fields)
         <tr>
-          <td>@(field.description())</td>
-          <td>@(field.getDisplayHTML(obj))</td>
+          <td>$field.description()</td>
+          <td>$field.getDisplayHTML($obj)</td>
         </tr>
-      @[end for]
+      #end
     </table>
     <p>
       Sind Sie sicher, dass Sie diesen Datensatz 
@@ -25,5 +26,6 @@
         <input type="submit" name="cancel" value="Abbrechen">
       </form>
     </p>
+    $handler.getCustomization("footer", "delete", $key)
   </body>
 </html>

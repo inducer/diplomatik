@@ -1,35 +1,34 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+$doctype
 <html>
   <head>
-    <title>Datenbank&uuml;bersicht</title>
+    <title>$handler.getCustomization("title", "overview", $none)</title>
   </head>
   <body>
-    <h1>Datenbank&uuml;bersicht</h1>
+    <h1>$handler.getCustomization("title", "overview", $none)</h1>
+    $handler.getCustomization("header", "overview", $none)
     <table border="1">
       <tr>
-        @#<td>Key</td>
-        @[for field in fields]
-          <td>@(field.description())</td>
-        @[end for]
+        #foreach ($field in $fields)
+          <td>$field.description()</td>
+        #end
       </tr>
-    @[for row_key in database.keys()]
-      @{row_obj = database[row_key]}
+    #foreach ($row_key in $database.keys())
+      #set ($row_obj = $database.__getitem__($row_key))
       <tr>
-        @#<td>@(repr(row_key))</td>
-        @[for field in fields]
-          <td>@(field.getDisplayHTML(row_obj))</td>
-        @[end for]
+        #foreach ($field in $fields)
+          <td>$field.getDisplayHTML($row_obj)</td>
+        #end
         <td>
-          <a href="edit/@row_key">Bearbeiten</a>
-          <a href="delete/@row_key">L&ouml;schen</a>
+          <a href="edit/$row_key">Bearbeiten</a>
+          <a href="delete/$row_key">L&ouml;schen</a>
         </td>
       </tr>
-    @[end for]
+    #end
     </table>
     <p>
       <a href="new/">Neuen Datensatz anlegen</a>
+      $handler.getCustomization("footer", "extra-commands", $none)
     </p>
+    $handler.getCustomization("footer", "overview", $none)
   </body>
 </html>

@@ -9,7 +9,7 @@ import datetime
 import random
 import traceback
 
-import em
+import airspeed
 
 
 
@@ -24,14 +24,17 @@ class tNotFoundError(Exception):
 
 
 def expandHTMLTemplate(filename, globals_dict):
-    output = StringIO.StringIO(u"")
-    interpreter = em.Interpreter(globals = globals_dict, 
-                                 output = output)
-    interpreter.file(codecs.open(os.path.join("html-templates",
-                                              filename),
-                                 "r", "utf-8"))
-    interpreter.shutdown()
-    return output.getvalue()
+    my_dict = globals_dict.copy()
+    my_dict["none"] = None
+    my_dict["doctype"] = \
+    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'+ \
+    '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
+
+    template = codecs.open(os.path.join("html-templates",
+                                        filename),
+                           "r", "utf-8").read()
+    
+    return airspeed.Template(template).merge(my_dict)
 
 
 
@@ -50,7 +53,7 @@ class tField:
     def getWidgetHTML(self, object):
         raise NotImplementedError
 
-    def getWidgetHTMLFromInput(self, form_input):
+    def getWidgetHTMLFromInput(self, object, form_input):
         raise NotImplementedError
 
     def isValid(self, form_input):
@@ -75,14 +78,13 @@ class tStringField(tField):
         return self.getValue(object)
 
     def getWidgetHTML(self, object):
-        # FIXME quotes
         value = self.getValue(object)
         if value is None:
             value = ""
         return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % (
             self.Name, value.replace('"', "&quot;"))
 
-    def getWidgetHTMLFromInput(self, form_input):
+    def getWidgetHTMLFromInput(self, object, form_input):
         return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % (
             self.Name, form_input[self.Name].replace('"', "&quot;"))
 
@@ -126,7 +128,10 @@ class tDateField(tField):
                                    "m": m,
                                    "d": d,
                                    "none_ok": self.NoneOK,
-                                   "is_none": is_none})
+                                   "is_none": is_none,
+                                   "dayrange": range(1,32),
+                                   "monthrange": range(1,13),
+                                   })
 
     def getWidgetHTML(self, object):
         date = self.getValue(object)
@@ -138,7 +143,7 @@ class tDateField(tField):
                              date.month,
                              date.day)
 
-    def getWidgetHTMLFromInput(self, form_input):
+    def getWidgetHTMLFromInput(self, object, form_input):
         today = datetime.date.today()
         y = today.year
         m = today.month
@@ -157,7 +162,7 @@ class tDateField(tField):
         except ValueError:
             pass
 
-        return self._getHTML(form_inputy, m, d)
+        return self._getHTML(form_input, y, m, d)
 
     def isValid(self, form_input):
         try:
@@ -202,10 +207,14 @@ class tDatabaseHandler:
     def deleteHook(self, key):
         pass
 
+    def getCustomization(self, element, situation, used_key):
+        return ""
+
     def handleOverviewPage(self, path, form_input):
         return tHTTPResponse(
             expandHTMLTemplate("db-overview.html",
                                {"database": self.Database,
+                                "handler": self,
                                 "fields": self.Fields}
                                ))
 
@@ -250,14 +259,18 @@ class tDatabaseHandler:
                 return tHTTPResponse(
                     expandHTMLTemplate("db-edit-validate.html",
                                        {"obj": obj,
+                                        "key": key,
                                         "input": form_input,
-                                        "fields": self.Fields}
+                                        "fields": self.Fields,
+                                        "handler": self}
                                        ))
         else:
             return tHTTPResponse(
                 expandHTMLTemplate("db-edit.html",
                                    {"obj": obj,
-                                    "fields": self.Fields}
+                                    "key": key,
+                                    "fields": self.Fields,
+                                    "handler": self}
                                    ))
 
     def handleNewPage(self, path, form_input):
@@ -279,7 +292,9 @@ class tDatabaseHandler:
                 return tHTTPResponse(
                     expandHTMLTemplate("db-delete-ask.html",
                                        {"obj": self.Database[key],
-                                        "fields": self.Fields}
+                                        "key": key,
+                                        "fields": self.Fields,
+                                        "handler": self}
                                        ))
             except KeyError:
                 raise tNotFoundError, "Delete request for non-existent key %s" % key
@@ -315,6 +330,7 @@ def parseQuery(query):
     result = {}
     for part in query.split("&"):
         key, value = part.split("=")
+        key = key.replace("+", " ")
         value = value.replace("+", " ")
         result[key] = unicode(urllib.unquote(value), 
                               "utf-8")

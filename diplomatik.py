@@ -24,7 +24,6 @@ class tDegreesField(appserver.tField):
 
     def getDisplayHTML(self, object):
         value = self.getValue(object)
-        print >> sys.stderr, value
         return ", ".join([
             degree_rule_sets[deg.DegreeRuleSet].description()
             for deg_key, deg in value.iteritems()
