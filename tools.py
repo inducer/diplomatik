@@ -1,8 +1,19 @@
+from __future__ import division
+
 import codecs
 import os
 import sets
 
 import airspeed
+
+
+
+class tSubjectError(Exception):
+    def __init__(self, value):
+        Exception.__init__(self)
+        self.Value = value
+    def __str__(self):
+        return str(self.Value)
 
 
 
@@ -86,6 +97,45 @@ def alistLookup(alist, sought_key):
 
 
 
+def median(list):
+    list.sort()
+    l = len(list)
+    l_2 = int(l / 2)
+    if l % 2 == 0:
+        return (list[l_2] + list[l_2+1]) / 2
+    else:
+        return list[l_2]
+
+
+
+
+def histogram(values, start = {}):
+    result = start.copy()
+    for v in values:
+        result[v] = 1 + result.setdefault(v, 0)
+    return result
+
+
+
+
+def gradeToWords(grade, use_distinction = False):
+    if use_distinction and grade < 1.1:
+        return "mit Auszeichnung"
+    if grade < 1:
+        return "?"
+    elif grade < 1.5:
+        return "sehr gut"
+    elif grade < 2.5:
+        return "gut"
+    elif grade < 3.5:
+        return "befriedigend"
+    elif grade <= 4:
+        return "ausreichend"
+    else:
+        return "?"
+
+
+
 
 def _expandTemplate(dir, filename, globals_dict):
     class _tTemplateHelper:
@@ -111,6 +161,11 @@ def _expandTemplate(dir, filename, globals_dict):
         def alistLookup(self, alist, key):
             return alistLookup(alist, key)
 
+        def sort(self, list):
+            result = list[:]
+            result.sort()
+            return result
+
         def sortBy(self, list, field):
             def cmp_func(a, b):
                 return cmp(getattr(a, field), getattr(b, field))
@@ -119,20 +174,11 @@ def _expandTemplate(dir, filename, globals_dict):
             result.sort(cmp_func)
             return result
 
-        def gradeToWords(self, grade):
-            if grade < 1.5:
-                return "sehr gut"
-            elif grade < 2.5:
-                return "gut"
-            elif grade < 3.5:
-                return "befriedigend"
-            elif grade <= 4:
-                return "ausreichend"
-            else:
-                return "mangelhaft"
-
         def len(self, value):
             return len(value)
+
+        def gradeToWords(self, grade):
+            return gradeToWords(grade)
 
         def round(self, value, decimals):
             return round(value, decimals)

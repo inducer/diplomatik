@@ -15,5 +15,5 @@ mkdir $DESTDIR/yaml
 cp yaml/*.py $DESTDIR/yaml
 mkdir $DESTDIR/example-data
 cp example-data/* $DESTDIR/example-data
-tar cvfz $DESTDIR.tar.gz $DESTDIR
+tar cfz $DESTDIR.tar.gz $DESTDIR
 

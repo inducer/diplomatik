@@ -4,19 +4,6 @@ DateOfBirth:
     month: 2
     year: 1966
 Degrees:
-    '3336612': !!datamodel.tDegree
-        DegreeRuleSet: tema-hd-alt
-        EnrolledDate:
-            day: 7
-            month: 2
-            year: 2005
-        Exams: {}
-        FinishedDate:
-            day: 7
-            month: 2
-            year: 2005
-        MinorSubject: MASCHBAU
-        Remark: ''
     '7438291': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
         EnrolledDate:
@@ -32,10 +19,10 @@ Degrees:
         Remark: ''
 Email: "amelie@poulain.fr"
 FirstName: "Am\xe9lie"
-Gender: "w"
-ID: "88"
+Gender: w
+ID: '88'
 LastName: "Poulain"
-MiddleName: ""
-Notes: ""
-PlaceOfBirth: "Paris"
+MiddleName: ''
+Notes: ''
+PlaceOfBirth: Paris
 SpecialSemesters: {}

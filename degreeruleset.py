@@ -4,6 +4,9 @@ import tools
 import semester
 import reports
 
+from tools import tSubjectError
+
+
 
 
 class tDegreeRuleSet:
@@ -21,6 +24,28 @@ class tDegreeRuleSet:
 
     def examSources(self):
         return {} # [(id(str), description(str))]
+
+    def getComponentAverageGrade(self, student, degree, component):
+        exams = [exam
+                 for exam in degree.Exams.values()
+                 if exam.DegreeComponent == component
+                 if exam.Counted
+                 if exam.CountedResult and exam.Credits]
+
+        credits = sum([exam.Credits for exam in exams])
+        if credits == 0:
+            raise tSubjectError, \
+                  "Student %s hat in Komponente %s keine Pruefungen abgelegt" \
+                  % (student.LastName, component)
+        grade_sum = sum([
+                    tools.unifyGrade(exam.CountedResult) 
+                    * exam.Credits
+                    for exam in exams])
+
+        return grade_sum / credits
+
+    def getOverallGrade(self, student, degree):
+        raise NotImplementedError
 
     def getPerExamReportHandler(self, student, degree, exam):
         return reports.tPerDegreeReportHandler(
@@ -95,6 +120,42 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             ("industrie", "Industrie"),
             ("andere", "Andere dt. Hochschule"),
             ]
+
+    def getVordiplom(self, student):
+        vds = [degree
+               for degree in student.Degrees.values()
+               if degree.DegreeRuleSet == "tema-vd-alt"
+               if degree.FinishedDate]
+        
+        if len(vds) != 1:
+            raise tSubjectError, \
+                  "Student %s: Anzahl beendeter TeMa-Vordiplome ist ungleich eins" \
+                  % student.LastName
+
+        return vds[0]
+
+    def getDiplomarbeit(self, student, degree):
+        assert degree.DegreeRuleSet == self.id()
+
+        diplomarbeiten = [exam
+                          for exam in degree.Exams.values()
+                          if exam.DegreeComponent == "diplomarbeit"
+                          if exam.Counted and exam.CountedResult]
+        if len(diplomarbeiten) != 1:
+            raise tSubjectError, \
+                  "Student %s: Anzahl benotete Diplomarbeiten ist ungleich eins" \
+                  % student.LastName
+        return diplomarbeiten[0]
+
+    def getOverallGrade(self, student, degree):
+        assert degree.DegreeRuleSet == self.id()
+
+        rm = self.getComponentAverageGrade(student, degree, "rein")
+        am = self.getComponentAverageGrade(student, degree, "angewandt")
+        nf1 = self.getComponentAverageGrade(student, degree, "1nf")
+        nf2 = self.getComponentAverageGrade(student, degree, "2nf")
+        da = self.getDiplomarbeit(student, degree)
+        return round((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
 
     def getPerDegreeReportHandler(self, student, degree):
         return reports.tTeMaHDAltReportHandler(

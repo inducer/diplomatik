@@ -5,6 +5,9 @@ import re
 import semester
 import appserver
 import tools
+import math
+
+from tools import tSubjectError
 
 
 
@@ -14,11 +17,11 @@ class tReportHandler:
         return []
 
     def handleRequest(self, http_request):
-        report_re = re.compile("^([a-zA-Z0-9]+)\.([a-zA-Z0-9]+)$")
+        report_re = re.compile("^([-a-zA-Z0-9]+)\.([a-zA-Z0-9]+)$")
         report_match = report_re.match(http_request.Path)
         if not report_match:
             raise appserver.tNotFoundError, \
-                  "Invalid report request %s" % request.Path
+                  "Invalid report request %s" % http_request.Path
 
         report_id = report_match.group(1)
         format_id = report_match.group(2)
@@ -90,12 +93,11 @@ class tGlobalReportHandler(tReportHandler):
     def getList(self):
         return tReportHandler.getList(self) + [
             ("abschluesse", u"Abschlüsse in Zeitraum"),
-            ("freischuesse", u"Studienbegleitende Prüfungen"),
-            #("statistik", "Statistik"),
+            ("statistik-temahdalt", "Statistik TeMa alte PO"),
             ]
 
     def getForm(self, report_id):
-        if report_id in ["abschluesse", "freischuesse"]:
+        if report_id in ["abschluesse", "statistik-temahdalt"]:
             ws = semester.tSemester.now()
             if ws.Term == "s":
                 ws = ws.previous()
@@ -130,6 +132,113 @@ class tGlobalReportHandler(tReportHandler):
                  "form_data": form_data,
                  "drs_map": self.DRSMap},
                 ["header.tex"])
+        elif report_id == "statistik-temahdalt":
+            stud_deg = []
+            for student in self.StudentDB.values():
+                for degree in student.Degrees.values():
+                    if degree.FinishedDate \
+                         and form_data.From <= degree.FinishedDate <= form_data.To\
+                         and degree.DegreeRuleSet == "tema-hd-alt":
+
+                        drs = self.DRSMap[degree.DegreeRuleSet]
+                        da = drs.getDiplomarbeit(student, degree)
+                        rm = drs.getComponentAverageGrade(student, degree, "rein")
+                        am = drs.getComponentAverageGrade(student, degree, "angewandt")
+                        nf1 = drs.getComponentAverageGrade(student, degree, "1nf")
+                        nf2 = drs.getComponentAverageGrade(student, degree, "2nf")
+                        pn = (rm+am+nf1+nf2)/4.
+                        gesamt = drs.getOverallGrade(student, degree)
+
+                        sem = semester.countSemesters(
+                            semester.tSemester.fromDate(
+                            drs.getVordiplom(student).EnrolledDate),
+                            semester.tSemester.fromDate(
+                            degree.FinishedDate))
+
+                        pz = degree.FinishedDate - da.Date
+
+                        stud_deg.append(tools.makeObject(
+                            {"Student": student,
+                             "Degree": degree,
+                             "Diplomarbeit": da,
+                             "DRS": drs,
+                             "Rein": rm,
+                             "Angewandt": am,
+                             "NF1": nf1,
+                             "NF1Name": degree.MinorSubject[:2],
+                             "NF2": nf2,
+                             "Pruefungsnoten": pn,
+                             "Gesamt": gesamt,
+                             "Pruefungszeitraum": int(math.ceil(pz.days/30.)),
+                             "Semesters": sem-len(student.SpecialSemesters),
+                             "SpecialSemesters": len(student.SpecialSemesters),
+                             }))
+
+
+            def cmp_func(a, b):
+                return cmp(a.Degree.FinishedDate,
+                           b.Degree.FinishedDate)
+            stud_deg.sort(cmp_func)
+
+            def countExamSource(degree, source):
+                return len([1 for exam in sd.Degree.Exams.values()
+                            if exam.Source == source
+                            if exam.Counted])
+
+            m_w = tools.histogram(
+                [sd.Student.Gender for sd in stud_deg],
+                {"m": 0, "w": 0})
+
+            gesamt_hist = tools.histogram(
+                [tools.gradeToWords(sd.Gesamt,
+                                    use_distinction = True)
+                 for sd in stud_deg],
+                {"mit Auszeichnung": 0, 
+                 "sehr gut": 0,
+                 "gut": 0,
+                 "befriedigend": 0})
+
+            da_hist = tools.histogram(
+                [tools.unifyGrade(sd.Diplomarbeit.CountedResult)
+                 for sd in stud_deg])
+
+            pn_hist = tools.histogram(
+                [tools.unifyGrade(sd.Pruefungsnoten)
+                 for sd in stud_deg])
+
+            nf_hist = tools.histogram(
+                [sd.Degree.MinorSubject for sd in stud_deg])
+
+            sb_hist = tools.histogram(
+                [countExamSource(sd.Degree, "freischuss")
+                 for sd in stud_deg])
+
+            sem_median = tools.median(
+                [sd.Semesters for sd in stud_deg])
+
+            pz_median = tools.median(
+                [sd.Pruefungszeitraum for sd in stud_deg])
+
+            ausland_count = len(
+                [1 
+                 for sd in stud_deg
+                 if countExamSource(sd.Degree, "ausland") != 0])
+
+            return tools.runLatexOnTemplate(
+                "statistik-temahdalt.tex",
+                {"stud_deg": stud_deg,
+                 "form_data": form_data,
+                 "drs_map": self.DRSMap,
+                 "m_w": m_w,
+                 "gesamt_hist": gesamt_hist,
+                 "da_hist": da_hist,
+                 "pn_hist": pn_hist,
+                 "nf_hist": nf_hist,
+                 "sb_hist": sb_hist,
+                 "sem_median": sem_median,
+                 "pz_median": pz_median,
+                 "ausland_count": ausland_count,
+                 })
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
 
@@ -216,23 +325,13 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
                     return cmp(a.Date, b.Date)
                 exams.sort(date_sort_func)
 
-                if len(exams) == 0:
-                    return None
-                       
                 return tools.makeObject({
                     "Exams": u", ".join([
                     exam.Description
                     for exam in exams]),
 
-                    "AvgGrade": sum([
-                    tools.unifyGrade(exam.CountedResult) 
-                    * exam.Credits
-                    for exam in exams 
-                    if exam.CountedResult and exam.Credits])\
-                    / sum([ 
-                    exam.Credits 
-                    for exam in exams 
-                    if exam.CountedResult and exam.Credits]), 
+                    "AvgGrade": drs.getComponentAverageGrade(
+                    self.Student, self.Degree, comp),
 
                     "Examiners": u", ".join(tools.uniq(
                     [getExaminer(exam) for exam in exams])), 
@@ -246,14 +345,11 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
                     if getRemark(exam)]
                     })
 
-            vordiplome = [deg
-                          for deg in self.Student.Degrees.values()
-                          if deg.DegreeRuleSet == "tema-vd-alt"]
-            if len(vordiplome) != 1:
-                raise RuntimeError, "Anzahl Vordiplome ist ungleich eins"
-            vordiplom = vordiplome[0]
+            drs = self.DegreeRuleSet
+
+            vordiplom = drs.getVordiplom(self.Student)
             if not vordiplom.FinishedDate:
-                raise RuntimeError, "Vordiplom nicht abgeschlossen"
+                raise tSubjectError, "Vordiplom nicht abgeschlossen"
 
             studienbeginn = start = min([
                 deg.EnrolledDate
@@ -261,7 +357,7 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
             studienbeginn_sem = semester.tSemester.fromDate(
                 studienbeginn)
             if not self.Degree.FinishedDate:
-                raise RuntimeError, "Enddatum HD nicht eingetragen"
+                raise tSubjectError, "Enddatum HD nicht eingetragen"
             studienende_sem = semester.tSemester.fromDate(
                 self.Degree.FinishedDate)
             semzahl = semester.countSemesters(
@@ -274,10 +370,6 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
             nf2 = gatherComponent("2nf")
             zusatz = gatherComponent("zusatz")
 
-            if not (rein and angewandt and nf1 and nf2):
-                raise RuntimeError, "In einem der Pruefungsfaecher wurde " + \
-                      "keine Pruefung absolviert."
-
             all_remarks = rein.Remarks + \
                           angewandt.Remarks + \
                           nf1.Remarks + \
@@ -286,12 +378,10 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
                 all_remarks += zusatz.Remarks
             remarks = u"\\\\".join(tools.uniq(all_remarks))
 
-            diplomarbeiten = [exam
-                              for exam in self.Degree.Exams.values()
-                              if exam.DegreeComponent == "diplomarbeit"]
-            if len(diplomarbeiten) != 1:
-                raise RuntimeError, "Anzahl Diplomarbeiten ist ungleich eins"
-            da = diplomarbeiten[0]
+            da = drs.getDiplomarbeit(
+                self.Student, self.Degree)
+            overall_grade = drs.getOverallGrade(
+                self.Student, self.Degree)
             
             return tools.runLatexOnTemplate(
                 "hddefs.tex",
@@ -309,6 +399,7 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
                  "zusatz": zusatz,
                  "da": da,
                  "remarks": remarks,
+                 "overall_grade": overall_grade,
                  
                  "form": "noten-hd.tex",
                  },
