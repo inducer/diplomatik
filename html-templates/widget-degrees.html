@@ -5,7 +5,7 @@
       <th>Begonnen</th>
       <th>Abgeschlossen</th>
     </tr>
-    #foreach ($degree in $degrees)
+    #foreach ($degree in $h.sortBy($degrees, "EnrolledDate"))
       <tr>
         <td>$rulesets.__getitem__($degree.DegreeRuleSet).description()</td>
         <td>$degree.EnrolledDate.isoformat()</td>

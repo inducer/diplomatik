@@ -1,5 +1,5 @@
 <p>Berichte:
-  #foreach ($rep_desc in $reports)
+  #foreach ($rep_desc in $reports.iteritems())
     <a href="/report/perstudent/$student.ID/${rep_desc.__getitem__(0)}.pdf">$rep_desc.__getitem__(1) (PDF)</a>
   #end
 </p>

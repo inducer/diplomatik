@@ -16,7 +16,7 @@ from tools import tSubjectError
 
 class tReportHandler:
     def getList(self):
-        return []
+        return tools.tAssociativeList()
 
     def handleRequest(self, http_request):
         report_re = re.compile("^([-a-zA-Z0-9]+)\.([a-zA-Z0-9]+)$")
@@ -39,8 +39,7 @@ class tReportHandler:
                 200,
                 {"Content-type": "application/pdf"})
         else:
-            title = tools.alistLookup(self.getList(),
-                                      report_id)
+            title = self.getList()[report_id]
 
             if http_request.Method == "POST":
                 valid = True
@@ -93,10 +92,12 @@ class tGlobalReportHandler(tReportHandler):
         self.DRSMap = drs_map
 
     def getList(self):
-        return tReportHandler.getList(self) + [
+        return tReportHandler.getList(self) + \
+               tools.tAssociativeList([
             ("abschluesse", u"Abschlüsse in Zeitraum"),
             ("statistik-temahdalt", "Statistik TeMa alte PO"),
-            ]
+            ("what-became-of", "Was ist geworden aus...?"),
+            ])
 
     def getForm(self, report_id):
         if report_id in ["abschluesse", "statistik-temahdalt"]:
@@ -111,6 +112,13 @@ class tGlobalReportHandler(tReportHandler):
                 ], tools.makeObject(
                 {"From": ws.startDate(),
                  "To": ss.endDate()})
+        elif report_id == "what-became-of":
+            ay = semester.getAcademicYear(semester.tSemester.now())
+            
+            return [
+                appserver.tFloatField("Year", "Jahrgang"),
+                ], tools.makeObject(
+                {"Year": ay})
         else:
             return tReportHandler.getForm(self, report_id)
 
@@ -253,9 +261,10 @@ class tPerStudentReportHandler(tReportHandler):
         self.DRSMap = drs_map
 
     def getList(self):
-        return tReportHandler.getList(self) + [
+        return tReportHandler.getList(self) + \
+               tools.tAssociativeList([
             ("transcript", "Notenauszug")
-            ]
+            ])
 
     def getPDF(self, report_id, form_data):
         if report_id == "transcript":
@@ -277,9 +286,10 @@ class tPerDegreeReportHandler(tReportHandler):
         self.DegreeRuleSet = drs
 
     def getList(self):
-        return tReportHandler.getList(self) + [
+        return tReportHandler.getList(self) + \
+               tools.tAssociativeList([
             ("transcript", "Notenauszug (teilweise)")
-            ]
+            ])
 
     def getPDF(self, report_id, form_data):
         if report_id == "transcript":
@@ -306,10 +316,11 @@ class tPerExamReportHandler(tReportHandler):
 
 class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
     def getList(self):
-        return tPerDegreeReportHandler.getList(self) + [
+        return tPerDegreeReportHandler.getList(self) + \
+               tools.tAssociativeList([
             ("hdfinal", u"Ausfertigung für die Prüfungsabteilung..."),
             ("zulassung-leer", u"Zulassung zur Prüfung (blanko)"),
-            ]
+            ])
 
     def getZeugnisTeXDefs(self):
         def gatherComponent(comp):
@@ -358,25 +369,50 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
 
         drs = self.DegreeRuleSet
 
-        rein = gatherComponent("rein")
-        angewandt = gatherComponent("angewandt")
-        nf1 = gatherComponent("ing")
-        nf2 = gatherComponent("inf")
+        all_remarks = []
 
-        all_remarks = rein.Remarks + \
-                      angewandt.Remarks + \
-                      nf1.Remarks + \
-                      nf2.Remarks
+        try:
+            rein = gatherComponent("rein")
+            all_remarks += rein.Remarks
+        except tSubjectError:
+            rein = None
+
+        try:
+            angewandt = gatherComponent("angewandt")
+            all_remarks += angewandt.Remarks
+        except tSubjectError:
+            angewandt = None
+
+        try:
+            ing = gatherComponent("ing")
+            all_remarks += ing.Remarks
+        except tSubjectError:
+            ing = None
+
+        try:
+            inf = gatherComponent("inf")
+            all_remarks += inf.Remarks
+        except tSubjectError:
+            inf = None
+
         try:
             zusatz = gatherComponent("zusatz")
             all_remarks += zusatz.Remarks
         except tSubjectError:
-            zusatz = False
+            zusatz = None
 
-        remarks = u"\\\\".join(tools.uniq(all_remarks))
+        remarks = u"\\\\".join(
+            [tools.escapeTeX(s) for s in tools.uniq(all_remarks)])
 
-        da = drs.getDiplomarbeit(self.Student, self.Degree)
-        overall_grade = drs.getOverallGrade(self.Student, self.Degree)
+        try:
+            da = drs.getDiplomarbeit(self.Student, self.Degree)
+        except tSubjectError:
+            da = None
+
+        try:
+            overall_grade = drs.getOverallGrade(self.Student, self.Degree)
+        except tSubjectError:
+            overall_grade = None
 
         return tools.expandTeXTemplate(
                 "hddefs-zeugnis.tex",
@@ -384,8 +420,8 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                  "degree": self.Degree,
                  "rein": rein,
                  "angewandt": angewandt,
-                 "nf1": nf1,
-                 "nf2": nf2,
+                 "ing": ing,
+                 "inf": inf,
                  "zusatz": zusatz,
                  "da": da,
                  "remarks": remarks,
@@ -443,9 +479,10 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
 
 class tTeMaHDAltPerExamReportHandler(tPerExamReportHandler):
     def getList(self):
-        return tPerExamReportHandler.getList(self) + [
+        return tPerExamReportHandler.getList(self) + \
+               tools.tAssociativeList([
             ("zulassung", u"Zulassung zur Prüfung")
-            ]
+            ])
 
     def getPDF(self, report_id, form_data):
         if report_id == "zulassung":

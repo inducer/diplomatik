@@ -90,17 +90,35 @@ def find(haystack, needle):
 
 
 
-def alistLookup(alist, sought_key):
-    for key, value in alist:
-        if sought_key == key:
-            return value
-    raise KeyError, sought_key
+class tAssociativeList(object):
+    """The main difference between a dictionary and this
+    class is that the insertion order of keys is maintained 
+    at all times.
+    """
+    def __init__(self, list = []):
+        self.Value = list[:]
 
+    def keys(self):
+        return [key for key, value in self.Value]
 
+    def values(self):
+        return [value for key, value in self.Value]
 
+    def iteritems(self):
+        return self.Value
+    
+    def __getitem__(self, sought_key):
+        for key, value in self.Value:
+            if sought_key == key:
+                return value
+        raise KeyError, sought_key
 
-def alistKeys(alist):
-    return [key for key, value in alist]
+    def __add__(self, other):
+        return tAssociativeList(self.Value + other.Value)
+
+    def __iadd__(self, other):
+        self.Value += other.Value
+        return self
 
 
 
@@ -174,12 +192,6 @@ def _expandTemplate(dir, filename, globals_dict):
 
         def add(self, value, value2):
             return value + value2
-
-        def alistLookup(self, alist, key):
-            return alistLookup(alist, key)
-
-        def alistKeys(self, alist):
-            return alistKeys(alist)
 
         def sort(self, list):
             result = list[:]

@@ -20,23 +20,24 @@ class tDegreeRuleSet(object):
         return "base"
         
     def degreeComponents(self):
-        """Returns an associative array (i.e. a list of tuples)
-        that enumerates the types of exams that count towards 
-        this degree.
+        """Returns an associative list that enumerates the types of
+        exams that count towards this degree.
 
         An example:
+        tools.tAssoicativeList(
         [("applied", "Applied Mathematics"),
          ("pure", "Pure Mathematics"),
-         ]
+         ])
         
         Note that the identifiers must be usable as TeX
         control sequence names and may thus only
         consist of upper and lower case letters.
         """
-        return {} # [(id:str, description:str)]
+        return tools.tAssociativeList()
 
     def examSources(self):
-        return {} # [(id:str, description:str)]
+        # id:str -> description:str
+        return tools.tAssociativeList 
 
     def expectedExamCount(self, component):
         raise NotImplementedError
@@ -94,20 +95,20 @@ class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
         return "Technomathematik Vordiplom/PO vom 03.06.1983"
         
     def degreeComponents(self):
-        return [
+        return tools.tAssociativeList([
             ("ana", "Analysis"),
             ("la", "Lineare Algebra"),
             ("stoch", "Stochastik"),
             ("num", "Numerik"),
             ("scheine", "Scheine"),
-            ]
+            ])
 
     def examSources(self):
-        return [
+        return tools.tAssociativeList([
             ("uni", "Uni Karlsruhe"),
             ("ausland", "Ausland"),
             ("andere", "Andere dt. Hochschule"),
-            ]
+            ])
 
     def expectedExamCount(self, component):
         if component == "scheine":
@@ -131,7 +132,7 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
         return "Technomathematik Hauptdiplom/PO vom 03.06.1983"
         
     def degreeComponents(self):
-        return [
+        return tools.tAssociativeList([
             ("rein", "Reine Mathematik"),
             ("angewandt", "Angewandte Mathematik"),
             ("ing", "Erstes Nebenfach"),
@@ -142,16 +143,16 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             ("seminar", "Seminar"),
             ("mrp", "Mikrorechnerpraktikum"),
             ("zusatz", "Zusatzfach"),
-            ]
+            ])
 
     def examSources(self):
-        return [
+        return tools.tAssociativeList([
             ("uni", "Uni Karlsruhe"),
             ("freischuss", "Uni Karlsruhe, studienbegleitend"),
             ("ausland", "Ausland"),
             ("industrie", "Industrie"),
             ("andere", "Andere dt. Hochschule"),
-            ]
+            ])
 
     def expectedExamCount(self, component):
         if component in ["rein",

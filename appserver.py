@@ -1,9 +1,7 @@
 import re
 import sys
-import os
 import StringIO
 import BaseHTTPServer
-import codecs
 import datetime
 import random
 import traceback
@@ -212,7 +210,6 @@ class tChoiceField(tField):
         tField.__init__(self, name, description, 
                         shown_in_overview)
         self.Choices = choices
-        self.ChoicesDict = dict(choices)
         self.NoneOK = none_ok
 
     def isMandatory(self):
@@ -233,7 +230,7 @@ class tChoiceField(tField):
         
         if supposed_value is not None:
             try:
-                tools.alistLookup(self.Choices, supposed_value)
+                self.Choices[supposed_value]
                 return supposed_value
             except KeyError:
                 raise ValueError, "Invalid input in choice field"
@@ -246,11 +243,11 @@ class tChoiceField(tField):
         if value is None:
             return "-/-"
         else:
-            return self.ChoicesDict[value]
+            return self.Choices[value]
 
     def _getHTML(self, choice):
-        values = [c[0] for c in self.Choices]
-        descriptions = [c[1] for c in self.Choices]
+        values = self.Choices.keys()
+        descriptions = self.Choices.values()
 
         if self.NoneOK:
             values.insert(0, "None")
@@ -383,7 +380,6 @@ class tCheckField(tField):
             return "-"
 
     def _getWidget(self, value):
-        print "YYYAAA", value
         if value:
             svalue = " checked=\"checked\""
         else:
@@ -727,12 +723,22 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
                 except tNotFoundError, e:
                     self.send_error(404, str(e))
                     return
+                except tools.tSubjectError, e:
+                    outbuf = StringIO.StringIO()
+                    traceback.print_exc(file = outbuf)
+
+                    response = tHTTPResponse(
+                        tools.expandHTMLTemplate(
+                        "subject-error.html",
+                        {"traceback": outbuf.getvalue(),
+                         "error_text": str(e)}),
+                        500)
                 except:
                     self.send_response(500)
                     self.send_header("Content-type", "text/html")
                     self.end_headers()
                     outbuf = StringIO.StringIO()
-                    traceback.print_exc(file=outbuf)
+                    traceback.print_exc(file = outbuf)
                     errtext = "<body><h1>Server Error</h1>" + \
                               "<p>Sorry, the server could not complete your " + \
                               "request. The following is an error dump that " + \

@@ -3,13 +3,52 @@ DateOfBirth:
     day: 13
     month: 2
     year: 1978
-Degrees: {}
+Degrees:
+    '410874': !!datamodel.tDegree
+        DegreeRuleSet: tema-hd-alt
+        EnrolledDate:
+            day: 1
+            month: 3
+            year: 2005
+        Exams:
+            '8294134': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.3
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 1
+                    month: 3
+                    year: 2005
+                DegreeComponent: rein
+                Description: Differentialgeometrie
+                Examiner: "Aumann"
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+        FinishedDate: ~
+        MinorSubject: ""
+        Remark: ""
+    '5635708': !!datamodel.tDegree
+        DegreeRuleSet: tema-vd-alt
+        EnrolledDate:
+            day: 1
+            month: 3
+            year: 2003
+        Exams: {}
+        FinishedDate:
+            day: 1
+            month: 3
+            year: 2005
+        MinorSubject: ''
+        Remark: ''
 Email: "hans@wurst.de"
-FirstName: "Hans"
-Gender: "m"
-ID: "1347373"
+FirstName: Hans
+Gender: m
+ID: '1347373'
 LastName: "Wurst"
-MiddleName: "Friedrich"
-Notes: ""
-PlaceOfBirth: ""
+MiddleName: Friedrich
+Notes: ''
+PlaceOfBirth: ''
 SpecialSemesters: {}

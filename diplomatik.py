@@ -206,8 +206,8 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             appserver.tStringField("LastName", "Nachname"),
             appserver.tChoiceField("Gender", "Geschlecht",
                                    False,
-                                   [("m", u"Männlich"),
-                                    ("w", "Weiblich")]),
+                                   tools.tAssociativeList([("m", u"Männlich"),
+                                                           ("w", "Weiblich")])),
             appserver.tDateField("DateOfBirth", "Geburtsdatum", 
                                  shown_in_overview = False,
                                  none_ok = True),
@@ -238,7 +238,8 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             return "Studierendendatenbank"
 
         if element == "extra-commands":
-            return '<a href="/quit">Diplomatik beenden</a>'
+            return '<a href="/quit">Diplomatik beenden</a> ' + \
+                   '<a href="/export-all">Exporte aktualisieren</a>'
 
         if element == "header":
             result = expandHTMLTemplate("main-header.html")
@@ -290,7 +291,7 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
     def enumerateFilteredKeys(self, filter_name):
         lastname_re = re.compile("^lastname-(.)$")
         lastname_match = lastname_re.match(filter_name)
-        ay_re = re.compile("^ay-([1-9]+)$")
+        ay_re = re.compile("^ay-([0-9]+)$")
         ay_match = ay_re.match(filter_name)
 
         if lastname_match:
@@ -320,7 +321,7 @@ class tSpecialSemesterDatabaseHandler(appserver.tDatabaseHandler):
             tSemesterField("Semester", "Semester"),
             appserver.tChoiceField("Type", "Art",
                                    True,
-                                   [("urlaub", "Urlaubssemester")]),
+                                   tools.tAssociativeList([("urlaub", "Urlaubssemester")])),
             appserver.tStringField("Remark", "Bemerkungen",
                                    shown_in_overview = True),
             ])
@@ -361,8 +362,8 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
             appserver.tChoiceField(
             "DegreeRuleSet", "Art des Abschlusses",
             shown_in_overview = True,
-            choices = [(drs.id(), drs.description()) 
-                       for drs in degree_rule_sets])),
+            choices = tools.tAssociativeList([(drs.id(), drs.description()) 
+                                              for drs in degree_rule_sets]))),
             appserver.tDateField("EnrolledDate", "Begonnen"),
             appserver.tDateField("FinishedDate", "Abgeschlossen", 
                                  none_ok = True),
@@ -676,6 +677,12 @@ class tMainAppServer(appserver.tAppServer):
                 200,
                 {"Content-type": "text/plain"})
 
+        def doExportAll(request):
+            store.exportAll()
+            return appserver.tHTTPResponse(
+                "Alle Daten erfolgreich exportiert.",
+                200,
+                {"Content-type": "text/plain"})
 
         return [
             ("^/students/", handleStudentDatabase),
@@ -689,6 +696,7 @@ class tMainAppServer(appserver.tAppServer):
             ("^/static/", handleStaticContent),
             ("^/students$", redirectToStart),
             ("^/quit$", doQuit),
+            ("^/export-all$", doExportAll),
             ("^/$", redirectToStart)
             ]
 

@@ -93,6 +93,12 @@ class tDataStore:
         os.unlink(filename)
 
     def getExportData(self, student):
+        studbeg = datamodel.firstEnrollment(student)
+        if studbeg:
+            studbeg_sem = semester.tSemester.fromDate(studbeg)
+        else:
+            studbeg_sem = None
+
         return tools.expandTeXTemplate(
             "export.tex",
             {"student": student,
@@ -100,9 +106,12 @@ class tDataStore:
              "urlaubssem": len([1 for specsem in student.SpecialSemesters.values()
                                 if specsem.Type == "urlaub"]),
              "semesters": datamodel.countStudySemesters(student),
-             "beginn": semester.tSemester.fromDate(
-          datamodel.firstEnrollment(student))
-            })
+             "beginn": studbeg_sem
+            }).encode("utf-8")
+
+    def exportAll(self):
+        for key in self.keys():
+            self.writeStudent(key)
 
     def writeStudent(self, key):
         student = self.Students[key]
@@ -129,11 +138,7 @@ class tDataStore:
         if not tools.doesDirExist(new_export_dir):
             os.mkdir(new_export_dir)
 
-        exportf = codecs.open(new_export_filename, "wb",
-                              "latin1")
+        exportf = file(new_export_filename, "wb")
         exportf.write(export_data)
         exportf.close()
-
-
-
 

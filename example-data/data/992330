@@ -79,18 +79,18 @@ Degrees:
                 Counted: True
                 CountedResult: 1.0
                 Credits: 4.0
-                CreditsPrintable: '3 (US)'
+                CreditsPrintable: "3 (US)"
                 Date:
                     day: 15
                     month: 12
                     year: 2001
-                DegreeComponent: rein
+                DegreeComponent: "rein"
                 Description: "Partial Differential Equations"
-                Examiner: ''
-                NativeResult: A
-                Remarks: ''
+                Examiner: "Molchanov"
+                NativeResult: "A"
+                Remarks: ""
                 Source: "ausland"
-                SourceDescription: University of North Carolina at Charlotte
+                SourceDescription: "University of North Carolina at Charlotte"
             '2712004': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.0
@@ -414,14 +414,14 @@ Degrees:
             year: 2000
         MinorSubject: ETECHNIK
         Remark: ''
-Email: "mathem@tiker.net"
-FirstName: "Andreas"
-Gender: "m"
-ID: "992330"
+Email: mathem@tiker.net
+FirstName: Andreas
+Gender: m
+ID: '992330'
 LastName: "Kl\xf6ckner"
 MiddleName: "Paul Eberhard"
-Notes: ""
-PlaceOfBirth: "Konstanz"
+Notes: ''
+PlaceOfBirth: Konstanz
 SpecialSemesters:
     '67499': !!datamodel.tSpecialSemester
         Remark: '2. Semester UNCC'

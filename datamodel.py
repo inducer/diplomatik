@@ -1,4 +1,6 @@
 import datetime
+
+import tools
 import semester
 
 
@@ -171,9 +173,7 @@ def countStudySemesters(student):
     le = lastEnrollment(student)
 
     if not (fe and le):
-        raise tools.tSubjectError(
-            "Trying to count the study semesters of someone "+
-            "who has never been enrolled")
+        return 0
 
     fe_sem = semester.tSemester.fromDate(fe)
     le_sem = semester.tSemester.fromDate(le)

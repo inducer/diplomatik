@@ -1,5 +1,13 @@
+% -*- coding: utf-8 -*-
+%
+% ACHTUNG: Diese Datei ist in UTF-8 kodiert und kann
+% nur mit einem entsprechenden Package [1] von TeX direkt
+% gelesen werden.
+%
+% [1] http://www.unruh.de/DniQ/latex/unicode/
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% per-student data
+% Daten Student
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\MATRIKEL{$student.ID}
@@ -22,15 +30,20 @@
 \def\GEBORT{$h.escapeTeX($student.PlaceOfBirth)}
 \def\HOCHSCHULSEMESTER{$semesters}
 \def\URLAUBSSEMESTER{$urlaubssem}
-\def\STUDBEG{$beginn}
+#if ($beginn)
+  \def\STUDBEG{$beginn}
+#else
+  \def\STUDBEG{}
+#end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% per-degree data
+% Daten Abschluesse
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #foreach ($deg_loop in $h.eletterate($h.sortBy($student.Degrees.values(), "EnrolledDate"), 3, $none))##
   #set ($dletter = $deg_loop.Letter)##
   #if ($deg_loop.Active)##
     #set ($degree = $deg_loop.Data)##
+    #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))##
 
     \def\ABSCH${dletter}GUELTIG{1}
     \def\ABSCH${dletter}BEGINN{$h.formatDate($degree.EnrolledDate)}
@@ -43,9 +56,9 @@
     \def\ABSCH${dletter}NF{$h.escapeTeX($degree.MinorSubject)}
     \def\ABSCH${dletter}REGELN{$h.escapeTeX($degree.DegreeRuleSet)}
     \def\ABSCH${dletter}BEMERKUNG{$h.escapeTeX($degree.Remark)}
+    \def\ABSCH${dletter}PODATUM{$h.formatDate($drs.ruleSetDate())}
     #set ($exams = $h.sortBy($degree.Exams.values(), "Date"))##
-    #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))##
-    #set ($components = $h.alistKeys($drs.degreeComponents()))##
+    #set ($components = $drs.degreeComponents().keys())##
     #foreach ($component in $components)##
       #foreach ($ex_loop in $h.eletterate($h.filterBy($exams, "DegreeComponent", $component), $drs.expectedExamCount($component), $none))##
         #set ($eletter = $ex_loop.Letter)##
@@ -57,7 +70,7 @@
             \def\ABSCH${dletter}KOMP${component}PRF${eletter}NAME{$h.escapeTeX($exam.Description)}
             \def\ABSCH${dletter}KOMP${component}PRF${eletter}PRUEFER{$h.escapeTeX($exam.Examiner)}
             \def\ABSCH${dletter}KOMP${component}PRF${eletter}GEZAEHLT{$h.formatBool($exam.Counted)}
-            \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNG{$h.escapeTeX($h.alistLookup($drs.examSources(), $exam.Source))}
+            \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNG{$h.escapeTeX($drs.examSources().__getitem__($exam.Source))}
             \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNGGENAU{$h.escapeTeX($exam.SourceDescription)}
             \def\ABSCH${dletter}KOMP${component}PRF${eletter}URSPRUNGRESULTAT{$h.escapeTeX($exam.NativeResult)}
             #if ($exam.CountedResult)
@@ -98,18 +111,19 @@
     \def\ABSCH${dletter}NF{}
     \def\ABSCH${dletter}REGELN{}
     \def\ABSCH${dletter}BEMERKUNG{}
+    \def\ABSCH${dletter}PODATUM{}
   #end
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% compatibility
+% Kompatibilitaet
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\DATUM{\ABSCHLUSSbBEGINN}
-\def\VORDIPL{\ABSCHLUSSaENDE}
-\def\TECHFACH{\ABSCHLUSSaNF}
+\def\DATUM{\ABSCHbBEGINN}
+\def\VORDIPL{\ABSCHaENDE}
+\def\TECHFACH{\ABSCHaNF}
 \def\Semesterzahl{\HOCHSCHULSEMESTER}
-\def\Abschlussdatum{\ABSCHLUSSbENDE}
-\def\PRUEFORDDAT{03.06.1983}% Datum der rel. Pruefungsordnung
-\def\PRUEFORDPARA{\S 10 (2)}% Pruefungsparagraph
+\def\Abschlussdatum{\ABSCHbENDE}
+\def\PRUEFORDDAT{\ABSCHbPODATUM}
+\def\PRUEFORDPARA{\S 10 (2)}
 

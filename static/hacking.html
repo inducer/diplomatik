@@ -10,16 +10,139 @@
       Hier finden Sie einige Hinweise, wie Sie Diplomatik
       selbst&auml;ndig ver&auml;ndern k&ouml;nnen.
     </p>
+
     <p>
-      Diplomatik benutzt die Templating-Engine
-      <a href="http://airspeed.pythonconsulting.com/">Airspeed</a>,
-      die eine Python-Implementierung der Java-Templating-Engine
-      <a href="http://jakarta.apache.org/velocity/">Velocity</a> ist.
-      (<a href="http://jakarta.apache.org/velocity/user-guide.html">Dokumentation</a>)
-      Weiterhin benutzt Diplomatik die Serialisierungssprache
-      <a href="http://www.yaml.org">YAML</a>, genauer die
-      Python-Implementierung <a href="http://www.pyyaml.org">PyYaml</a>.
-      Beide Pakete sind mitsamt Lizenz-Hinweisen im Quellbaum integriert.
+      Diplomatik besteht aus verschiedenen Modulen,
+      auf die hier in der Reihenfolge von unten (d.h.
+      eher technisch, grundlegend) nach oben (d.h. eher
+      spezialisiert, anwendungsorientiert) eingegangen werden soll.
     </p>
+
+    <p>
+      F&uuml;r diesen Text ist es von Vorteil, sich kurz
+      mit den elementaren Konzepten von Python vertraut
+      zu machen. Kenntnisse in etwa vom Umfang des
+      <a href="http://docs.python.org/tut">Python Tutorial</a>
+      sind sicher n&uuml;tzlich f&uuml;r das Verst&auml;ndnis.
+    </p>
+
+    <h2>Basistechnologien</h2>
+    <p>
+      Diplomatik benutzt die Templating-(zu Deutsch etwa:
+      Schablonierungs-)Bibliothek <a
+      href="http://airspeed.pythonconsulting.com/">Airspeed</a>, die
+      eine Python-Implementierung der Java-Templating-Engine <a
+      href="http://jakarta.apache.org/velocity/">Velocity</a> ist.
+      Aufgabe der Schablonierung ist es, vom Programm generierte Daten
+      in vorgefertigte Textst&uuml;cke ("Schablonen") einzusetzen.
+    </p>
+    <p>
+      In jeder Schablone ist ein Objekt <code>$h</code> (wie "Helper")
+      verf&uuml;gbar, das einige Hilfsroutinen (z.B. zum Formatieren
+      von Zahlen und Daten) zur Verf&uuml;gung stellt. Dieses Objekt
+      wird in <code>tools._expandTemplate</code> definiert und
+      hei&szlig;t <code>_tTemplateHelper</code>. Den
+      gegenw&auml;rtigen Funktionsumfang des Helpers sieht man am
+      Besten dort nach.
+    </p>
+    <p>
+      Weiterhin benutzt Diplomatik die Serialisierungssprache <a
+      href="http://www.yaml.org">YAML</a>, genauer deren
+      Python-Implementierung <a
+      href="http://www.pyyaml.org">PyYaml</a>.  Aufgabe der
+      Serialisierungssprache ist es, den Datenbestand des Programms in
+      maschinenlesbarer Form auf einem permanenten Speicher (z.B. der
+      Festplatte) zu sichern und sp&auml;ter wiederherzustellen.  In
+      zweiter Linie ist die Sprache YAML auch sehr einfach von einem
+      (mit einem Texteditor bewaffneten) Menschen les- und
+      ver&auml;nderbar.
+    </p>
+    <p>
+      Beide Pakete sind
+      mitsamt Lizenz-Hinweisen im Quellbaum integriert.  Airspeed
+      finden Sie in <code>airspeed.py</code>, PyYaml im Verzeichnis
+      <code>yaml/</code>.
+    </p>
+    
+    <h2>Das Datenmodell (<code>datamodel.py</code>)</h2>
+    <p>
+      Ein Student (<code>tStudent</code>) hat einen oder mehrere
+      Abschl&uuml;sse (<code>tDegree</code>).  Diese Abschl&uuml;sse
+      werden in dem Feld <code>Degrees</code> des <code>tStudent</code>
+      gespeichert. Aus technischen Gr&uuml;nden handelt es sich
+      hierbei um ein <em>Dictionary</em>, dessen Schl&uuml;ssel
+      zuf&auml;llige Zahlenwerte sind, das also quasi als
+      <em>Liste</em> missbraucht wird. Jeder Abschluss gehorcht einem
+      Regelsatz (Subklassen von
+      <code>degreeruleset.tDegreeRuleSet</code>), der mit seinem
+      symbolischen Namen im Feld <code>DegreeRuleSet</code> vermerkt
+      ist. Um diesen symbolischen Namen in eine Instanz der
+      entsprechenden Klasse zu &uuml;bersetzen, benutzt man die
+      <code>degree_rule_sets_map</code>, ein Dictionary, das genau
+      dieses zur Aufgabe hat. Dieses Dictionary ist im Modul
+      <code>diplomatik.py</code> global definiert, aber auch in
+      anderen Kontexten unter Namen wie <code>drs_map</code> (in
+      vielen Schablonen) oder <code>DRSMap</code> (als Attribut von
+      Klassen) verf&uuml;gbar.
+    </p>
+    <p>
+      Ein Abschluss wiederum hat verschiedene Pr&uuml;fungen
+      (<code>tExam</code>) zum Gegenstand, die abermals in dem
+      missbrauchten Dictionary <code>tDegree.Exams</code>
+      gespeichert werden. Jede Pr&uuml;fung geh&ouml;rt
+      zu einer <em>Komponente</em> eines Abschlusses und
+      hat einen <em>Ursprung</em>. 
+    </p>
+    <p>
+      <em>Komponenten</em> eines Abschlusses sind z.B. die
+      Diplomarbeit, das Hauptfach oder das erste Nebenfach. Eine Liste
+      aller m&ouml;glichen Komponenten bekommt von der Methode
+      <code>degreeComponents()</code> an jedem
+      <code>tDegreeRuleSet</code>. Diese liefert ein Dictionary,
+      dessen Schl&uuml;ssel maschinenlesbare Bezeichner und dessen
+      Werte menschenlesbare Beschreibungen dieser Komponente sind.
+      Diese maschinenlesbaren Bezeichner d&uuml;rfen nur aus Klein-
+      und Grossbuchstaben bestehen (d.h. keine Zahlen, Unterstriche
+      oder Sonderzeichen enthalten), da sie als Teil von
+      TeX-Makronamen verwendet werden.
+    </p>
+    <p>
+      Der <em>Ursprung</em> einer Pr&uuml;fung hingegen ist gemeinhin
+      der Ort, wo Sie abgenommen wurde, z.B. im Ausland.  Eine Liste
+      aller m&ouml;glichen Werte f&uuml;r das entsprechende Feld
+      <code>tExam.Source</code> bekommt man ebenfalls als
+      ID-Beschreibung-Dictionary von jedem
+      <code>tDegreeRuleSet</code>.
+    </p>
+    <h2>Der Anwendungsserver (<code>appserver.py</code>)</h2>
+
+    <h2>Das Berichtssystem (<code>reports.py</code>)</h2>
+
+    <h2>Wie kann ich...</h2>
+    <h3>...(kleine) &Auml;nderungen an der Ausgabe vornehmen?</h3>
+    <p>
+      Falls alles, was Sie erreichen m&ouml;chten, eine
+      geringf&uuml;gige &Auml;nderung der Ausgabe ist, so sehen Sie
+      doch mal in die Verzeichnisse <code>tex-templates/</code>
+      bzw. <code>html-templates/</code>. Dort liegen die Schablonen
+      f&uuml;r s&auml;mtliche HTML- und TeX-Ausgaben des Programms. Es
+      ist sicherlich eine gute Idee, sich ein wenig mit der (wirklich
+      unkomplizierten) <a
+      href="http://jakarta.apache.org/velocity/user-guide.html">Velocity-Syntax</a>
+      zu besch&auml;ftigen, bevor man gr&ouml;&szlig;ere
+      &Auml;nderungen angeht. Jede Schablone wird nat&uuml;rlich von
+      einem gewissen Programmst&uuml;ck aufgerufen, dieses kann man
+      mit einem einfachen <code>grep</code> nach dem
+      Schablonen-Dateinamen in allen <code>*.py</code>-Dateien finden,
+      um dort eventuell n&ouml;tige Anpassungen vorzunehmen.
+    </p>
+    <h3>...eine neue Pr&uuml;fungsordung einbauen?</h3>
+    <ul>
+      <li>Eine neue Klasse von <code>tDegreeRuleSet</code>
+      ableiten.</li>
+      <li>Eine Instanz dieser Klasse in <code>diplomatik.py</code>
+      in die globale Liste <code>degree_rule_sets</code>
+      einf&uuml;gen.</li>
+    </ul>
   </body>
 </html>

@@ -20,7 +20,7 @@ Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\
 #foreach ($exam in $h.sortBy($degree.Exams.values(), "Date"))##
   $h.formatDate($exam.Date) &
   $h.escapeTeX($exam.Description) &
-  $h.alistLookup($drs.degreeComponents(), $exam.DegreeComponent) &
+  $h.escapeTeX($drs.degreeComponents().__getitem__($exam.DegreeComponent)) &
   #if ($exam.Credits)##
     #if ($exam.CreditsPrintable)##
       $h.escapeTeX($exam.CreditsPrintable) ##
@@ -39,10 +39,15 @@ Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\
   #else ##
     - ##
   #end \\\\*
-  & \multicolumn{2}{p{9cm}|}{$exam.Examiner, $h.alistLookup($drs.examSources(), $exam.Source) 
-  #if ($exam.SourceDescription)##
-    ($h.escapeTeX($exam.SourceDescription))## 
-  #end} & & \\\\
+  & \multicolumn{2}{p{9cm}|}{
+    #if ($exam.Examiner)##
+      $h.escapeTeX($exam.Examiner), 
+    #end##
+    $h.escapeTeX($drs.examSources().__getitem__($exam.Source))
+    #if ($exam.SourceDescription)##
+      ($h.escapeTeX($exam.SourceDescription))## 
+    #end##
+  } & & \\\\
   \hline
 #end##
 \end{longtable}

@@ -92,7 +92,7 @@ Degrees:
                 Source: "uni"
                 SourceDescription: ''
             '8616441': !!datamodel.tExam
-                Counted: False
+                Counted: True
                 CountedResult: 1.3
                 Credits: ~
                 CreditsPrintable: ""
@@ -124,11 +124,11 @@ Degrees:
                 Source: "uni"
                 SourceDescription: ''
         FinishedDate:
-            day: 16
-            month: 2
+            day: 1
+            month: 3
             year: 2005
-        MinorSubject: MASCHBAU
-        Remark: ''
+        MinorSubject: "MASCHBAU"
+        Remark: ""
     '7438291': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
         EnrolledDate:
