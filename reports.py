@@ -353,7 +353,7 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
         def gatherComponent(comp):
             def getExaminer(exam):
                 if exam.Source == "ausland":
-                    return exam.Examiner+"*"
+                    return "*"
                 else:
                     return exam.Examiner
 
@@ -374,6 +374,15 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                 return cmp(a.Date, b.Date)
             exams.sort(date_sort_func)
 
+            examiners = tools.uniq(
+                [getExaminer(exam) for exam in exams])
+            star_in_examiners = "*" in examiners
+            if star_in_examiners:
+                examiners.remove("*")
+            examiners.sort()
+            if star_in_examiners:
+                examiners.append("*")
+
             return tools.makeObject({
                 "Exams": u", ".join([
                 exam.Description
@@ -382,8 +391,7 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                 "AvgGrade": drs.getComponentAverageGrade(
                 self.Student, self.Degree, comp),
 
-                "Examiners": u", ".join(tools.uniq(
-                [getExaminer(exam) for exam in exams])), 
+                "Examiners": ", ".join(examiners),
 
                 "EndDate": 
                 max([exam.Date for exam in exams]), 
