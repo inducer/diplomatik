@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import re
+import datetime
+import math
 
 import semester
 import appserver
 import tools
-import math
 
 from tools import tSubjectError
 
@@ -293,7 +294,17 @@ class tPerDegreeReportHandler(tReportHandler):
 
 
 
-class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
+class tPerExamReportHandler(tReportHandler):
+    def __init__(self, student, degree, drs, exam):
+        self.Student = student
+        self.Degree = degree
+        self.DegreeRuleSet = drs
+        self.Exam = exam
+
+
+
+
+class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
     def getList(self):
         return tPerDegreeReportHandler.getList(self) + [
             ("hdfinal", u"Ausfertigung für die Prüfungsabteilung...")
@@ -368,14 +379,17 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
             angewandt = gatherComponent("angewandt")
             nf1 = gatherComponent("1nf")
             nf2 = gatherComponent("2nf")
-            zusatz = gatherComponent("zusatz")
 
             all_remarks = rein.Remarks + \
                           angewandt.Remarks + \
                           nf1.Remarks + \
                           nf2.Remarks
-            if zusatz:
+            try:
+                zusatz = gatherComponent("zusatz")
                 all_remarks += zusatz.Remarks
+            except tSubjectError:
+                zusatz = False
+
             remarks = u"\\\\".join(tools.uniq(all_remarks))
 
             da = drs.getDiplomarbeit(
@@ -410,4 +424,30 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
                  "drs_map": self.DRSMap})
         else:
             return tPerDegreeReportHandler.getPDF(self, report_id, form_data)
+
+
+
+
+
+class tTeMaHDAltPerExamReportHandler(tPerExamReportHandler):
+    def getList(self):
+        return tPerExamReportHandler.getList(self) + [
+            ("zulassung", u"Zulassung zur Prüfung")
+            ]
+
+    def getPDF(self, report_id, form_data):
+        if report_id == "zulassung":
+            return tools.runLatexOnTemplate(
+                "temahdalt-pruefung.tex",
+                {"student": self.Student,
+                 "drs": self.DegreeRuleSet,
+                 "degree": self.Degree,
+                 "exam": self.Exam,
+                 "today": datetime.date.today(),
+                 "podatum": "03.06.1983",
+                 "popara": "\S 10 (2)",
+                 },
+                ["header.tex"])
+        else:
+            return tPerExamReportHandler.getPDF(self, report_id, form_data)
 

@@ -48,7 +48,7 @@ class tDegreeRuleSet:
         raise NotImplementedError
 
     def getPerExamReportHandler(self, student, degree, exam):
-        return reports.tPerDegreeReportHandler(
+        return reports.tPerExamReportHandler(
             student, degree, self, exam)
 
     def getPerDegreeReportHandler(self, student, degree):
@@ -109,6 +109,7 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             ("ueb-rein", u"Übung Reine Mathematik"),
             ("ueb-angewandt", u"Übung Angewandte Mathematik"),
             ("seminar", "Seminar"),
+            ("mrp", "Mikrorechnerpraktikum"),
             ("zusatz", "Zusatzfach"),
             ]
 
@@ -158,6 +159,10 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
         return round((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
 
     def getPerDegreeReportHandler(self, student, degree):
-        return reports.tTeMaHDAltReportHandler(
+        return reports.tTeMaHDAltPerDegreeReportHandler(
             student, degree, self)
+
+    def getPerExamReportHandler(self, student, degree, exam):
+        return reports.tTeMaHDAltPerExamReportHandler(
+            student, degree, self, exam)
 

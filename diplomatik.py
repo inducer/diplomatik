@@ -424,12 +424,27 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
             return "Pr&uuml;fungen f&uuml;r %s" % self.Student.ID
 
         if element == "header":
-            return expandHTMLTemplate(
+            result = expandHTMLTemplate(
                 "exams-header.html",
                 {"student": self.Student,
                  "degree_id": self.DegreeID,
                  "degree": self.Degree,
                  "rulesets": degree_rule_sets_map})
+
+            if situation == "edit" and db_key:
+                exam = self.Database[db_key]
+                drs = degree_rule_sets_map[self.Degree.DegreeRuleSet]
+                report_handler = drs.getPerExamReportHandler(
+                    self.Student, self.Degree, exam)
+                result = expandHTMLTemplate(
+                    "exam-reports.html",
+                    {"student": self.Student,
+                     "degree_id": self.DegreeID,
+                     "degree": self.Degree,
+                     "exam_id": db_key,
+                     "reports": report_handler.getList()})
+
+            return result
         return ""
 
 
@@ -455,6 +470,17 @@ class tMainAppServer(appserver.tAppServer):
                   "Unknown degree ID: %s" % degree_id
         
         return student, degree
+
+    def resolveExam(self, stud_id, degree_id, exam_id):
+        student, degree = self.resolveDegree(stud_id, degree_id)
+
+        try:
+            exam = degree.Exams[exam_id]
+        except KeyError:
+            raise appserver.tNotFoundError, \
+                  "Unknown exam ID: %s" % exam_id
+        
+        return student, degree, exam
 
     def pageHandlers(self):
         def handleStudentDatabase(request):
@@ -503,6 +529,24 @@ class tMainAppServer(appserver.tAppServer):
                 .getPage(request.changePath(
                 request.Path[id_match.end():]))
         
+        def handleGlobalReports(request):
+            return reports.tGlobalReportHandler(
+                store, degree_rule_sets_map)\
+                .handleRequest(request)
+
+        def handlePerStudentReports(request):
+            id_re = re.compile("^([a-zA-Z0-9]+)/")
+            id_match = id_re.match(request.Path)
+            if not id_match:
+                raise appserver.tNotFoundError, \
+                      "Invalid per-student report request %s" % request.Path
+            student = self.resolveStudent(id_match.group(1))
+              
+            return reports.tPerStudentReportHandler(
+                student, degree_rule_sets_map)\
+                .handleRequest(request.changePath(
+                request.Path[id_match.end():]))
+
         def handlePerDegreeReports(request):
             id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/")
             id_match = id_re.match(request.Path)
@@ -521,23 +565,24 @@ class tMainAppServer(appserver.tAppServer):
             return report_handler.handleRequest(request.changePath(
                 request.Path[id_match.end():]))
 
-        def handlePerStudentReports(request):
-            id_re = re.compile("^([a-zA-Z0-9]+)/")
+        def handlePerExamReports(request):
+            id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/")
             id_match = id_re.match(request.Path)
             if not id_match:
                 raise appserver.tNotFoundError, \
-                      "Invalid per-student report request %s" % request.Path
-            student = self.resolveStudent(id_match.group(1))
+                      "Invalid per-exam report request %s" % request.Path
+            
+            student, degree, exam = self.resolveExam(
+                id_match.group(1),
+                id_match.group(2),
+                id_match.group(3))
               
-            return reports.tPerStudentReportHandler(
-                student, degree_rule_sets_map)\
-                .handleRequest(request.changePath(
-                request.Path[id_match.end():]))
+            drs = degree_rule_sets_map[degree.DegreeRuleSet]
+            report_handler = drs.getPerExamReportHandler(
+                student, degree, exam)
 
-        def handleGlobalReports(request):
-            return reports.tGlobalReportHandler(
-                store, degree_rule_sets_map)\
-                .handleRequest(request)
+            return report_handler.handleRequest(request.changePath(
+                request.Path[id_match.end():]))
 
         def handleStaticContent(request):
             fn_re = re.compile(r"^[-_a-zA-Z0-9]+\.([-_a-zA-Z0-9]+)$")
@@ -587,9 +632,10 @@ class tMainAppServer(appserver.tAppServer):
             ("^/specsem/", handleSpecialSemesterDatabase),
             ("^/degrees/", handleDegreeDatabase),
             ("^/exams/", handleExamDatabase),
+            ("^/report/global/", handleGlobalReports),
             ("^/report/perstudent/", handlePerStudentReports),
             ("^/report/perdegree/", handlePerDegreeReports),
-            ("^/report/global/", handleGlobalReports),
+            ("^/report/perexam/", handlePerExamReports),
             ("^/static/", handleStaticContent),
             ("^/students$", redirectToStart),
             ("^/quit$", doQuit),

@@ -98,11 +98,16 @@ def alistLookup(alist, sought_key):
 
 
 def median(list):
+    if len(list) == 0:
+        raise ValueError, "median() of empty list"
+
+    print len(list)
     list.sort()
     l = len(list)
     l_2 = int(l / 2)
     if l % 2 == 0:
-        return (list[l_2] + list[l_2+1]) / 2
+        print "l_2:", l_2
+        return (list[l_2-1] + list[l_2]) / 2
     else:
         return list[l_2]
 
