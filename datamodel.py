@@ -157,6 +157,9 @@ class tDataStore:
     def values(self):
         return self.Students.values()
 
+    def iteritems(self):
+        return self.Students.iteritems()
+
     def __getitem__(self, key):
         return self.Students[key]
 
@@ -177,3 +180,16 @@ class tDataStore:
         outf = file(filename, "wb")
         yaml.dumpToFile(outf, student)
         outf.close()
+
+
+
+
+
+def firstEnrollment(student):
+    enrollment_dates = [deg.EnrolledDate
+                        for deg in student.Degrees.values()]
+    if len(enrollment_dates) == 0:
+        return None
+    else:
+        return min(enrollment_dates)
+

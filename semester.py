@@ -73,3 +73,11 @@ def countSemesters(start, stop):
 
 
 
+
+def getAcademicYear(date_or_sem):
+    if not isinstance(date_or_sem, tSemester):
+        sem = tSemester.fromDate(date_or_sem)
+    else:
+        sem = date_or_sem
+
+    return sem.Year

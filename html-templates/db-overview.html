@@ -7,13 +7,23 @@ $doctype
   <body>
     <h1>$handler.getCustomization("title", "overview", $none)</h1>
     $handler.getCustomization("header", "overview", $none)
+    #if ($h.len($filters) > 1)
+      <p>
+        Filter:
+        #foreach ($filter in $filters)
+          #set ($filter_name = $filter.__getitem__(0))
+          #set ($filter_desc = $filter.__getitem__(1))
+          <a href="$h.composeQuery("filter", $filter_name, $previous_query)">#if ($current_filter == $filter_name)[#end$filter_desc#if ($current_filter == $filter_name)]#end</a>
+        #end
+      </p>
+    #end
     <table>
       <tr>
         #foreach ($field in $fields)
           #if ($field.isShownInOverview())
             <th>
               #if ($field.isSortable())
-                <a href="sortBy$field.name()">$field.description()</a>
+                <a href="$h.composeQuery("sortby", $field.name(), $previous_query)">$field.description()</a>
               #else
                 $field.description()
               #end

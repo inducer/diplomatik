@@ -2,7 +2,6 @@ import re
 import sys
 import os
 import StringIO
-import urllib
 import BaseHTTPServer
 import codecs
 import datetime
@@ -474,8 +473,31 @@ class tDatabaseHandler:
     def getCustomization(self, element, situation, db_key):
         return ""
 
-    def handleOverviewPage(self, request, sort_by):
-        keys = self.Database.keys()
+    def getFilterList(self):
+        return [("none", "-")]
+
+    def enumerateFilteredKeys(self, filter_name):
+        if filter_name == "none":
+            return self.Database.keys()
+        else:
+            raise RuntimeError, "unknown filter: %s" % filter_name
+
+    def handleOverviewPage(self, request):
+        try:
+            current_filter = request.Query["filter"]
+            keys = self.enumerateFilteredKeys(
+                current_filter)
+        except KeyError:
+            current_filter = "none"
+            keys = self.Database.keys()
+
+        print keys
+
+        try:
+            sort_by = request.Query["sortby"]
+        except KeyError:
+            sort_by = self.defaultSortField()
+
         if sort_by is not None:
             sort_fields = [f for f in self.Fields
                            if f.name() == sort_by]
@@ -499,7 +521,10 @@ class tDatabaseHandler:
                                {"database": self.Database,
                                 "keys": keys,
                                 "handler": self,
-                                "fields": self.Fields}
+                                "fields": self.Fields,
+                                "previous_query": request.Query,
+                                "filters": self.getFilterList(),
+                                "current_filter": current_filter}
                                ))
 
     def generateEditPage(self, request, key, obj):
@@ -589,29 +614,16 @@ class tDatabaseHandler:
             return tHTTPResponse("", 302, {"Location": "../overview"})
 
     def getPage(self, request):
-        sort_re = re.compile("^sortBy([a-zA-Z0-9_]+)$")
-        sort_match = sort_re.search(request.Path)
         edit_re = re.compile("^edit/([a-zA-Z0-9]+)$")
         edit_match = edit_re.search(request.Path)
         delete_re = re.compile("^delete/([a-zA-Z0-9]+)$")
         delete_match = delete_re.search(request.Path)
 
         if request.Path == "":
-            if self.defaultSortField() is None:
-                return tHTTPResponse("", 302, 
-                                     {"Location": "overview"})
-            else:
-                return tHTTPResponse("", 302, 
-                                     {"Location": "sortBy%s" % self.defaultSortField()})
+            return tHTTPResponse("", 302, 
+                                 {"Location": "overview"})
         if request.Path == "overview":
-            if self.defaultSortField() is None:
-                return self.handleOverviewPage(request, None)
-            else:
-                return tHTTPResponse("", 302, 
-                                     {"Location": "sortBy%s" % self.defaultSortField()})
-        elif sort_match:
-            return self.handleOverviewPage(request, 
-                                           sort_match.group(1))
+            return self.handleOverviewPage(request)
         elif request.Path == "new/create":
             return self.handleNewPage(request)
         elif edit_match:
@@ -626,32 +638,13 @@ class tDatabaseHandler:
 
 
 
-def parseQuery(query):
-    result = {}
-    if query == "":
-        return result
-    for part in query.split("&"):
-        kvlist = part.split("=")
-        if len(kvlist) == 1:
-            key = kvlist[0]
-            value = None
-        else:
-            key = kvlist[0].replace("+", " ")
-            value = unicode(urllib.unquote(
-                kvlist[1].replace("+", " ")),
-                "utf-8")
-        result[key] = value
-    return result
-
-
-
-
 class tHTTPRequest:
-    def __init__(self, method, headers, form_input, 
+    def __init__(self, method, headers, form_input, query,
                  full_path, path = None):
         self.Method = method
         self.Headers = headers
         self.FormInput = form_input
+        self.Query = query
         self.FullPath = full_path
         if path is None:
             self.Path = full_path
@@ -663,6 +656,7 @@ class tHTTPRequest:
             self.Method,
             self.Headers,
             self.FormInput,
+            self.Query,
             self.FullPath,
             path)
 
@@ -694,7 +688,8 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
         request = tHTTPRequest(
             "GET",
             self.headers,
-            parseQuery(query),
+            {},
+            tools.parseQuery(query),
             path)
         self.handlePage(request)
 
@@ -703,12 +698,11 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
         post_data = self.rfile.read(clength)
         scheme, host, path, param, query, fragment = urlparse.urlparse(self.path)
 
-        form_input = parseQuery(post_data)
-        form_input.update(parseQuery(query))
         request = tHTTPRequest(
             "POST",
             self.headers,
-            form_input,
+            tools.parseQuery(post_data),
+            tools.parseQuery(query),
             self.path)
         self.handlePage(request)
 

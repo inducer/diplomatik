@@ -265,6 +265,44 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             return result
         return ""
 
+    def getFilterList(self):
+        lnf = [("lastname-"+value.LastName[0].lower(), 
+                value.LastName[0])
+                for key, value in self.Database.iteritems()
+                if value.LastName]
+        lnf.sort()
+        ayf = []
+        for key, value in self.Database.iteritems():
+            if datamodel.firstEnrollment(value) is None:
+                continue
+            ay = semester.getAcademicYear(datamodel.firstEnrollment(value))
+            ayf.append(("ay-%d" % ay, "Ak.J. %d" % ay))
+        ayf.sort()
+
+        return appserver.tDatabaseHandler.getFilterList(self) \
+               + lnf + ayf
+
+    def enumerateFilteredKeys(self, filter_name):
+        lastname_re = re.compile("^lastname-(.)$")
+        lastname_match = lastname_re.match(filter_name)
+        ay_re = re.compile("^ay-([1-9]+)$")
+        ay_match = ay_re.match(filter_name)
+
+        if lastname_match:
+            start_char = lastname_match.group(1).lower()
+            return [key for key, value in self.Database.iteritems()
+                    if value.LastName and value.LastName[0].lower() == start_char]
+        elif ay_match:
+            academic_year = int(ay_match.group(1))
+            return [key 
+                    for key, value in self.Database.iteritems()
+                    if datamodel.firstEnrollment(value) is not None
+                    if semester.getAcademicYear(datamodel.firstEnrollment(value)) == academic_year]
+        else:
+            return appserver.tDatabaseHandler.enumerateFilteredKeys(
+                self, filter_name)
+            
+
 
 
 

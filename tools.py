@@ -3,6 +3,7 @@ from __future__ import division
 import codecs
 import os
 import sets
+import urllib
 
 import airspeed
 
@@ -188,6 +189,9 @@ def _expandTemplate(dir, filename, globals_dict):
         def round(self, value, decimals):
             return round(value, decimals)
 
+        def composeQuery(self, key, value, previous):
+            return composeQuery({key: value}, previous)
+
     my_dict = globals_dict.copy()
     my_dict["h"] = _tTemplateHelper()
     my_dict["none"] = None
@@ -276,3 +280,41 @@ def runLatex(text, included_files):
         return pdf_string
     finally:
         os.chdir(previous_wd)
+
+
+
+
+def parseQuery(query):
+    result = {}
+    if query == "":
+        return result
+    for part in query.split("&"):
+        kvlist = part.split("=")
+        if len(kvlist) == 1:
+            key = kvlist[0]
+            value = None
+        else:
+            key = kvlist[0].replace("+", " ")
+            value = unicode(urllib.unquote(
+                kvlist[1].replace("+", " ")),
+                "utf-8")
+        result[key] = value
+    return result
+
+
+
+
+def composeQuery(items, previous_query = {}):
+    query_items = previous_query.copy()
+    query_items.update(items)
+    if query_items:
+        str_items = ["%s=%s" % (key,
+                                urllib.quote(value.encode("utf-8")))
+                     for key, value in query_items.iteritems()]
+        return "?"+ "&".join(str_items)
+    else:
+        return ""
+    
+
+
+
