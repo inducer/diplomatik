@@ -1,25 +1,24 @@
 --- !!datamodel.tStudent
 DateOfBirth:
     day: 17
-    month: 2
-    year: 2005
+    month: 5
+    year: 1978
 Degrees:
     '879223': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
-        EnrolledDate:
-            day: 1
-            month: 10
-            year: 1998
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 1998
         Exams: {}
         FinishedDate: ~
         MinorSubject: ''
         Remark: "Nach Australien ausgewandert"
-Email: ''
-FirstName: Albert
-Gender: m
-ID: '1233311'
-LastName: Karl
-MiddleName: ''
-Notes: nix
-PlaceOfBirth: ''
+Email: ""
+FirstName: "Albert"
+Gender: "m"
+ID: "1233311"
+LastName: "Karl"
+MiddleName: ""
+Notes: "nix"
+PlaceOfBirth: ""
 SpecialSemesters: {}

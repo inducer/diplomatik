@@ -60,24 +60,24 @@ class tSemesterField(appserver.tField):
         return self._getHTML(sem is None, str(v.Term), str(v.Year))
 
     def _getInput(self, form_input):
-        if self.NoneOK and form_input["%s-null" % self.Name] == "1":
+        if self.NoneOK and form_input["%s_null" % self.Name] == "1":
             return None
         else:
-            y = int(form_input["%s-y" % self.Name])
-            t = form_input["%s-t" % self.Name]
+            y = int(form_input["%s_y" % self.Name])
+            t = form_input["%s_t" % self.Name]
             return semester.tSemester(t, y)
 
     def getWidgetHTMLFromInput(self, key, object, form_input):
         return self._getHTML(
             self.NoneOK and form_input["%s-null" % self.Name] == "1",
-            str(form_input["%s-t" % self.Name]),
-            str(form_input["%s-y" % self.Name])
+            str(form_input["%s_t" % self.Name]),
+            str(form_input["%s_y" % self.Name])
             )
 
     def isValid(self, form_input):
         try:
-            int(form_input["%s-y" % self.Name])
-            form_input["%s-y" % self.Name] in ["s", "t"]
+            int(form_input["%s_y" % self.Name])
+            form_input["%s_y" % self.Name] in ["s", "t"]
             return True
         except ValueError:
             return False
@@ -424,15 +424,20 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                             degree.Exams,
                                             [
             appserver.tDateField("Date", "Datum"),
+            appserver.tChoiceField("Source", "Herkunft",
+                                   shown_in_overview = True,
+                                   choices = degree_rule_sets_map[degree.DegreeRuleSet].examSources()
+                                   ),
             appserver.tChoiceField("DegreeComponent", 
                                    "Komponente",
                                    shown_in_overview = True,
                                    choices = degree_rule_sets_map[degree.DegreeRuleSet].degreeComponents()
                                    ),
-            appserver.tChoiceField("Source", "Herkunft",
-                                   shown_in_overview = True,
-                                   choices = degree_rule_sets_map[degree.DegreeRuleSet].examSources()
-                                   ),
+            appserver.tFloatField("Credits", "SWS", 
+                                  shown_in_overview = True,
+                                  min = 0.0, 
+                                  max = None, 
+                                  none_ok = True),
             appserver.tStringField("Description", "Fach"),
             appserver.tStringField("SourceDescription", u"Herkunft (ausführlich)",
                                    shown_in_overview = False),
@@ -445,11 +450,6 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                   none_ok = True),
             appserver.tStringField("NativeResult", "Original-Ergebnis (falls abweichend)",
                                    shown_in_overview = False),
-            appserver.tFloatField("Credits", "SWS", 
-                                  shown_in_overview = True,
-                                  min = 0.0, 
-                                  max = None, 
-                                  none_ok = True),
             appserver.tStringField("CreditsPrintable", u"SWS (ausführlich)",
                                    shown_in_overview = False),
             appserver.tStringField("Remarks", "Bemerkung",
@@ -466,7 +466,7 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
         store.writeStudent(self.Student.ID)
 
     def defaultSortField(self):
-        return "Date";
+        return "DegreeComponent";
 
     def getCustomization(self, element, situation, db_key):
         if element == "title":

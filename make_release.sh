@@ -10,7 +10,7 @@ cp tex-templates/*.tex $DESTDIR/tex-templates
 mkdir $DESTDIR/html-templates
 cp html-templates/*.html $DESTDIR/html-templates
 mkdir $DESTDIR/static
-cp static/*.{html,css} $DESTDIR/static
+cp static/*.{html,css,png} $DESTDIR/static
 mkdir $DESTDIR/yaml
 cp yaml/*.py $DESTDIR/yaml
 mkdir -p $DESTDIR/example-data/data

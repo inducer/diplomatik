@@ -170,37 +170,38 @@ class tDateField(tField):
         d = today.day
 
         try:
-            y = int(form_input["%s-y" % self.Name])
+            y = int(form_input["%s_y" % self.Name])
         except ValueError:
             pass
         try:
-            m = int(form_input["%s-m" % self.Name])
+            m = int(form_input["%s_m" % self.Name])
         except ValueError:
             pass
         try:
-            d = int(form_input["%s-d" % self.Name])
+            d = int(form_input["%s_d" % self.Name])
         except ValueError:
             pass
+        is_none = self.NoneOK and form_input["%s_null" % self.Name] == "1"
 
-        return self._getHTML(form_input, str(y), m, d)
+        return self._getHTML(is_none, str(y), m, d)
 
     def isValid(self, form_input):
         try:
-            y = int(form_input["%s-y" % self.Name])
-            m = int(form_input["%s-m" % self.Name])
-            d = int(form_input["%s-d" % self.Name])
+            y = int(form_input["%s_y" % self.Name])
+            m = int(form_input["%s_m" % self.Name])
+            d = int(form_input["%s_d" % self.Name])
             datetime.date(y, m, d)
             return True
         except ValueError:
             return False
 
     def setValue(self, key, form_input, object):
-        if self.NoneOK and form_input["%s-null" % self.Name] == "1":
+        if self.NoneOK and form_input["%s_null" % self.Name] == "1":
             date = None
         else:
-            y = int(form_input["%s-y" % self.Name])
-            m = int(form_input["%s-m" % self.Name])
-            d = int(form_input["%s-d" % self.Name])
+            y = int(form_input["%s_y" % self.Name])
+            m = int(form_input["%s_m" % self.Name])
+            d = int(form_input["%s_d" % self.Name])
             date = datetime.date(y, m, d)
         setattr(object, self.Name, date)
 

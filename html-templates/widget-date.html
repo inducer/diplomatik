@@ -1,25 +1,32 @@
 #if ($none_ok)
-  <input type="radio" name="${name}-null" 
-    value="1" id="${name}-null-yes"
+  <input type="radio" name="${name}_null" 
+    value="1" id="${name}_null_yes"
     #if ($is_none)checked="checked"#end/>
-  <label for="${name}-null-yes">ungesetzt</label>
+  <label for="${name}_null_yes">ungesetzt</label>
 
-  <input type="radio" name="${name}-null" 
-    value="0" id="${name}-null-no"
+  <input type="radio" name="${name}_null" 
+    value="0" id="${name}_null_no"
     #if ($is_none)#else checked="checked"#end/>
-  <label for="${name}-null-no">gesetzt:</label>
+  <label for="${name}_null_no">gesetzt:</label>
 #end
 
-<select name="${name}-d">
+<select name="${name}_d">
   #foreach ($i in $dayrange)
     <option value="$i" #if ($i == $d)selected#end>$i</option>
   #end
 </select>.
 
-<select name="${name}-m">
+<select name="${name}_m">
   #foreach ($i in $monthrange)
     <option value="$i" #if ($i==$m)selected#end>$i</option>
   #end
 </select>.
 
-<input type="text" name="${name}-y" value="$h.escapeHTML($y)"/>
+<input type="text" name="${name}_y" value="$h.escapeHTML($y)"/>
+<img src="/static/number-flicker.png" usemap="\#map_${name}_y" border="0" align="top"/>
+<map name="map_${name}_y">
+<area shape="rect" coords="0,0,9,9" onClick="javascript:window.document.forms[0].${name}_y.value = parseInt(window.document.forms[0].${name}_y.value)+1" />
+<area shape="rect" coords="9,0,19,9" onClick="javascript:window.document.forms[0].${name}_y.value = parseInt(window.document.forms[0].${name}_y.value)+10" />
+<area shape="rect" coords="0,9,9,19" onClick="javascript:window.document.forms[0].${name}_y.value = parseInt(window.document.forms[0].${name}_y.value)-1" />
+<area shape="rect" coords="9,9,19,19" onClick="javascript:window.document.forms[0].${name}_y.value = parseInt(window.document.forms[0].${name}_y.value)-10" />
+</map>
