@@ -644,6 +644,11 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
             if path_match:
                 try:
                     response = handler(path[path_match.end():], form_input)
+                    print response
+                    if not isinstance(response, tHTTPResponse):
+                        raise TypeError, "Expected tHTTPResponse"
+                    if not isinstance(response.Content, str):
+                        raise TypeError, "Expected string-like content in response"
                 except tNotFoundError, e:
                     self.send_error(404, str(e))
                     return

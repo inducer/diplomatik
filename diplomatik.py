@@ -360,11 +360,11 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                    shown_in_overview = True,
                                    choices = degree_rule_sets_map[degree.DegreeRuleSet].degreeComponents()
                                    ),
-            appserver.tChoiceField("Source", "Ursprung",
+            appserver.tChoiceField("Source", "Herkunft",
                                    shown_in_overview = True,
                                    choices = degree_rule_sets_map[degree.DegreeRuleSet].examSources()
                                    ),
-            appserver.tStringField("SourceDescription", "Ursprung (ausf&uuml;hrlich)",
+            appserver.tStringField("SourceDescription", "Herkunft (ausf&uuml;hrlich)",
                                    shown_in_overview = False),
             appserver.tStringField("Examiner", "Pr&uuml;fer"),
             appserver.tCheckField("Counted", "Gewertet?"),
@@ -373,7 +373,7 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                   min = 1.0, 
                                   max = 6.0, 
                                   none_ok = True),
-            appserver.tStringField("NativeResult", "Original-Ergebnis",
+            appserver.tStringField("NativeResult", "Original-Ergebnis (falls abweichend)",
                                    shown_in_overview = False),
             appserver.tFloatField("Credits", "SWS", 
                                   shown_in_overview = True,
@@ -599,15 +599,15 @@ degree_rule_sets_map = {}
 for drs in degree_rule_sets:
     degree_rule_sets_map[drs.id()] = drs
 
-print "Loading student data...",
+print "Lade Studentendaten...",
 sys.stdout.flush()
 store = datamodel.tDataStore("example-data", 
                              degree_rule_sets)
-print "done"
+print "erledigt"
 httpd = BaseHTTPServer.HTTPServer(('', LISTEN_PORT), 
                                   tMainAppServer)
 
-print "Serving requests at http://localhost:%d." % LISTEN_PORT
+print "Horche nach Anfragen auf http://localhost:%d." % LISTEN_PORT
 quitflag = tools.tReference(False)
 while not quitflag.get():
     httpd.handle_request()

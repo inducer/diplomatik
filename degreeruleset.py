@@ -241,7 +241,8 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                  },
                 ["noten-hd.tex", "header.tex"])
         else:
-            tDegreeRuleSet.doPerDegreeReport(self, id, student, degree)
+            return tDegreeRuleSet.doPerDegreeReport(
+                self, id, student, degree)
 
 
 
@@ -261,4 +262,14 @@ def doPerStudentReport(id, student, drs_map):
                                          "drs_map": drs_map})
     else:
         return KeyError, id
+
+
+
+
+def globalReports():
+    return [
+        ("abschluesse", "Abschlüsse in Zeitraum"),
+        ("freischuesse", "Studienbegleitende Prüfungen"),
+        ("statistik", "Statistik"),
+        ]
 

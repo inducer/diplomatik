@@ -1,0 +1,11 @@
+--- !!datamodel.tStudent
+DateOfBirth: ~
+Degrees: {}
+Email: ""
+FirstName: "\u6bcf\u6708\u6709"
+ID: "324223"
+LastName: "\u826f\u597d\u7684\u793e\u4f1a"
+MiddleName: ""
+Notes: ""
+PlaceOfBirth: ""
+SpecialSemesters: {}

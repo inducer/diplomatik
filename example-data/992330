@@ -420,14 +420,14 @@ Notes: ''
 PlaceOfBirth: Konstanz
 SpecialSemesters:
     '67499': !!datamodel.tSpecialSemester
-        Remark: "2. Semester UNCC"
+        Remark: '2. Semester UNCC'
         Semester: !!semester.tSemester
-            Term: "s"
+            Term: s
             Year: 2002
         Type: "urlaub"
     '9061954': !!datamodel.tSpecialSemester
-        Remark: "1. Semester UNCC"
+        Remark: '1. Semester UNCC'
         Semester: !!semester.tSemester
-            Term: "w"
+            Term: w
             Year: 2001
         Type: "urlaub"
