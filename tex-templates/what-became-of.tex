@@ -1,0 +1,57 @@
+\input header
+\begin{document}
+\textbf{\Large Was ist aus dem Jahrgang $year geworden?}
+
+#macro (newline)##
+  #if ($had_hline)##
+    \\\\*
+  #else##
+    \\\\* \hline
+  #end##
+#end
+
+\begin{longtable}[l]{|l|l|l|}
+\hline
+\multicolumn{3}{|l|}{\textbf{Name}} \\\\*
+\hline
+\makebox[1cm][c]{} & \textbf{Ereignis} & \textbf{Datum} \\\\
+\hline
+\endhead
+#foreach ($student in $students)##
+  #set ($have_had_hline = 0)##
+  \multicolumn{3}{|l|}{$h.escapeTeX($student.FirstName) $h.escapeTeX($student.LastName)} 
+  #if ($student.Notes)
+    #newline()#set ($had_hline = 1)##
+    & $h.escapeTeX($student.Notes) & 
+  #end##
+  #foreach ($degree in $h.sortBy($student.Degrees.values(), "EnrolledDate"))##
+    #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))
+    #newline()#set ($had_hline = 1)##
+    & $h.escapeTeX($drs.description()) begonnen 
+    & $h.formatDate($degree.EnrolledDate) 
+    #if ($degree.FinishedDate)##
+      #newline()#set ($had_hline = 1)##
+      & $h.escapeTeX($drs.description()) abgeschlossen 
+      & $h.formatDate($degree.FinishedDate)
+    #else##
+      #newline()#set ($had_hline = 1)##
+      #if ($degree.Remark)##
+        & $h.escapeTeX($degree.Remark) &
+      #end##
+    #end##
+  #end##
+  \\\\ \hline
+#end##
+\end{longtable}
+\begin{tabular}{|l|c|}
+\hline
+#foreach ($drs_id in $h.sort($drs_map.keys()))##
+  $h.escapeTeX($drs_map.__getitem__($drs_id).description()) begonnen & $begun.setdefault($drs_id, 0) \\\\
+  $h.escapeTeX($drs_map.__getitem__($drs_id).description()) abgeschlossen & $finished.setdefault($drs_id, 0) \\\\
+#end##
+\hline
+Gesamtzahl Studenten & $h.len($students) \\\\
+\hline
+\hline
+\end{tabular}
+\end{document}
