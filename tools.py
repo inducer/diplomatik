@@ -177,7 +177,7 @@ def gradeToWords(grade):
 
 
 
-def formatDate(self, date):
+def formatDate(date):
     return date.strftime("%d.%m.%Y")
 
 
