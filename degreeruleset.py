@@ -62,7 +62,7 @@ class tDegreeRuleSet(object):
                     * exam.Credits
                     for exam in exams])
 
-        return grade_sum / credits
+        return tools.roundGrade(grade_sum / credits)
 
     def getOverallGrade(self, student, degree):
         raise NotImplementedError

@@ -57,7 +57,7 @@ class tSemesterField(appserver.tField):
     def getWidgetHTML(self, key, object):
         sem = self.getValue(object) 
         v = sem or semester.tSemester().now()
-        return self._getHTML(sem is None, v.Term, v.Year)
+        return self._getHTML(sem is None, str(v.Term), str(v.Year))
 
     def _getInput(self, form_input):
         if self.NoneOK and form_input["%s-null" % self.Name] == "1":
@@ -70,8 +70,8 @@ class tSemesterField(appserver.tField):
     def getWidgetHTMLFromInput(self, key, object, form_input):
         return self._getHTML(
             self.NoneOK and form_input["%s-null" % self.Name] == "1",
-            form_input["%s-t" % self.Name],
-            form_input["%s-y" % self.Name]
+            str(form_input["%s-t" % self.Name]),
+            str(form_input["%s-y" % self.Name])
             )
 
     def isValid(self, form_input):
@@ -434,11 +434,11 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                    choices = degree_rule_sets_map[degree.DegreeRuleSet].examSources()
                                    ),
             appserver.tStringField("Description", "Fach"),
-            appserver.tStringField("SourceDescription", "Herkunft (ausf&uuml;hrlich)",
+            appserver.tStringField("SourceDescription", u"Herkunft (ausführlich)",
                                    shown_in_overview = False),
-            appserver.tStringField("Examiner", "Pr&uuml;fer"),
+            appserver.tStringField("Examiner", u"Prüfer"),
             appserver.tCheckField("Counted", "Gewertet?"),
-            appserver.tFloatField("CountedResult", "Gez&auml;hltes Ergebnis",
+            appserver.tFloatField("CountedResult", u"Gezähltes Ergebnis",
                                   shown_in_overview = True,
                                   min = 1.0, 
                                   max = 6.0, 
@@ -450,7 +450,7 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                   min = 0.0, 
                                   max = None, 
                                   none_ok = True),
-            appserver.tStringField("CreditsPrintable", "SWS (ausf&uuml;hrlich)",
+            appserver.tStringField("CreditsPrintable", u"SWS (ausführlich)",
                                    shown_in_overview = False),
             appserver.tStringField("Remarks", "Bemerkung",
                                    shown_in_overview = False),

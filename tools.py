@@ -5,6 +5,7 @@ import stat
 import os
 import sets
 import urllib
+import math
 
 import airspeed
 
@@ -61,6 +62,13 @@ def escapeHTML(value):
     value = value.replace(">", "&gt;")
     value = value.replace("\"", "&quot;")
     return value
+
+
+
+
+def roundGrade(grade, places = 1):
+    factor = 10**places
+    return math.floor(float(grade*factor))/factor
 
 
 
