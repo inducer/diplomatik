@@ -131,6 +131,9 @@ class tDateField(tField):
     def isMandatory(self):
         return not self.NoneOK
 
+    def isSortable(self):
+        return not self.NoneOK
+
     def getDisplayHTML(self, object):
         date = self.getValue(object)
         if date is None:
