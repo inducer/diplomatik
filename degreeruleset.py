@@ -177,9 +177,6 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                if degree.DegreeRuleSet == "tema-vd-alt"
                if degree.FinishedDate]
         
-        for degree in student.Degrees.values():
-            print student.ID, degree.DegreeRuleSet
-
         if len(vds) != 1:
             raise tSubjectError, \
                   "Student %s: Anzahl beendeter TeMa-Vordiplome ist ungleich eins" \
@@ -208,7 +205,7 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
         nf1 = self.getComponentAverageGrade(student, degree, "ing")
         nf2 = self.getComponentAverageGrade(student, degree, "inf")
         da = self.getDiplomarbeit(student, degree)
-        return round((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
+        return tools.roundGrade((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
 
     def getPerDegreeReportHandler(self, student, degree):
         return reports.tTeMaHDAltPerDegreeReportHandler(

@@ -6,10 +6,9 @@ DateOfBirth:
 Degrees:
     '4836878': !!datamodel.tDegree
         DegreeRuleSet: tema-hd-alt
-        EnrolledDate:
-            day: 7
-            month: 2
-            year: 2002
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 2001
         Exams:
             '2053161': !!datamodel.tExam
                 Counted: True
@@ -45,39 +44,39 @@ Degrees:
                 SourceDescription: ''
             '5387816': !!datamodel.tExam
                 Counted: True
-                CountedResult: 1.7
+                CountedResult: 2.0
                 Credits: 4.0
-                CreditsPrintable: ''
+                CreditsPrintable: ""
                 Date:
                     day: 13
                     month: 2
                     year: 2005
-                DegreeComponent: angewandt
-                Description: Stochastik II
-                Examiner: Henze
-                NativeResult: ''
-                Remarks: ''
+                DegreeComponent: "angewandt"
+                Description: "Stochastik II"
+                Examiner: "Henze"
+                NativeResult: ""
+                Remarks: ""
                 Source: "uni"
-                SourceDescription: ''
+                SourceDescription: ""
             '554919': !!datamodel.tExam
                 Counted: True
-                CountedResult: 1.7
+                CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: ''
+                CreditsPrintable: ""
                 Date:
                     day: 13
                     month: 2
                     year: 2005
-                DegreeComponent: angewandt
-                Description: Markovketten
-                Examiner: Henze
-                NativeResult: ''
-                Remarks: ''
+                DegreeComponent: "angewandt"
+                Description: "Markovketten"
+                Examiner: "Henze"
+                NativeResult: ""
+                Remarks: ""
                 Source: "uni"
-                SourceDescription: ''
+                SourceDescription: ""
             '5976136': !!datamodel.tExam
                 Counted: True
-                CountedResult: 1.3
+                CountedResult: 1.7
                 Credits: 4.0
                 CreditsPrintable: '3+1'
                 Date:
@@ -131,10 +130,9 @@ Degrees:
         Remark: ''
     '7438291': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
-        EnrolledDate:
-            day: 7
-            month: 2
-            year: 2000
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 1999
         Exams: {}
         FinishedDate:
             day: 7

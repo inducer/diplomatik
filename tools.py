@@ -68,7 +68,14 @@ def escapeHTML(value):
 
 def roundGrade(grade, places = 1):
     factor = 10**places
-    return math.floor(float(grade*factor))/factor
+    multiplied = float(grade*factor)
+    floor = math.floor(multiplied)
+    if multiplied - floor > 0.999:
+        print "ROUND", grade,(floor+1) / factor
+        return (floor+1) / factor
+    else:
+        print "ROUND", grade,(floor) / factor
+        return floor / factor
 
 
 
@@ -99,12 +106,14 @@ def uniq(list):
 def unifyGrade(grade):
     base_grade = round(grade)
     diff = grade - base_grade
-    if diff < -1./6:
-        return base_grade - 1./3
-    elif diff < 1./6:
+    if diff < -0.49:
+        return base_grade - 0.7
+    elif diff < -0.15:
+        return base_grade - 0.3
+    elif diff < 0.15:
         return base_grade
     else:
-        return base_grade + 1./3
+        return base_grade + 0.3
 
 
 
