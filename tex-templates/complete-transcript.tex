@@ -23,7 +23,7 @@
 \vskip 0.5cm%
 #parse ("transcript-header.tex")
 \vskip 0.5cm%
-#foreach ($degree in $h.sortBy($student.Degrees.values(), "EnrolledDate"))
+#foreach ($degree in $h.sortBy($student.Degrees.values(), "EnrolledSemester"))
   #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))
   #parse ("transcript-degree.tex")
 #end

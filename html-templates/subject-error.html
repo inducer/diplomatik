@@ -10,7 +10,7 @@ $doctype
     <p>Bei der Behandlung Ihrer Anfrage ist ein
     sachlicher Fehler aufgetreten:</p>
 
-    <pre>$error_text</pre>
+    <pre>$h.escapeHTML($error_text)</pre>
 
     <p>Anhand dieser Fehlermeldung sollten Sie in der
     Lage sein, den fehlerverursachenden Umstand zu
@@ -20,6 +20,6 @@ $doctype
     mit den folgenden Informationen an den
     <a href="mailto:mathem@tiker.net">Programmautor</a>:</p>
 
-    <pre>$traceback<pre>
+    <pre>$h.escapeHTML($traceback)<pre>
   </body>
 </html>

@@ -15,7 +15,7 @@ $doctype
         #foreach ($filter in $filters)
           #set ($filter_name = $filter.__getitem__(0))
           #set ($filter_desc = $filter.__getitem__(1))
-          <a href="$h.composeQuery("filter", $filter_name, $previous_query)">#if ($current_filter == $filter_name)[#end$filter_desc#if ($current_filter == $filter_name)]#end</a>
+          <a href="$h.composeQuery("filter", $filter_name, $previous_query)">#if ($current_filter == $filter_name)[#end$h.escapeHTML($filter_desc)#if ($current_filter == $filter_name)]#end</a>
           #set ($i = $h.add($i, 1))
           #if ($i != $len)&middot;#end
         #end
@@ -27,9 +27,9 @@ $doctype
           #if ($field.isShownInOverview())
             <th>
               #if ($field.isSortable())
-                <a href="$h.composeQuery("sortby", $field.name(), $previous_query)">$field.description()</a>
+                <a href="$h.composeQuery("sortby", $field.name(), $previous_query)">$h.escapeHTML($field.description())</a>
               #else
-                $field.description()
+                $h.escapeHTML($field.description())
               #end
             </th>
           #end

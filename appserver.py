@@ -95,18 +95,18 @@ class tStringField(tField):
                self.ValidationRE.match("") is None
 
     def getDisplayHTML(self, object):
-        return self.getValue(object)
+        return tools.escapeHTML(self.getValue(object))
 
     def getWidgetHTML(self, key, object):
         value = self.getValue(object)
         if value is None:
             value = ""
-        return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % (
-            self.Name, value.replace('"', "&quot;"))
+        return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % \
+               (self.Name, tools.escapeHTML(value))
 
     def getWidgetHTMLFromInput(self, key, object, form_input):
         return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % (
-            self.Name, form_input[self.Name].replace('"', "&quot;"))
+            self.Name, tools.escapeHTML(form_input[self.Name]))
 
     def isValid(self, form_input):
         if self.ValidationRE is not None:
@@ -159,7 +159,7 @@ class tDateField(tField):
         if date is None:
             date = datetime.date.today()
         return self._getHTML(is_none,
-                             date.year,
+                             str(date.year),
                              date.month,
                              date.day)
 
@@ -182,7 +182,7 @@ class tDateField(tField):
         except ValueError:
             pass
 
-        return self._getHTML(form_input, y, m, d)
+        return self._getHTML(form_input, str(y), m, d)
 
     def isValid(self, form_input):
         try:
@@ -246,7 +246,7 @@ class tChoiceField(tField):
         if value is None:
             return "-/-"
         else:
-            return self.Choices[value]
+            return tools.escapeHTML(self.Choices[value])
 
     def _getHTML(self, choice):
         values = self.Choices.keys()
@@ -266,7 +266,7 @@ class tChoiceField(tField):
                 sel_index = tools.find(values, choice)
 
         return expandHTMLTemplate(
-            "choice.html",
+            "widget-choice.html",
             {"name": self.Name,
              "indices": range(len(values)),
              "values": values,
@@ -736,7 +736,7 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
                         tools.expandHTMLTemplate(
                         "subject-error.html",
                         {"traceback": outbuf.getvalue(),
-                         "error_text": str(e)}),
+                         "error_text": unicode(e)}),
                         500)
                 except:
                     self.send_response(500)
@@ -749,7 +749,7 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
                               "request. The following is an error dump that " + \
                               "you may print to help localize the problem.</p>" + \
                               "<pre>%s</pre></body>" \
-                              % outbuf.getvalue()
+                              % tools.escapeHTML(outbuf.getvalue())
                     self.wfile.write(errtext)
                     return
 

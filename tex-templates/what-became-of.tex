@@ -24,11 +24,11 @@
     #newline()#set ($had_hline = 1)##
     & $h.escapeTeX($student.Notes) & 
   #end##
-  #foreach ($degree in $h.sortBy($student.Degrees.values(), "EnrolledDate"))##
+  #foreach ($degree in $h.sortBy($student.Degrees.values(), "EnrolledSemester"))##
     #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))
     #newline()#set ($had_hline = 1)##
     & $h.escapeTeX($drs.description()) begonnen 
-    & $h.formatDate($degree.EnrolledDate) 
+    & $h.formatDate($degree.EnrolledSemester.startDate())
     #if ($degree.FinishedDate)##
       #newline()#set ($had_hline = 1)##
       & $h.escapeTeX($drs.description()) abgeschlossen 

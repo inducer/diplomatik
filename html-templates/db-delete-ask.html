@@ -11,7 +11,7 @@ $doctype
     <table border="1">
       #foreach ($field in $fields)
         <tr>
-          <td>$field.description()</td>
+          <td>$h.escapeHTML($field.description())</td>
           <td>$field.getDisplayHTML($obj)</td>
         </tr>
       #end

@@ -177,6 +177,9 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                if degree.DegreeRuleSet == "tema-vd-alt"
                if degree.FinishedDate]
         
+        for degree in student.Degrees.values():
+            print student.ID, degree.DegreeRuleSet
+
         if len(vds) != 1:
             raise tSubjectError, \
                   "Student %s: Anzahl beendeter TeMa-Vordiplome ist ungleich eins" \

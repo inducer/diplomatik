@@ -1,7 +1,7 @@
 {\Large\bfseries $drs.description()}
 
 \begin{tabular}{lp{10cm}}
-Begonnen & $h.formatDate($degree.EnrolledDate) \\\\
+Begonnen & $degree.EnrolledSemester.__str__() \\\\
 Abgeschlossen & 
 #if ($degree.FinishedDate) $h.formatDate($degree.FinishedDate) #else \textit{noch nicht} #end \\\\
 Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\

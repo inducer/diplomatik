@@ -5,10 +5,10 @@
       <th>Begonnen</th>
       <th>Abgeschlossen</th>
     </tr>
-    #foreach ($degree in $h.sortBy($degrees, "EnrolledDate"))
+    #foreach ($degree in $h.sortBy($degrees, "EnrolledSemester"))
       <tr>
-        <td>$rulesets.__getitem__($degree.DegreeRuleSet).description()</td>
-        <td>$h.formatDate($degree.EnrolledDate)</td>
+        <td>$h.escapeHTML($rulesets.__getitem__($degree.DegreeRuleSet).description())</td>
+        <td>$degree.EnrolledSemester.__str__()</td>
         <td>
           #if ($degree.FinishedDate)
             $h.formatDate($degree.FinishedDate)

@@ -9,7 +9,7 @@
   &gt;
   <a href="/degrees/$student.ID/edit/$degree_id">
     $rulesets.__getitem__($degree.DegreeRuleSet).description(),
-    $degree.EnrolledDate.isoformat()
+    $degree.EnrolledSemester.__str__()
   </a>
   &gt;
   Pr&uuml;fungen

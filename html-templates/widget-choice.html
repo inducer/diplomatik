@@ -1,6 +1,6 @@
 <select name="$name">
   #foreach ($index in $indices)
     <option value="$values.__getitem__($index)"
-      #if ($sel_index == $index)selected#end>$descriptions.__getitem__($index)</option>
+      #if ($sel_index == $index)selected#end>$h.escapeHTML($descriptions.__getitem__($index))</option>
   #end
 </select>

@@ -59,7 +59,7 @@ class tExam:
 
 class tDegree:
     def __init__(self):
-        self.EnrolledDate = None 
+        self.EnrolledSemester = None # semester
         self.FinishedDate = None
         self.MinorSubject = ""
         self.Exams = {}
@@ -75,7 +75,6 @@ class tDegree:
 
     def to_yaml(self):
         result = self.__dict__.copy()
-        result["EnrolledDate"] = dateToYaml(self.EnrolledDate)
         result["FinishedDate"] = dateToYaml(self.FinishedDate)
         return (result, "!!datamodel.tDegree")
 
@@ -83,8 +82,13 @@ class tDegree:
         if "MinorSubject" not in new_dict:
             self.MinorSubject = ""
 
+        if "EnrolledDate" in new_dict:
+            # compatibility: convert date to semester
+            edate = dateFromYaml(new_dict["EnrolledDate"])
+            del new_dict["EnrolledDate"]
+            self.EnrolledSemester = semester.tSemester.fromDate(edate)
+
         self.__dict__.update(new_dict)
-        self.EnrolledDate = dateFromYaml(self.EnrolledDate)
         self.FinishedDate = dateFromYaml(self.FinishedDate)
         return self
 
@@ -144,7 +148,15 @@ class tStudent:
 
 
 def firstEnrollment(student):
-    enrollment_dates = [deg.EnrolledDate
+    enrollment_dates = [deg.EnrolledSemester.startDate()
+                        for deg in student.Degrees.values()]
+    if len(enrollment_dates) == 0:
+        return None
+    else:
+        return min(enrollment_dates)
+
+def firstEnrollmentSemester(student):
+    enrollment_dates = [deg.EnrolledSemester
                         for deg in student.Degrees.values()]
     if len(enrollment_dates) == 0:
         return None
@@ -169,12 +181,12 @@ def academicYearOfStart(student):
         return semester.getAcademicYear(fe)
 
 def countStudySemesters(student):
-    fe = firstEnrollment(student)
     le = lastEnrollment(student)
 
-    if not (fe and le):
+    fe_sem = firstEnrollmentSemester(student)
+    le_sem = le and semester.tSemester.fromDate(le)
+
+    if not (fe_sem and le_sem):
         return 0
 
-    fe_sem = semester.tSemester.fromDate(fe)
-    le_sem = semester.tSemester.fromDate(le)
     return semester.countSemesters(fe_sem, le_sem)

@@ -10,12 +10,23 @@ import airspeed
 
 
 
+def stringifySensibly(s):
+    if not isinstance(s, basestring):
+        return str(s)
+    else:
+        return s
+
+
+
+
 class tSubjectError(Exception):
     def __init__(self, value):
         Exception.__init__(self)
         self.Value = value
     def __str__(self):
         return str(self.Value)
+    def __unicode__(self):
+        return unicode(self.Value)
 
 
 
@@ -39,6 +50,16 @@ def escapeTeX(value):
     value = value.replace("~", "\\~")
     value = value.replace("$", "\\$")
     value = value.replace("--BS-ESCAPE--", "$\\backslash$")
+    return value
+
+
+
+
+def escapeHTML(value):
+    value = value.replace("&", "&amp;")
+    value = value.replace("<", "&lt;")
+    value = value.replace(">", "&gt;")
+    value = value.replace("\"", "&quot;")
     return value
 
 
@@ -203,6 +224,9 @@ def _expandTemplate(dir, filename, globals_dict):
 
         def escapeTeX(self, value):
             return escapeTeX(value)
+
+        def escapeHTML(self, value):
+            return escapeHTML(value)
 
         def dump(self, value):
             print "*** DEBUG DUMP", repr(value)

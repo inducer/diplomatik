@@ -1,5 +1,5 @@
 \input header
-\def\DATUM{$h.formatDate($degree.EnrolledDate)}
+\def\DATUM{$h.formatDate($degree.EnrolledSemester.startDate())}
 \def\NAME{$h.escapeTeX($student.LastName)}
 \def\VORNAME{$h.escapeTeX($student.FirstName)}
 #if ($student.DateOfBirth)

@@ -160,8 +160,7 @@ class tGlobalReportHandler(tReportHandler):
                         gesamt = drs.getOverallGrade(student, degree)
 
                         sem = semester.countSemesters(
-                            semester.tSemester.fromDate(
-                            drs.getVordiplom(student).EnrolledDate),
+                            drs.getVordiplom(student).EnrolledSemester,
                             semester.tSemester.fromDate(
                             degree.FinishedDate))
 

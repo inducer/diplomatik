@@ -214,7 +214,7 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
                                  none_ok = True),
             appserver.tStringField("PlaceOfBirth", "Geburtsort",
                                    shown_in_overview = False),
-            tDegreesField("Degrees", "Abschl&uuml;sse"),
+            tDegreesField("Degrees", u"Abschlüsse"),
             tSpecialSemestersField("SpecialSemesters", "Spezielle Semester"),
             appserver.tStringField("Email", "Email-Adresse",
                                    shown_in_overview = False),
@@ -366,12 +366,12 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
             shown_in_overview = True,
             choices = tools.tAssociativeList([(drs.id(), drs.description()) 
                                               for drs in degree_rule_sets]))),
-            appserver.tDateField("EnrolledDate", "Begonnen"),
+            tSemesterField("EnrolledSemester", "Beginn Studienabschnitt"),
             appserver.tDateField("FinishedDate", "Abgeschlossen", 
                                  none_ok = True),
             appserver.tStringField("MinorSubject", "1. Nebenfach",
                                    shown_in_overview = False),
-            tExamsField("Exams", "Pr&uuml;fungen", student),
+            tExamsField("Exams", u"Prüfungen", student),
             appserver.tStringField("Remark", "Bemerkungen",
                                    shown_in_overview = False),
             ])
@@ -386,7 +386,7 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
         store.writeStudent(self.Student.ID)
 
     def defaultSortField(self):
-        return "EnrolledDate";
+        return "EnrolledSemester";
 
     def getCustomization(self, element, situation, db_key):
         if element == "title":

@@ -39,14 +39,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Daten Abschluesse
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#foreach ($deg_loop in $h.eletterate($h.sortBy($student.Degrees.values(), "EnrolledDate"), 3, $none))##
+#foreach ($deg_loop in $h.eletterate($h.sortBy($student.Degrees.values(), "EnrolledSemester"), 3, $none))##
   #set ($dletter = $deg_loop.Letter)##
   #if ($deg_loop.Active)##
     #set ($degree = $deg_loop.Data)##
     #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))##
 
     \def\ABSCH${dletter}GUELTIG{1}
-    \def\ABSCH${dletter}BEGINN{$h.formatDate($degree.EnrolledDate)}
+    \def\ABSCH${dletter}BEGINN{$degree.EnrolledSemester.__str__()}
     #if ($degree.FinishedDate)
       \def\ABSCH${dletter}ENDE{$h.formatDate($degree.FinishedDate)}##
     #else

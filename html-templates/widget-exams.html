@@ -11,9 +11,9 @@
     #foreach ($exam in $exams)
       <tr>
         <td>$h.formatDate($exam.Date)</td>
-        <td>$components.__getitem__($exam.DegreeComponent)</td>
-        <td>$exam.Description</td>
-        <td>$exam.Examiner</td>
+        <td>$h.escapeHTML($components.__getitem__($exam.DegreeComponent))</td>
+        <td>$h.escapeHTML($exam.Description)</td>
+        <td>$h.escapeHTML($exam.Examiner)</td>
         <td>
           #if ($exam.CountedResult)
             $exam.CountedResult

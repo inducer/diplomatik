@@ -6,10 +6,9 @@ DateOfBirth:
 Degrees:
     '3271585': !!datamodel.tDegree
         DegreeRuleSet: tema-hd-alt
-        EnrolledDate:
-            day: 17
-            month: 10
-            year: 2000
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 2000
         Exams:
             '1106379': !!datamodel.tExam
                 Counted: True
@@ -371,10 +370,9 @@ Degrees:
         Remark: ''
     '4269868': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
-        EnrolledDate:
-            day: 1
-            month: 10
-            year: 1998
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 1998
         Exams:
             '195525': !!datamodel.tExam
                 Counted: True
@@ -414,14 +412,14 @@ Degrees:
             year: 2000
         MinorSubject: ETECHNIK
         Remark: ''
-Email: mathem@tiker.net
-FirstName: Andreas
-Gender: m
-ID: '992330'
+Email: "mathem@tiker.net"
+FirstName: "Andreas"
+Gender: "m"
+ID: "992330"
 LastName: "Kl\xf6ckner"
 MiddleName: "Paul Eberhard"
-Notes: ''
-PlaceOfBirth: Konstanz
+Notes: ""
+PlaceOfBirth: "Konstanz"
 SpecialSemesters:
     '67499': !!datamodel.tSpecialSemester
         Remark: '2. Semester UNCC'
