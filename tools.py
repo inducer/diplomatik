@@ -177,13 +177,20 @@ def gradeToWords(grade):
 
 
 
+def formatDate(self, date):
+    return date.strftime("%d.%m.%Y")
+
+
+
+
 def _expandTemplate(dir, filename, globals_dict):
     class _tTemplateHelper:
         """This class provides a namespace for helpers in
         Airspeed templating code.
         """
+
         def formatDate(self, date):
-            return date.strftime("%d.%m.%Y")
+            return formatDate(date)
 
         def formatNumber(self, format, number):
             return format % number

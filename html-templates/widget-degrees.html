@@ -8,10 +8,10 @@
     #foreach ($degree in $h.sortBy($degrees, "EnrolledDate"))
       <tr>
         <td>$rulesets.__getitem__($degree.DegreeRuleSet).description()</td>
-        <td>$degree.EnrolledDate.isoformat()</td>
+        <td>$h.formatDate($degree.EnrolledDate)</td>
         <td>
           #if ($degree.FinishedDate)
-            $degree.FinishedDate.isoformat()
+            $h.formatDate($degree.FinishedDate)
           #else
             -/-
           #end

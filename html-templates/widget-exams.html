@@ -10,7 +10,7 @@
     </tr>
     #foreach ($exam in $exams)
       <tr>
-        <td>$exam.Date.isoformat()</td>
+        <td>$h.formatDate($exam.Date)</td>
         <td>$components.__getitem__($exam.DegreeComponent)</td>
         <td>$exam.Description</td>
         <td>$exam.Examiner</td>

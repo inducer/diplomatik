@@ -139,7 +139,7 @@ class tDateField(tField):
         if date is None:
             return "-/-"
         else:
-            return date.isoformat()
+            return tools.formatDate(date)
 
     def _getHTML(self, is_none, y, m, d):
         return expandHTMLTemplate("widget-date.html",
