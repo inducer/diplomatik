@@ -481,7 +481,7 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                 drs = degree_rule_sets_map[self.Degree.DegreeRuleSet]
                 report_handler = drs.getPerExamReportHandler(
                     self.Student, self.Degree, exam)
-                result = expandHTMLTemplate(
+                result += expandHTMLTemplate(
                     "exam-reports.html",
                     {"student": self.Student,
                      "degree_id": self.DegreeID,

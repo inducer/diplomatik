@@ -307,7 +307,8 @@ class tPerExamReportHandler(tReportHandler):
 class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
     def getList(self):
         return tPerDegreeReportHandler.getList(self) + [
-            ("hdfinal", u"Ausfertigung für die Prüfungsabteilung...")
+            ("hdfinal", u"Ausfertigung für die Prüfungsabteilung..."),
+            ("zulassung-leer", u"Zulassung zur Prüfung (blanko)"),
             ]
 
     def getPDF(self, report_id, form_data):
@@ -422,6 +423,17 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                 "complete-transcript.tex",
                 {"student": self.Student,
                  "drs_map": self.DRSMap})
+        elif report_id == "zulassung-leer":
+            return tools.runLatexOnTemplate(
+                "temahdalt-pruefung-leer.tex",
+                {"student": self.Student,
+                 "degree": self.Degree,
+                 "today": datetime.date.today(),
+                 "podatum": "03.06.1983",
+                 "popara": "\S 10 (2)",
+                 },
+                ["header.tex"])
+
         else:
             return tPerDegreeReportHandler.getPDF(self, report_id, form_data)
 
