@@ -3,6 +3,7 @@ import re
 import sys
 
 import tools
+import semester
 import degreeruleset
 import datamodel
 import appserver
@@ -10,11 +11,70 @@ import appserver
 from tools import expandHTMLTemplate
 
 __VERSION__ = "0.90"
+LISTEN_PORT = 8000
 
 
 
 
 # Custom fields implementations ----------------------------
+class tSemesterField(appserver.tField):
+    def __init__(self, name, description,
+                 shown_in_overview = True,
+                 none_ok = False):
+        appserver.tField.__init__(self, name, description,
+                        shown_in_overview)
+        self.NoneOK = none_ok
+
+    def getDisplayHTML(self, object):
+        sem = self.getValue(object)
+        if sem is None:
+            return "-/-"
+        else:
+            return str(sem)
+
+    def _getHTML(self, is_none, term, year):
+        return expandHTMLTemplate("widget-semester.html",
+                                  {"name": self.Name,
+                                   "term": term,
+                                   "year": year,
+                                   "none_ok": self.NoneOK,
+                                   "is_none": is_none,
+                                   })
+
+    def getWidgetHTML(self, key, object):
+        sem = self.getValue(object) 
+        v = sem or semester.tSemester().now()
+        return self._getHTML(sem is None, v.Term, v.Year)
+
+    def _getInput(self, form_input):
+        if self.NoneOK and form_input["%s-null" % self.Name] == "1":
+            return None
+        else:
+            y = int(form_input["%s-y" % self.Name])
+            t = form_input["%s-t" % self.Name]
+            return semester.tSemester(t, y)
+
+    def getWidgetHTMLFromInput(self, key, object, form_input):
+        return self._getHTML(
+            self.NoneOK and form_input["%s-null" % self.Name] == "1",
+            form_input["%s-t" % self.Name],
+            form_input["%s-y" % self.Name]
+            )
+
+    def isValid(self, form_input):
+        try:
+            int(form_input["%s-y" % self.Name])
+            form_input["%s-y" % self.Name] in ["s", "t"]
+            return True
+        except ValueError:
+            return False
+
+    def setValue(self, key, form_input, object):
+        setattr(object, self.Name, 
+                self._getInput(form_input))
+
+
+
 class tDegreesField(appserver.tDisplayField):
     def __init__(self, name, description):
         appserver.tDisplayField.__init__(self, name, description)
@@ -31,7 +91,7 @@ class tDegreesField(appserver.tDisplayField):
 
     def getWidgetHTML(self, key, object):
         value = self.getValue(object)
-        return appserver.expandHTMLTemplate("degrees-widget.html",
+        return appserver.expandHTMLTemplate("widget-degrees.html",
                                             {"student": object,
                                              "degrees": value.values(),
                                              "rulesets": degree_rule_sets_map})
@@ -70,12 +130,46 @@ class tExamsField(appserver.tDisplayField):
         else:
             components = dict(degree_rule_sets_map[object.DegreeRuleSet].degreeComponents())
 
-        return appserver.expandHTMLTemplate("exams-widget.html",
+        return appserver.expandHTMLTemplate("widget-exams.html",
                                             {"student": self.Student,
                                              "degree": object,
                                              "degree_id": key,
                                              "exams": exams,
                                              "components": components
+                                             })
+
+    def getWidgetHTMLFromInput(self, key, object, form_input):
+        return self.getWidgetHTML(key, object)
+
+
+
+
+class tSpecialSemestersField(appserver.tDisplayField):
+    def __init__(self, name, description):
+        appserver.tDisplayField.__init__(self, name, description,
+                                         shown_in_overview = False)
+
+    def isSortable(self):
+        return False
+
+    def getDisplayHTML(self, object):
+        value = self.getValue(object)
+        return ", ".join([
+            str(sem.Semester)
+            for sem in value.itervalues()
+            ])
+
+    def getWidgetHTML(self, key, object):
+        value = self.getValue(object)
+
+        sems = value.values()
+        def cmp_date_func(a, b):
+            return cmp(a.Semester, b.Semester)
+        sems.sort(cmp_date_func)
+
+        return appserver.expandHTMLTemplate("widget-specsem.html",
+                                            {"student": object,
+                                             "sems": sems,
                                              })
 
     def getWidgetHTMLFromInput(self, key, object, form_input):
@@ -104,6 +198,7 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             appserver.tStringField("PlaceOfBirth", "Geburtsort",
                                    shown_in_overview = False),
             tDegreesField("Degrees", "Abschl&uuml;sse"),
+            tSpecialSemestersField("SpecialSemesters", "Spezielle Semester"),
             appserver.tStringField("Notes", "Notizen",
                                    shown_in_overview = False),
             appserver.tStringField("Email", "Email-Adresse",
@@ -144,6 +239,46 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
                      })
 
             return result
+        return ""
+
+
+
+
+class tSpecialSemesterDatabaseHandler(appserver.tDatabaseHandler):
+    def __init__(self, student):
+        self.Student = student
+        appserver.tDatabaseHandler.__init__(self,
+                                            student.SpecialSemesters,
+                                            [
+            tSemesterField("Semester", "Semester"),
+            appserver.tChoiceField("Type", "Art",
+                                   True,
+                                   [("urlaub", "Urlaubssemester")]),
+            appserver.tStringField("Remark", "Bemerkungen",
+                                   shown_in_overview = True),
+            ])
+
+    def createNewObject(self):
+        return datamodel.tSpecialSemester()
+
+    def writeHook(self, key):
+        store.writeStudent(self.Student.ID)
+
+    def deleteHook(self, key):
+        store.writeStudent(self.Student.ID)
+
+    def defaultSortField(self):
+        return "Semester";
+
+    def getCustomization(self, element, situation, db_key):
+        if element == "title":
+            return "Spezielle Semester f&uuml;r %s" % self.Student.ID
+
+        if element == "header":
+            return expandHTMLTemplate(
+                "special-sem-header.html",
+                {"student": self.Student})
+
         return ""
 
 
@@ -303,6 +438,19 @@ class tMainAppServer(appserver.tAppServer):
             return tStudentDatabaseHandler(
                 store).getPage(path, form_input)
         
+        def handleSpecialSemesterDatabase(path, form_input):
+            stud_id_re = re.compile("^([a-zA-Z0-9]+)/")
+            stud_id_match = stud_id_re.match(path)
+            if not stud_id_match:
+                raise appserver.tNotFoundError, \
+                      "Invalid special semesters request %s" % path
+            stud_id = stud_id_match.group(1)
+              
+            return tSpecialSemesterDatabaseHandler(
+                self.resolveStudent(stud_id))\
+                .getPage(path[stud_id_match.end():], 
+                         form_input)
+
         def handleDegreeDatabase(path, form_input):
             stud_id_re = re.compile("^([a-zA-Z0-9]+)/")
             stud_id_match = stud_id_re.match(path)
@@ -311,8 +459,10 @@ class tMainAppServer(appserver.tAppServer):
                       "Invalid degrees request %s" % path
             stud_id = stud_id_match.group(1)
               
-            return tDegreeDatabaseHandler(self.resolveStudent(stud_id))\
-                   .getPage(path[stud_id_match.end():], form_input)
+            return tDegreeDatabaseHandler(
+                self.resolveStudent(stud_id))\
+                .getPage(path[stud_id_match.end():], 
+                         form_input)
 
         def handleExamDatabase(path, form_input):
             id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/")
@@ -325,9 +475,10 @@ class tMainAppServer(appserver.tAppServer):
             student, degree = self.resolveDegree(stud_id,
                                                  degree_id)
               
-            return tExamsDatabaseHandler(student, degree_id, degree)\
-                   .getPage(path[id_match.end():], 
-                            form_input)
+            return tExamsDatabaseHandler(
+                student, degree_id, degree)\
+                .getPage(path[id_match.end():], 
+                         form_input)
         
         def handlePerDegreeReports(path, form_input):
             id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)$")
@@ -389,6 +540,7 @@ class tMainAppServer(appserver.tAppServer):
 
         return [
             ("^/students/", handleStudentDatabase),
+            ("^/specsem/", handleSpecialSemesterDatabase),
             ("^/degrees/", handleDegreeDatabase),
             ("^/exams/", handleExamDatabase),
             ("^/report/perstudent/", handlePerStudentReports),
@@ -412,10 +564,15 @@ degree_rule_sets_map = {}
 for drs in degree_rule_sets:
     degree_rule_sets_map[drs.id()] = drs
 
+print "Loading student data...",
+sys.stdout.flush()
 store = datamodel.tDataStore("example-data", 
                              degree_rule_sets)
-httpd = BaseHTTPServer.HTTPServer(('', 8000), 
+print "done"
+httpd = BaseHTTPServer.HTTPServer(('', LISTEN_PORT), 
                                   tMainAppServer)
+
+print "Serving requests at http://localhost:%d." % LISTEN_PORT
 quitflag = tools.tReference(False)
 while not quitflag.get():
     httpd.handle_request()

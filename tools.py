@@ -88,10 +88,61 @@ def alistLookup(alist, sought_key):
 
 
 def _expandTemplate(dir, filename, globals_dict):
+    class _tTemplateHelper:
+        """This class provides a namespace for helpers in
+        Airspeed templating code.
+        """
+        def formatDate(self, date):
+            return date.strftime("%d.%m.%Y")
+
+        def formatNumber(self, format, number):
+            return format % number
+
+        def escapeTeX(self, value):
+            return escapeTeX(value)
+
+        def dump(self, value):
+            print "*** DEBUG DUMP", repr(value)
+            return ""
+
+        def add(self, value, value2):
+            return value + value2
+
+        def alistLookup(self, alist, key):
+            return alistLookup(alist, key)
+
+        def sortBy(self, list, field):
+            def cmp_func(a, b):
+                return cmp(getattr(a, field), getattr(b, field))
+
+            result = list[:]
+            result.sort(cmp_func)
+            return result
+
+        def gradeToWords(self, grade):
+            if grade < 1.5:
+                return "sehr gut"
+            elif grade < 2.5:
+                return "gut"
+            elif grade < 3.5:
+                return "befriedigend"
+            elif grade <= 4:
+                return "ausreichend"
+            else:
+                return "mangelhaft"
+
+        def len(self, value):
+            return len(value)
+
+        def round(self, value, decimals):
+            return round(value, decimals)
+
+    my_dict = globals_dict.copy()
+    my_dict["h"] = _tTemplateHelper()
     template = codecs.open(os.path.join(dir, filename),
                            "r", "utf-8").read()
     loader = airspeed.CachingFileLoader(dir)
-    return airspeed.Template(template).merge(globals_dict,
+    return airspeed.Template(template).merge(my_dict,
                                              loader)
 
 

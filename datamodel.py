@@ -90,13 +90,22 @@ class tDegree:
 
 
 
+class tSpecialSemester:
+    def __init__(self):
+        self.Semester = None
+        self.Type = None # str ("urlaub")
+        self.Remark = "" # str
+
+
+
+
 class tStudent:
     def __init__(self):
         self.ID = None # str
         self.FirstName = ""
         self.MiddleName = ""
         self.LastName = ""
-        self.VacationSemesters = [] # list of semesters
+        self.SpecialSemesters = {} # list of semesters
         self.DateOfBirth = None
         self.PlaceOfBirth = ""
         self.Degrees = {}
@@ -109,6 +118,8 @@ class tStudent:
         return (result, "!!datamodel.tStudent")
 
     def from_yaml(self, new_dict):
+        if "SpecialSemesters" not in new_dict:
+            self.SpecialSemesters = {}
         if "Notes" not in new_dict:
             self.Notes = ""
         if "Email" not in new_dict:

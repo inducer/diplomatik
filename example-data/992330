@@ -1,8 +1,5 @@
 --- !!datamodel.tStudent
-DateOfBirth:
-    day: 5
-    month: 8
-    year: 1977
+DateOfBirth: ~
 Degrees:
     '3271585': !!datamodel.tDegree
         DegreeRuleSet: tema-hd-alt
@@ -412,8 +409,8 @@ Degrees:
             day: 16
             month: 10
             year: 2000
-        MinorSubject: "ETECHNIK"
-        Remark: ""
+        MinorSubject: ETECHNIK
+        Remark: ''
 Email: mathem@tiker.net
 FirstName: Andreas
 ID: '992330'
@@ -421,4 +418,16 @@ LastName: "Kl\xf6ckner"
 MiddleName: "Paul Eberhard"
 Notes: ''
 PlaceOfBirth: Konstanz
-VacationSemesters: []
+SpecialSemesters:
+    '67499': !!datamodel.tSpecialSemester
+        Remark: "2. Semester UNCC"
+        Semester: !!semester.tSemester
+            Term: "s"
+            Year: 2002
+        Type: "urlaub"
+    '9061954': !!datamodel.tSpecialSemester
+        Remark: "1. Semester UNCC"
+        Semester: !!semester.tSemester
+            Term: "w"
+            Year: 2001
+        Type: "urlaub"

@@ -4,9 +4,9 @@ import datetime
 
 
 class tSemester:
-    def __init__(self):
-        self.Term = None # "w"/"s"
-        self.Year = None
+    def __init__(self, term = None, year = None):
+        self.Term = term # "w"/"s"
+        self.Year = year
 
     def __str__(self):
         if self.Term == "w":
@@ -16,20 +16,24 @@ class tSemester:
         else:
             raise RuntimeError, "Invalid term in semester: %s" % self.Term
 
+    def __cmp__(self, other):
+        # mind the hack: "s" < "w", alphabetically
+        return cmp(self.Year, other.Year) or \
+               cmp(self.Term, other.Term)
+
     def now(cls):
-        cls.loadFromDate(datetime.date.today())
+        return cls.fromDate(datetime.date.today())
     now = classmethod(now)
     
     def fromDate(cls, date):
-        result = cls()
-        result.Year = date.year
+        y = date.year
         if 4 <= date.month < 10:
-            result.Term = "s"
+            t = "s"
         else:
-            result.Term = "w"
+            t = "w"
             if date.month < 4:
-                result.Year -= 1
-        return result
+                y -= 1
+        return cls(t, y)
     fromDate = classmethod(fromDate)
 
 

@@ -4,53 +4,6 @@ import semester
 
 
 
-class tReportHelper:
-    def formatDate(self, date):
-        return date.strftime("%d.%m.%Y")
-
-    def formatNumber(self, format, number):
-        return format % number
-
-    def escapeTeX(self, value):
-        return tools.escapeTeX(value)
-
-    def dump(self, value):
-        print "*** DEBUG DUMP", repr(value)
-        return ""
-
-    def add(self, value, value2):
-        return value + value2
-
-    def alistLookup(self, alist, key):
-        return tools.alistLookup(alist, key)
-
-    def sortBy(self, list, field):
-        def cmp_func(a, b):
-            return cmp(getattr(a, field), getattr(b, field))
-
-        result = list[:]
-        result.sort(cmp_func)
-        return result
-
-    def gradeToWords(self, grade):
-        if grade < 1.5:
-            return "sehr gut"
-        elif grade < 2.5:
-            return "gut"
-        elif grade < 3.5:
-            return "befriedigend"
-        elif grade <= 4:
-            return "ausreichend"
-        else:
-            return "mangelhaft"
-
-    def round(self, value, decimals):
-        return round(value, decimals)
-
-
-
-
-
 class tDegreeRuleSet:
     def __init__(self):
         pass
@@ -66,9 +19,6 @@ class tDegreeRuleSet:
 
     def examSources(self):
         return {} # [(id(str), description(str))]
-
-    def isComplete(self, student):
-        raise NotImplemented
 
     def perExamReports(self):
         return [] # [(id:str, description:str)]
@@ -112,9 +62,6 @@ class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
             ("andere", "Andere dt. Hochschule"),
             ]
 
-    def isComplete(self, student):
-        return False
-
 
 
 
@@ -149,9 +96,6 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             ("industrie", "Industrie"),
             ("andere", "Andere dt. Hochschule"),
             ]
-
-    def isComplete(self, student):
-        return False
 
     def perDegreeReports(self):
         return [
@@ -286,7 +230,6 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                  "remarks": remarks,
                  
                  "form": "noten-hd.tex",
-                 "h": tReportHelper(),
                  },
                 ["noten-hd.tex", "header.tex"])
         elif id == "transcript":
@@ -294,7 +237,6 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                 "degree-transcript.tex",
                 {"student": student,
                  "degree": degree,
-                 "h": tReportHelper(),
                  "drs": self})
         else:
             raise KeyError, id
@@ -314,7 +256,6 @@ def doPerStudentReport(id, student, drs_map):
     if id == "transcript":
         return tools.runLatexOnTemplate("complete-transcript.tex",
                                         {"student": student,
-                                         "h": tReportHelper(),
                                          "drs_map": drs_map})
     else:
         return KeyError, id

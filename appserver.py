@@ -8,6 +8,7 @@ import codecs
 import datetime
 import random
 import traceback
+import socket
 
 from tools import expandHTMLTemplate
 import tools
@@ -130,7 +131,7 @@ class tDateField(tField):
             return date.isoformat()
 
     def _getHTML(self, is_none, y, m, d):
-        return expandHTMLTemplate("date.html",
+        return expandHTMLTemplate("widget-date.html",
                                   {"name": self.Name,
                                    "y": y,
                                    "m": m,
@@ -634,7 +635,7 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
         self.handlePage(self.path, parseQuery(post_data))
 
     def handlePage(self, path, form_input):
-        if self.client_address[0] != "127.0.0.1":
+        if self.client_address[0] != socket.gethostbyname("localhost"):
             self.send_error(403, "Non-local access denied")
             return
 

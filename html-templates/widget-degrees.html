@@ -4,7 +4,6 @@
       <td>Abschluss</td>
       <td>Begonnen</td>
       <td>Abgeschlossen</td>
-      <td>Vollst&auml;ndig?</td>
     </tr>
     #foreach ($degree in $degrees)
       <tr>
@@ -17,19 +16,12 @@
             -/-
           #end
         </td>
-        <td>
-          #if ($degree.isComplete())
-            ja
-          #else
-            nein
-          #end
-        </td>
       </tr>
     #end
   </table>
 
   <p>
-    <a href="/degrees/$student.ID/">Bearbeiten</a>
+    <a href="/degrees/$student.ID/overview">Bearbeiten</a>
   </p>
 #else
   Abschl&uuml;sse k&ouml;nnen erst nach dem ersten
