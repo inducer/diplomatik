@@ -1,0 +1,142 @@
+\documentclass[landscape, 10pt]{article}
+\batchmode
+\usepackage[latin1]{inputenc}
+\usepackage{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\q{\quad}%
+\def\qh{$\;$}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\textheight250mm%
+\textwidth160mm%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\parindent}{0cm}%
+\setlength{\topmargin}{-1.0cm}%
+\setlength{\headheight}{0cm}%
+\setlength{\headsep}{0cm}%
+\setlength{\oddsidemargin}{0.0cm}%
+\setlength{\evensidemargin}{0.0cm}%
+\pagestyle{empty}%
+\begin{document}
+  \begin{center}
+    \textbf{Studienabschl\"usse in TECHNOMATHEMATIK (Diplom)}
+
+    im Zeitraum 
+    $h.formatDate($form_data.From)
+    --
+    $h.formatDate($form_data.To)
+  \end{center}
+
+
+  \begin{longtable}[l]{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+  \hline
+  \textit{Name}
+  & \textit{Nr}
+  & \textit{GN}
+  & \textit{DA}
+  & \textit{Betreuer}
+  & \textit{PN}
+  & \textit{RM}
+  & \textit{AM}
+  & \textit{Info.}
+  & \multicolumn{2}{|c|}{\textit{Tech.Fach}}
+  & \textit{Pr\"ufz.}
+  & \textit{Sem.}\\\\
+  \hline
+  \endhead
+  #set ($number = 0)
+  #foreach ($sd in $stud_deg)##
+    #set ($number = $h.add($number, 1))##
+    $sd.Student.LastName ##
+    & $number
+    & $h.formatNumber("%.1f", $sd.Gesamt)
+    & $h.formatNumber("%.1f", $sd.Diplomarbeit.CountedResult)
+    & $sd.Diplomarbeit.Examiner
+    & $h.formatNumber("%.1f", $sd.Pruefungsnoten)
+    & $h.formatNumber("%.1f", $sd.Rein)
+    & $h.formatNumber("%.1f", $sd.Angewandt)
+    & $h.formatNumber("%.1f", $sd.NF2)
+    & $h.formatNumber("%.1f", $sd.NF1)
+    & $sd.NF1Name
+    & $sd.Pruefungszeitraum
+    & $sd.Semesters#if ($sd.SpecialSemesters)+$sd.SpecialSemesters#end
+    \\\\
+    \hline
+  #end##
+  \end{longtable}
+
+  \textbf{Erl\"auterungen der Abk\"urzungen:}
+  \vskip0.3cm
+
+  \begin{tabular}{lcl}
+    \textit{GN} & = & Gesamtnote \\\\
+    \textit{DA} & = & Diplomarbeit \\\\
+    \textit{PN} & = & Durchschnittsnote der vier 
+      Pr\"ufungen \\\\
+    \textit{PM} & = & Reine Mathematik \\\\
+    \textit{AM} & = & Angewandte Mathematik \\\\
+    \textit{Info.} & = & Angewandte Informatik \\\\
+    \textit{Tech. Fach.} & = & Technisches Fach \\\\
+    \textit{Pr\"ufz.} & = & Zeit in Monaten zwischen
+      Abgabe der Diplomarbeit und letzter Pr\"ufung \\\\
+    \textit{Sem.} & = & Studiendauer in Semestern \\\\
+  \end{tabular}
+
+  \newpage
+  \begin{center}
+    \textbf{Studiengang TECHNOMATHEMATIK (Diplom)}
+
+    Statistik f\"ur den Zeitraum 
+    $h.formatDate($form_data.From)
+    --
+    $h.formatDate($form_data.To)
+  \end{center}
+
+  \begin{tabular}{llll}
+    \textbf{Anzahl der Abschl\"usse:} 
+    & insgesamt & $h.len($stud_deg) \\\\
+    & m\"annlich & $m_w.__getitem__("m") \\\\
+    & weiblich & $m_w.__getitem__("w") \\\\
+    \\\\
+    \textbf{Gesamtnote:}
+    & mit Auszeichnung & $gesamt_hist.__getitem__("mit Auszeichnung") \\\\
+    & sehr gut & $gesamt_hist.__getitem__("sehr gut") \\\\
+    & gut & $gesamt_hist.__getitem__("gut") \\\\
+    & befriedigend & $gesamt_hist.__getitem__("befriedigend") \\\\
+    \\\\
+    \textbf{Note der Diplomarbeit:}
+    #foreach ($da_grade in $h.sort($da_hist.keys())) ##
+      & $h.formatNumber("%.1f", $da_grade) 
+      & $da_hist.__getitem__($da_grade) \\\\
+    #end ##
+    \\\\
+    \textbf{Notendurchschnitt der vier Pr\"ufungen:}
+    #foreach ($pn in $h.sort($pn_hist.keys())) ##
+      & $h.formatNumber("%.1f", $pn) 
+      & $pn_hist.__getitem__($pn) \\\\
+    #end ##
+    \\\\
+    \textbf{Studiendauer:}
+      & Median & $sem_median & Semester \\\\
+    \\\\
+    \textbf{Pr\"ufungszeitraum:}
+      & Median & $pz_median & Monate \\\\
+    \\\\
+    \textbf{Nebenfach:}
+    #foreach ($nf in $h.sort($nf_hist.keys())) ##
+      & $nf
+      & $nf_hist.__getitem__($nf) \\\\
+    #end ##
+    \\\\
+    \textbf{Anzahl der studienbegleitenden Pr\"ufungen:}
+    #foreach ($sb in $h.sort($sb_hist.keys())) ##
+      & $sb
+      & $sb_hist.__getitem__($sb) \\\\
+    #end ##
+    \\\\
+    \textbf{Pr\"ufungen aus dem Ausland:}
+      & brachte ein
+      & $ausland_count
+      & Studierende(r)
+  \end{tabular}
+\end{document}
