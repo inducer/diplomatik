@@ -1,0 +1,29 @@
+airspeed is used in this software on the basis of the following email
+received from Steve Purcell <steve@pythonconsulting.com> on
+08.02.2005 08:39:
+
+Hi Andreas,
+
+That's right -- and there are no tarballs or official releases either!
+
+Airspeed is, of course, Open Source, but no licence has yet been chosen.
+I'll check with my co-author Chris today, but I think you can safely assume 
+that the licence will be either LGPL or BSD-style, ie. very liberal.
+
+Best wishes,
+
+-Steve
+
+
+On Tuesday 08 February 2005 00:21, you wrote:
+
+>> Hi Steve,
+>>
+>> While checking up on legal stuff for work, I noticed that neither the
+>> Airspeed code nor its web site contain any license information. While it
+>> sure looks open-source, I'd be happy to be certain.  :) 
+>>
+>> Andreas
+
+
+
