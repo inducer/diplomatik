@@ -139,6 +139,7 @@ def _expandTemplate(dir, filename, globals_dict):
 
     my_dict = globals_dict.copy()
     my_dict["h"] = _tTemplateHelper()
+    my_dict["none"] = None
     template = codecs.open(os.path.join(dir, filename),
                            "r", "utf-8").read()
     loader = airspeed.CachingFileLoader(dir)
@@ -150,7 +151,6 @@ def _expandTemplate(dir, filename, globals_dict):
 
 def expandHTMLTemplate(filename, globals_dict = {}):
     my_dict = globals_dict.copy()
-    my_dict["none"] = None
     my_dict["doctype"] = \
     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'+ \
     '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'

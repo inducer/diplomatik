@@ -21,6 +21,30 @@ class tSemester:
         return cmp(self.Year, other.Year) or \
                cmp(self.Term, other.Term)
 
+    def startDate(self):
+        if self.Term == "w":
+            return datetime.date(self.Year, 10, 1)
+        else:
+            return datetime.date(self.Year, 4, 1)
+
+    def endDate(self):
+        if self.Term == "w":
+            return datetime.date(self.Year+1, 3, 31)
+        else:
+            return datetime.date(self.Year, 9, 30)
+
+    def previous(self):
+        if self.Term == "w":
+            return tSemester("s", self.Year)
+        else:
+            return tSemester("w", self.Year-1)
+
+    def next(self):
+        if self.Term == "w":
+            return tSemester("s", self.Year+1)
+        else:
+            return tSemester("w", self.Year)
+
     def now(cls):
         return cls.fromDate(datetime.date.today())
     now = classmethod(now)

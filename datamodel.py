@@ -145,6 +145,9 @@ class tDataStore:
     def keys(self):
         return self.Students.keys()
 
+    def values(self):
+        return self.Students.values()
+
     def __getitem__(self, key):
         return self.Students[key]
 

@@ -7,6 +7,7 @@ import os.path
 import tools
 import semester
 import degreeruleset
+import reports
 import datamodel
 import appserver
 
@@ -230,14 +231,26 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             result = expandHTMLTemplate("main-header.html")
 
             if situation == "overview":
-                result += expandHTMLTemplate("welcome.html",
-                                             {"version": __VERSION__})
+                result += expandHTMLTemplate(
+                    "welcome.html",
+                    {"version": __VERSION__})
+
+                report_handler = reports.tGlobalReportHandler(
+                    store,
+                    degree_rule_sets_map)
+                
+                result += expandHTMLTemplate(
+                    "global-reports.html",
+                    {"reports": report_handler.getList()})
 
             if situation == "edit" and db_key:
+                rep_handler = reports.tPerStudentReportHandler(
+                    self.Database[db_key],
+                    degree_rule_sets_map)
                 result += expandHTMLTemplate(
                     "student-reports.html",
                     {"student": self.Database[db_key],
-                     "reports": degreeruleset.perStudentReports()
+                     "reports": rep_handler.getList()
                      })
 
             return result
@@ -332,11 +345,13 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
             if situation == "edit" and db_key:
                 degree = self.Database[db_key]
                 drs = degree_rule_sets_map[degree.DegreeRuleSet]
+                report_handler = drs.getPerDegreeReportHandler(
+                    self.Student, degree)
                 result += expandHTMLTemplate(
                     "degree-reports.html",
                     {"student": self.Student,
                      "degree_id": db_key,
-                     "reports": drs.perDegreeReports()
+                     "reports": report_handler.getList()
                      })
             return result
 
@@ -436,42 +451,42 @@ class tMainAppServer(appserver.tAppServer):
         return student, degree
 
     def pageHandlers(self):
-        def handleStudentDatabase(path, form_input):
+        def handleStudentDatabase(request):
             return tStudentDatabaseHandler(
-                store).getPage(path, form_input)
+                store).getPage(request)
         
-        def handleSpecialSemesterDatabase(path, form_input):
+        def handleSpecialSemesterDatabase(request):
             stud_id_re = re.compile("^([a-zA-Z0-9]+)/")
-            stud_id_match = stud_id_re.match(path)
+            stud_id_match = stud_id_re.match(request.Path)
             if not stud_id_match:
                 raise appserver.tNotFoundError, \
-                      "Invalid special semesters request %s" % path
+                      "Invalid special semesters request %s" % request.Path
             stud_id = stud_id_match.group(1)
               
             return tSpecialSemesterDatabaseHandler(
                 self.resolveStudent(stud_id))\
-                .getPage(path[stud_id_match.end():], 
-                         form_input)
+                .getPage(request.changePath(
+                request.Path[stud_id_match.end():]))
 
-        def handleDegreeDatabase(path, form_input):
+        def handleDegreeDatabase(request):
             stud_id_re = re.compile("^([a-zA-Z0-9]+)/")
-            stud_id_match = stud_id_re.match(path)
+            stud_id_match = stud_id_re.match(request.Path)
             if not stud_id_match:
                 raise appserver.tNotFoundError, \
-                      "Invalid degrees request %s" % path
+                      "Invalid degrees request %s" % request.Path
             stud_id = stud_id_match.group(1)
               
             return tDegreeDatabaseHandler(
                 self.resolveStudent(stud_id))\
-                .getPage(path[stud_id_match.end():], 
-                         form_input)
+                .getPage(request.changePath(
+                request.Path[stud_id_match.end():]))
 
-        def handleExamDatabase(path, form_input):
+        def handleExamDatabase(request):
             id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/")
-            id_match = id_re.match(path)
+            id_match = id_re.match(request.Path)
             if not id_match:
                 raise appserver.tNotFoundError, \
-                      "Invalid exams request %s" % path
+                      "Invalid exams request %s" % request.Path
             stud_id = id_match.group(1)
             degree_id = id_match.group(2)
             student, degree = self.resolveDegree(stud_id,
@@ -479,65 +494,54 @@ class tMainAppServer(appserver.tAppServer):
               
             return tExamsDatabaseHandler(
                 student, degree_id, degree)\
-                .getPage(path[id_match.end():], 
-                         form_input)
+                .getPage(request.changePath(
+                request.Path[id_match.end():]))
         
-        def handlePerDegreeReports(path, form_input):
-            id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)$")
-            id_match = id_re.match(path)
+        def handlePerDegreeReports(request):
+            id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/")
+            id_match = id_re.match(request.Path)
             if not id_match:
                 raise appserver.tNotFoundError, \
-                      "Invalid per-degree report request %s" % path
-            report_id = id_match.group(1)
-            format_id = id_match.group(2)
-            student_id = id_match.group(3)
-            degree_id = id_match.group(4)
-
-            if format_id != "pdf":
-                return "Formats besides PDF currently unsupported"
-
-            student, degree = self.resolveDegree(student_id, degree_id)
+                      "Invalid per-degree report request %s" % request.Path
+            
+            student, degree = self.resolveDegree(
+                id_match.group(1),
+                id_match.group(2))
               
             drs = degree_rule_sets_map[degree.DegreeRuleSet]
-            return appserver.tHTTPResponse(
-                drs.doPerDegreeReport(report_id,
-                                      student,
-                                      degree),
-                200,
-                {"Content-type": "application/pdf"})
+            report_handler = drs.getPerDegreeReportHandler(
+                student, degree)
 
-        def handlePerStudentReports(path, form_input):
-            id_re = re.compile("^([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)$")
-            id_match = id_re.match(path)
+            return report_handler.handleRequest(request.changePath(
+                request.Path[id_match.end():]))
+
+        def handlePerStudentReports(request):
+            id_re = re.compile("^([a-zA-Z0-9]+)/")
+            id_match = id_re.match(request.Path)
             if not id_match:
                 raise appserver.tNotFoundError, \
-                      "Invalid per-student report request %s" % path
-            report_id = id_match.group(1)
-            format_id = id_match.group(2)
-            student_id = id_match.group(3)
-
-            if format_id != "pdf":
-                return "Formats besides PDF currently unsupported"
-
-            student = self.resolveStudent(student_id)
+                      "Invalid per-student report request %s" % request.Path
+            student = self.resolveStudent(id_match.group(1))
               
-            return appserver.tHTTPResponse(
-                degreeruleset.doPerStudentReport(report_id,
-                                                 student,
-                                                 degree_rule_sets_map),
-                200,
-                {"Content-type": "application/pdf"})
+            return reports.tPerStudentReportHandler(
+                student, degree_rule_sets_map)\
+                .handleRequest(request.changePath(
+                request.Path[id_match.end():]))
 
-        def handleStaticContent(path, form_input):
+        def handleGlobalReports(request):
+            return reports.tGlobalReportHandler(
+                store, degree_rule_sets_map)\
+                .handleRequest(request)
+
+        def handleStaticContent(request):
             fn_re = re.compile(r"^[-_a-zA-Z0-9]+\.([-_a-zA-Z0-9]+)$")
-            fn_match = fn_re.match(path)
-            print path
+            fn_match = fn_re.match(request.Path)
             if not fn_match:
                 raise appserver.tNotFoundError, \
                       "Invalid static content request %s" % path
 
             complete_fn = os.path.join("static",
-                                       path)
+                                       request.Path)
             ext = fn_match.group(1)
             if ext == "css":
                 mime_type = "text/css"
@@ -560,11 +564,11 @@ class tMainAppServer(appserver.tAppServer):
                 raise appserver.tNotFoundError, \
                       "Static content `%s' not found" % path
 
-        def redirectToStart(path, form_input):
+        def redirectToStart(request):
             return appserver.tHTTPResponse(
                 "", 302, {"Location": "/students/"})
 
-        def doQuit(path, form_input):
+        def doQuit(request):
             quitflag.set(True)
             return appserver.tHTTPResponse(
                 "OK, wird beendet.",
@@ -579,6 +583,7 @@ class tMainAppServer(appserver.tAppServer):
             ("^/exams/", handleExamDatabase),
             ("^/report/perstudent/", handlePerStudentReports),
             ("^/report/perdegree/", handlePerDegreeReports),
+            ("^/report/global/", handleGlobalReports),
             ("^/static/", handleStaticContent),
             ("^/students$", redirectToStart),
             ("^/quit$", doQuit),

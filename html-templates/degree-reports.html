@@ -1,5 +1,5 @@
 <p>Berichte:
   #foreach ($rep_desc in $reports)
-    <a href="/report/perdegree/$rep_desc.__getitem__(0)/pdf/$student.ID/$degree_id">$rep_desc.__getitem__(1) (PDF)</a>
+    <a href="/report/perdegree/$student.ID/$degree_id/${rep_desc.__getitem__(0)}.pdf">$rep_desc.__getitem__(1) (PDF)</a>
   #end
 </p>

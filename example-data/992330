@@ -411,13 +411,13 @@ Degrees:
             year: 2000
         MinorSubject: ETECHNIK
         Remark: ''
-Email: mathem@tiker.net
-FirstName: Andreas
-ID: '992330'
+Email: "mathem@tiker.net"
+FirstName: "Andreas"
+ID: "992330"
 LastName: "Kl\xf6ckner"
 MiddleName: "Paul Eberhard"
-Notes: ''
-PlaceOfBirth: Konstanz
+Notes: ""
+PlaceOfBirth: "Konstanz"
 SpecialSemesters:
     '67499': !!datamodel.tSpecialSemester
         Remark: '2. Semester UNCC'

@@ -441,7 +441,7 @@ class tDatabaseHandler:
     def getCustomization(self, element, situation, db_key):
         return ""
 
-    def handleOverviewPage(self, path, form_input, sort_by):
+    def handleOverviewPage(self, request, sort_by):
         keys = self.Database.keys()
         if sort_by is not None:
             sort_fields = [f for f in self.Fields
@@ -469,19 +469,19 @@ class tDatabaseHandler:
                                 "fields": self.Fields}
                                ))
 
-    def generateEditPage(self, path, form_input, key, obj):
-        if len(form_input):
-            if not "save" in form_input:
+    def generateEditPage(self, request, key, obj):
+        if request.Method == "POST":
+            if not "save" in request.FormInput:
                 return tHTTPResponse("", 302, {"Location": "../overview"})
 
             valid = True
             for field in self.Fields:
-                if not field.isValid(form_input):
+                if not field.isValid(request.FormInput):
                     valid = False
                     break
             if valid:
                 for field in self.Fields:
-                    field.setValue(key, form_input, obj)
+                    field.setValue(key, request.FormInput, obj)
 
                 new_key = self.getObjectKey(obj)
                 if key is None:
@@ -511,7 +511,7 @@ class tDatabaseHandler:
                     expandHTMLTemplate("db-edit-validate.html",
                                        {"obj": obj,
                                         "key": key,
-                                        "input": form_input,
+                                        "input": request.FormInput,
                                         "fields": self.Fields,
                                         "handler": self}
                                        ))
@@ -524,21 +524,21 @@ class tDatabaseHandler:
                                     "handler": self}
                                    ))
 
-    def handleNewPage(self, path, form_input):
-        return self.generateEditPage(path, form_input, 
+    def handleNewPage(self, request):
+        return self.generateEditPage(request, 
                                      None,
                                      self.createNewObject())
     
-    def handleEditPage(self, path, form_input, key):
+    def handleEditPage(self, request, key):
         try:
             obj = self.Database[key]
         except KeyError:
             raise tNotFoundError, "Edit request for non-existent key %s" % key
 
-        return self.generateEditPage(path, form_input, key, obj)
+        return self.generateEditPage(request, key, obj)
 
-    def handleDeletePage(self, path, form_input, key):
-        if len(form_input) == 0:
+    def handleDeletePage(self, request, key):
+        if len(request.FormInput) == 0:
             try:
                 return tHTTPResponse(
                     expandHTMLTemplate("db-delete-ask.html",
@@ -550,42 +550,42 @@ class tDatabaseHandler:
             except KeyError:
                 raise tNotFoundError, "Delete request for non-existent key %s" % key
         else:
-            if "delete" in form_input:
+            if "delete" in request.FormInput:
                 del self.Database[key]
                 self.deleteHook(key)
             return tHTTPResponse("", 302, {"Location": "../overview"})
 
-    def getPage(self, path, form_input):
+    def getPage(self, request):
         sort_re = re.compile("^sortBy([a-zA-Z0-9_]+)$")
-        sort_match = sort_re.search(path)
+        sort_match = sort_re.search(request.Path)
         edit_re = re.compile("^edit/([a-zA-Z0-9]+)$")
-        edit_match = edit_re.search(path)
+        edit_match = edit_re.search(request.Path)
         delete_re = re.compile("^delete/([a-zA-Z0-9]+)$")
-        delete_match = delete_re.search(path)
+        delete_match = delete_re.search(request.Path)
 
-        if path == "":
+        if request.Path == "":
             if self.defaultSortField() is None:
                 return tHTTPResponse("", 302, 
                                      {"Location": "overview"})
             else:
                 return tHTTPResponse("", 302, 
                                      {"Location": "sortBy%s" % self.defaultSortField()})
-        if path == "overview":
+        if request.Path == "overview":
             if self.defaultSortField() is None:
-                return self.handleOverviewPage(path, form_input, None)
+                return self.handleOverviewPage(request, None)
             else:
                 return tHTTPResponse("", 302, 
                                      {"Location": "sortBy%s" % self.defaultSortField()})
         elif sort_match:
-            return self.handleOverviewPage(path, form_input, 
+            return self.handleOverviewPage(request, 
                                            sort_match.group(1))
-        elif path == "new/create":
-            return self.handleNewPage(path, form_input)
+        elif request.Path == "new/create":
+            return self.handleNewPage(request)
         elif edit_match:
-            return self.handleEditPage(path, form_input, 
+            return self.handleEditPage(request, 
                                        edit_match.group(1))
         elif delete_match:
-            return self.handleDeletePage(path, form_input, 
+            return self.handleDeletePage(request, 
                                          delete_match.group(1))
         else:
             raise tNotFoundError, "Invalid database handler request URI"
@@ -602,6 +602,29 @@ def parseQuery(query):
         result[key] = unicode(urllib.unquote(value), 
                               "utf-8")
     return result
+
+
+
+
+class tHTTPRequest:
+    def __init__(self, method, headers, form_input, 
+                 full_path, path = None):
+        self.Method = method
+        self.Headers = headers
+        self.FormInput = form_input
+        self.FullPath = full_path
+        if path is None:
+            self.Path = full_path
+        else:
+            self.Path = path
+
+    def changePath(self, path):
+        return tHTTPRequest(
+            self.Method,
+            self.Headers,
+            self.FormInput,
+            self.FullPath,
+            path)
 
 
 
@@ -627,24 +650,36 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
         raise NotImplementedError
 
     def do_GET(self):
-        self.handlePage(self.path, {})
+        # FIXME implement GET query
+        request = tHTTPRequest(
+            "GET",
+            self.headers,
+            {},
+            self.path)
+        self.handlePage(request)
 
     def do_POST(self):
         clength = int(self.headers["Content-Length"])
         post_data = self.rfile.read(clength)
-        self.handlePage(self.path, parseQuery(post_data))
+        request = tHTTPRequest(
+            "POST",
+            self.headers,
+            parseQuery(post_data),
+            self.path)
+        self.handlePage(request)
 
-    def handlePage(self, path, form_input):
+    def handlePage(self, request):
         if self.client_address[0] != socket.gethostbyname("localhost"):
             self.send_error(403, "Non-local access denied")
             return
 
         for path_re, handler in self.pageHandlers():
-            path_match = re.compile(path_re).match(path)
+            path_match = re.compile(path_re).match(request.Path)
             if path_match:
                 try:
-                    response = handler(path[path_match.end():], form_input)
-                    print response
+                    response = handler(
+                        request.changePath(
+                        request.Path[path_match.end():]))
                     if not isinstance(response, tHTTPResponse):
                         raise TypeError, "Expected tHTTPResponse"
                     if not isinstance(response.Content, str):

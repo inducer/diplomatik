@@ -10,21 +10,17 @@ $doctype
     $handler.getCustomization("header", "validate", $key)
 
     <p>Bei der Verarbeitung Ihrer Eingaben sind Fehler 
-    aufgetreten. Bitte korrigieren Sie die rot 
+    aufgetreten. Bitte korrigieren Sie die 
     hervorgehobenen Felder.</p>
 
     <form method="POST" accept-charset="UTF-8">
       <table>
         #foreach ($field in $fields)
           <tr>
-            <td class="Label">
-              #if ($field.isValid($input))
-                $field.description()
-              #else
-                <span style="color:red">$field.description()</span>
-              #end
+            <td class="Label">$field.description()</td>
+            <td #if ($field.isValid($input))#else class="InvalidEntry"#end>
+              $field.getWidgetHTMLFromInput($key, $obj, $input)
             </td>
-            <td>$field.getWidgetHTMLFromInput($key, $obj, $input)</td>
           </tr>
         #end
       </table>

@@ -27,3 +27,6 @@ td.DataBox {
 td.Label {
   background-color: #e0e0e0;
 }
+td.InvalidEntry {
+  background-color: Red;
+}
