@@ -11,9 +11,106 @@ Degrees:
             month: 10
             year: 2000
         Exams:
-            '4827520': !!datamodel.tExam
+            '2463974': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 29
+                    month: 7
+                    year: 2001
+                DegreeComponent: rein
+                Description: "Rand- und Eigenwertprobleme"
+                Examiner: Lemmert
+                NativeResult: ''
+                Remarks: ''
+                Source: "freischuss"
+                SourceDescription: ''
+            '2473237': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: '3 (US)'
+                Date:
+                    day: 15
+                    month: 12
+                    year: 2001
+                DegreeComponent: rein
+                Description: "Partial Differential Equations"
+                Examiner: Molchanov
+                NativeResult: A
+                Remarks: ''
+                Source: "ausland"
+                SourceDescription: University of North Carolina at Charlotte
+            '2712004': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 15
+                    month: 5
+                    year: 2002
+                DegreeComponent: '2nf'
+                Description: Robotics
+                Examiner: Xiao
+                NativeResult: A
+                Remarks: ''
+                Source: "ausland"
+                SourceDescription: University of North Carolina at Charlotte
+            '3234879': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 2.0
+                CreditsPrintable: ''
+                Date:
+                    day: 15
+                    month: 5
+                    year: 2002
+                DegreeComponent: '1nf'
+                Description: "Analog Integrated Circuits"
+                Examiner: Binkley
+                NativeResult: A
+                Remarks: ''
+                Source: "ausland"
+                SourceDescription: University of North Carolina at Charlotte
+            '3822126': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 7
+                    month: 3
+                    year: 2001
+                DegreeComponent: rein
+                Description: "Funktionalanalysis I"
+                Examiner: Lemmert
+                NativeResult: ''
+                Remarks: ''
+                Source: "freischuss"
+                SourceDescription: ''
+            '4382490': !!datamodel.tExam
+                Counted: True
                 CountedResult: ~
                 Credits: ~
+                CreditsPrintable: ''
+                Date:
+                    day: 7
+                    month: 8
+                    year: 2003
+                DegreeComponent: seminar
+                Description: "Seminar Darstellungstheorie"
+                Examiner: Schmidt
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '4827520': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.7
+                Credits: 4.0
                 CreditsPrintable: ''
                 Date:
                     day: 24
@@ -22,26 +119,142 @@ Degrees:
                 DegreeComponent: rein
                 Description: "Funktionalanalysis II"
                 Examiner: Schmoeger
-                NativeResult: '1,7'
+                NativeResult: ''
                 Remarks: ''
-                Semester: ~
-            '8110132': !!datamodel.tExam
+                Source: "uni"
+                SourceDescription: ''
+            '5846881': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 15
+                    month: 5
+                    year: 2002
+                DegreeComponent: angewandt
+                Description: "Stochastic Differential Equations"
+                Examiner: "Wihstutz"
+                NativeResult: A
+                Remarks: ''
+                Source: "ausland"
+                SourceDescription: University of North Carolina at Charlotte
+            '6343696': !!datamodel.tExam
+                Counted: True
+                CountedResult: 2.3
+                Credits: 4.0
+                CreditsPrintable: '3+1'
+                Date:
+                    day: 7
+                    month: 7
+                    year: 2003
+                DegreeComponent: '1nf'
+                Description: "Nachrichten\xfcbertragung"
+                Examiner: Jondral
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '6516642': !!datamodel.tExam
+                Counted: True
                 CountedResult: ~
-                Credits: ~
+                Credits: 2.0
                 CreditsPrintable: ""
                 Date:
-                    day: 4
+                    day: 7
                     month: 2
-                    year: 2005
-                DegreeComponent: "diplomarbeit"
+                    year: 2001
+                DegreeComponent: "ueb-angewandt"
+                Description: "Stochastik II"
+                Examiner: "Kadelka"
+                NativeResult: ""
+                Remarks: ""
+                Source: "uni"
+                SourceDescription: ""
+            '6563978': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 1
+                    month: 7
+                    year: 2001
+                DegreeComponent: angewandt
+                Description: Stochastik II
+                Examiner: Kadelka
+                NativeResult: ''
+                Remarks: ''
+                Source: "freischuss"
+                SourceDescription: ''
+            '709080': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 15
+                    month: 12
+                    year: 2001
+                DegreeComponent: '2nf'
+                Description: Intelligent Systems
+                Examiner: Xiao
+                NativeResult: A
+                Remarks: ''
+                Source: "ausland"
+                SourceDescription: University of North Carolina at Charlotte
+            '7850289': !!datamodel.tExam
+                Counted: True
+                CountedResult: ~
+                Credits: 2.0
+                CreditsPrintable: ''
+                Date:
+                    day: 15
+                    month: 7
+                    year: 2000
+                DegreeComponent: "ueb-rein"
+                Description: "Funktionentheorie I"
+                Examiner: "K\xfchnlein"
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '8110132': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 30
+                    month: 9
+                    year: 2004
+                DegreeComponent: diplomarbeit
                 Description: "On the Computation of Maximally Localized Wannier Functions"
                 Examiner: "D\xf6rfler"
-                NativeResult: "1,0"
-                Remarks: ""
-                Semester: ~
-            '954992': !!datamodel.tExam
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '9527853': !!datamodel.tExam
+                Counted: True
                 CountedResult: ~
                 Credits: ~
+                CreditsPrintable: ''
+                Date:
+                    day: 7
+                    month: 2
+                    year: 2003
+                DegreeComponent: seminar
+                Description: "Seminar Numerische Optimierung"
+                Examiner: Kirsch
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '954992': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.7
+                Credits: 4.0
                 CreditsPrintable: ''
                 Date:
                     day: 24
@@ -50,12 +263,45 @@ Degrees:
                 DegreeComponent: rein
                 Description: "Funktionentheorie I"
                 Examiner: "K\xfchnlein"
-                NativeResult: '1,7'
+                NativeResult: ''
                 Remarks: ''
-                Semester: ~
+                Source: "uni"
+                SourceDescription: ''
+            '9604278': !!datamodel.tExam
+                Counted: True
+                CountedResult: 2.7
+                Credits: 4.0
+                CreditsPrintable: '3+1'
+                Date:
+                    day: 7
+                    month: 2
+                    year: 2001
+                DegreeComponent: '1nf'
+                Description: System Dynamics and Control Engineering
+                Examiner: Krebs
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '9911297': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 2.0
+                CreditsPrintable: ''
+                Date:
+                    day: 15
+                    month: 12
+                    year: 2001
+                DegreeComponent: '1nf'
+                Description: "Intro to Semiconductor Physics"
+                Examiner: Hasan
+                NativeResult: A
+                Remarks: ''
+                Source: "ausland"
+                SourceDescription: University of North Carolina at Charlotte
         FinishedDate: ~
         Remark: ''
-    '5802243': !!datamodel.tDegree
+    '4269868': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
         EnrolledDate:
             day: 1

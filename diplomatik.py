@@ -7,6 +7,13 @@ import datamodel
 import appserver
 import texpdf
 
+
+
+__VERSION__ = "0.90"
+
+
+
+
 from tools import expandHTMLTemplate
 
 degree_rule_sets = [
@@ -25,10 +32,10 @@ store = datamodel.tDataStore("example-data",
 
 class tDegreesField(appserver.tDisplayField):
     def __init__(self, name, description):
-        appserver.tField.__init__(self, name, description)
+        appserver.tDisplayField.__init__(self, name, description)
 
-    def getValue(self, object):
-        return getattr(object, self.Name)
+    def isSortable(self):
+        return False
 
     def getDisplayHTML(self, object):
         value = self.getValue(object)
@@ -39,13 +46,12 @@ class tDegreesField(appserver.tDisplayField):
 
     def getWidgetHTML(self, key, object):
         value = self.getValue(object)
-        print value
         return appserver.expandHTMLTemplate("degrees-widget.html",
                                             {"student": object,
                                              "degrees": value.values(),
                                              "rulesets": degree_rule_sets_map})
 
-    def getWidgetHTMLFromInput(self, object, form_input):
+    def getWidgetHTMLFromInput(self, key, object, form_input):
         return self.getWidgetHTML(key, object)
 
 
@@ -53,11 +59,11 @@ class tDegreesField(appserver.tDisplayField):
 
 class tExamsField(appserver.tDisplayField):
     def __init__(self, name, description, student):
-        appserver.tField.__init__(self, name, description)
+        appserver.tDisplayField.__init__(self, name, description)
         self.Student = student
 
-    def getValue(self, object):
-        return getattr(object, self.Name)
+    def isSortable(self):
+        return False
 
     def getDisplayHTML(self, object):
         value = self.getValue(object)
@@ -68,12 +74,23 @@ class tExamsField(appserver.tDisplayField):
 
     def getWidgetHTML(self, key, object):
         value = self.getValue(object)
-        print value
+
+        exams = value.values()
+        def cmp_date_func(a, b):
+            return cmp(a.Date, b.Date)
+        exams.sort(cmp_date_func)
+
+        if key is None:
+            components = {}
+        else:
+            components = dict(degree_rule_sets_map[object.DegreeRuleSet].degreeComponents())
+
         return appserver.expandHTMLTemplate("exams-widget.html",
                                             {"student": self.Student,
                                              "degree": object,
                                              "degree_id": key,
-                                             "exams": value.values(),
+                                             "exams": exams,
+                                             "components": components
                                              })
 
     def getWidgetHTMLFromInput(self, key, object, form_input):
@@ -88,14 +105,21 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
                                             store,
                                             [
             appserver.tStringField("ID", "Matrikelnummer", 
-                         re.compile("^[a-zA-Z0-9]+$")),
+                                   shown_in_overview = True,
+                                   validation_re = \
+                                   re.compile("^[a-zA-Z0-9]+$")),
             appserver.tStringField("FirstName", "Vorname"),
-            appserver.tStringField("MiddleName", "Weitere Vornamen"),
+            appserver.tStringField("MiddleName", "Weitere Vornamen",
+                                   False),
             appserver.tStringField("LastName", "Nachname"),
-            appserver.tDateField("DateOfBirth", "Geburtsdatum", none_ok = True),
+            appserver.tDateField("DateOfBirth", "Geburtsdatum", 
+                                 shown_in_overview = False,
+                                 none_ok = True),
             tDegreesField("Degrees", "Abschl&uuml;sse"),
-            appserver.tStringField("Notes", "Notizen"),
-            appserver.tStringField("Email", "Email-Adresse")
+            appserver.tStringField("Notes", "Notizen",
+                                   shown_in_overview = False),
+            appserver.tStringField("Email", "Email-Adresse",
+                                   shown_in_overview = False)
             ])
 
     def createNewObject(self):
@@ -107,6 +131,9 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
     def inPlaceWriteHook(self, key):
         store.writeStudent(key)
 
+    def defaultSortField(self):
+        return "LastName";
+
     def getCustomization(self, element, situation, db_key):
         if element == "title":
             return "Studierendendatenbank"
@@ -114,7 +141,8 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
         if element == "header":
             result = expandHTMLTemplate("main-header.html")
             if situation == "overview":
-                result += expandHTMLTemplate("welcome.html")
+                result += expandHTMLTemplate("welcome.html",
+                                             {"version": __VERSION__})
             return result
         return ""
 
@@ -127,13 +155,18 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
         appserver.tDatabaseHandler.__init__(self,
                                             student.Degrees,
                                             [
+            appserver.tChangeOnCreateAdapter(
             appserver.tChoiceField(
             "DegreeRuleSet", "Art des Abschlusses",
-            [(drs.id(), drs.description()) for drs in degree_rule_sets]),
+            shown_in_overview = True,
+            choices = [(drs.id(), drs.description()) 
+                       for drs in degree_rule_sets])),
             appserver.tDateField("EnrolledDate", "Begonnen"),
-            appserver.tDateField("FinishedDate", "Abgeschlossen", none_ok = True),
+            appserver.tDateField("FinishedDate", "Abgeschlossen", 
+                                 none_ok = True),
             tExamsField("Exams", "Pr&uuml;fungen", student),
-            appserver.tStringField("Remark", "Bemerkungen"),
+            appserver.tStringField("Remark", "Bemerkungen",
+                                   shown_in_overview = False),
             ])
 
     def createNewObject(self):
@@ -144,6 +177,9 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
 
     def deleteHook(self, key):
         store.writeStudent(self.Student.ID)
+
+    def defaultSortField(self):
+        return "EnrolledDate";
 
     def getCustomization(self, element, situation, db_key):
         if element == "title":
@@ -167,17 +203,36 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                             degree.Exams,
                                             [
             appserver.tDateField("Date", "Datum"),
-            # FIXME semester
             appserver.tStringField("Description", "Beschreibung"),
             appserver.tChoiceField("DegreeComponent", 
                                    "Komponente",
-                                   degree_rule_sets_map[degree.DegreeRuleSet].degreeComponents()),
+                                   shown_in_overview = True,
+                                   choices = degree_rule_sets_map[degree.DegreeRuleSet].degreeComponents()
+                                   ),
+            appserver.tChoiceField("Source", "Ursprung",
+                                   shown_in_overview = True,
+                                   choices = degree_rule_sets_map[degree.DegreeRuleSet].examSources()
+                                   ),
+            appserver.tStringField("SourceDescription", "Ursprung (ausf&uuml;hrlich)",
+                                   shown_in_overview = False),
             appserver.tStringField("Examiner", "Pr&uuml;fer"),
-            #appserver.tFloatField("CountedResult", "Gez&auml;hltes Ergebnis", 1.0, 6.0, 1),
-            appserver.tStringField("NativeResult", "Original-Ergebnis"),
-            #appserver.tFloatField("Credits", "SWS", 0.0, None, 1),
-            appserver.tStringField("CreditsPrintable", "SWS (ausf&uuml;hrlich)"),
-            appserver.tStringField("Remarks", "Bemerkung"),
+            appserver.tCheckField("Counted", "Gewertet?"),
+            appserver.tFloatField("CountedResult", "Gez&auml;hltes Ergebnis",
+                                  shown_in_overview = True,
+                                  min = 1.0, 
+                                  max = 6.0, 
+                                  none_ok = True),
+            appserver.tStringField("NativeResult", "Original-Ergebnis",
+                                   shown_in_overview = False),
+            appserver.tFloatField("Credits", "SWS", 
+                                  shown_in_overview = True,
+                                  min = 0.0, 
+                                  max = None, 
+                                  none_ok = True),
+            appserver.tStringField("CreditsPrintable", "SWS (ausf&uuml;hrlich)",
+                                   shown_in_overview = False),
+            appserver.tStringField("Remarks", "Bemerkung",
+                                   shown_in_overview = False),
             ])
 
     def createNewObject(self):
@@ -188,6 +243,9 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
 
     def deleteHook(self, key):
         store.writeStudent(self.Student.ID)
+
+    def defaultSortField(self):
+        return "Date";
 
     def getCustomization(self, element, situation, db_key):
         if element == "title":
@@ -273,7 +331,3 @@ class tMainAppServer(appserver.tAppServer):
 httpd = BaseHTTPServer.HTTPServer(('', 8000), 
                                   tMainAppServer)
 httpd.serve_forever()
-
-me = datamodel.tStudent()
-me.ID = "992330"
-store.writeStudent(me)

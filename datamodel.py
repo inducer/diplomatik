@@ -2,7 +2,6 @@ import yaml
 import os
 import os.path
 import stat
-import codecs
 import datetime
 
 
@@ -28,13 +27,15 @@ def dateFromYaml(date):
 class tExam:
     def __init__(self):
         self.Date = None # timestamp
-        self.Semester = None
         self.Description = "" # str
         self.DegreeComponent = None # str
         self.Examiner = "" # str
+        self.Counted = True # bool
+        self.Source = None # str-key
+        self.SourceDescription = "" # str
         self.NativeResult = None # str
-        self.CountedResult = None # float
-        self.Credits = None # float, like SWS
+        self.CountedResult = None # float or None
+        self.Credits = None # float or None, like SWS
         self.CreditsPrintable = None # str, like "3+1"
         self.Remarks = "" # str
 
@@ -44,6 +45,12 @@ class tExam:
         return (result, "!!datamodel.tExam")
 
     def from_yaml(self, new_dict):
+        if "Counted" not in new_dict:
+            self.Counted = True
+        if "Source" not in new_dict:
+            self.Source = None
+        if "SourceDescription" not in new_dict:
+            self.SourceDescription = ""
         self.__dict__.update(new_dict)
         self.Date = dateFromYaml(self.Date)
         return self
@@ -55,7 +62,7 @@ class tDegree:
         self.EnrolledDate = None 
         self.FinishedDate = None
         self.Exams = {}
-        self.DegreeRuleSet = None # str
+        self.DegreeRuleSet = None # str-key
         self.Remark = "" # str
 
     def degreeComponents(self):
@@ -137,5 +144,6 @@ class tDataStore:
         assert key == student.ID
         
         filename = os.path.join(self.Directory, student.ID)
-        yaml.dumpToFile(file(filename, "wb"), 
-                        student)
+        outf = file(filename, "wb")
+        yaml.dumpToFile(outf, student)
+        outf.close()

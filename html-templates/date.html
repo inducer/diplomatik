@@ -1,12 +1,12 @@
 #if ($none_ok)
   <input type="radio" name="${name}-null" 
     value="1" id="${name}-null-yes"
-    #if ($is_none)checked#end/>
+    #if ($is_none)checked="checked"#end/>
   <label for="${name}-null-yes">ungesetzt</label>
 
   <input type="radio" name="${name}-null" 
     value="0" id="${name}-null-no"
-    #if ($is_none)#else checked#end/>
+    #if ($is_none)#else checked="checked"#end/>
   <label for="${name}-null-no">gesetzt:</label>
 #end
 

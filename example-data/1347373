@@ -5,9 +5,9 @@ DateOfBirth:
     year: 1978
 Degrees: {}
 Email: "hans@wurst.de"
-FirstName: "Hans"
-ID: "7347373"
+FirstName: Hans
+ID: '1347373'
 LastName: "Wurst"
-MiddleName: "Friedrich"
-Notes: "kann gar nix, ausser Wurst machen"
+MiddleName: Friedrich
+Notes: ''
 VacationSemesters: []

@@ -11,6 +11,9 @@ class tDegreeRuleSet:
     def degreeComponents(self):
         return {} # [(id(str), description(str))]
 
+    def examSources(self):
+        return {} # [(id(str), description(str))]
+
     def isComplete(self, student):
         raise NotImplemented
 
@@ -54,6 +57,13 @@ class tTemaVDAltDegreeRuleSet:
             ("scheine", "Scheine"),
             ]
 
+    def examSources(self):
+        return [
+            ("uni", "Uni KA, regul&auml;r"),
+            ("ausland", "Ausland"),
+            ("andere", "Andere dt. Hochschule"),
+            ]
+
     def isComplete(self, student):
         return False
 
@@ -91,14 +101,22 @@ class tTemaHDAltDegreeRuleSet:
     def degreeComponents(self):
         return [
             ("rein", "Reine Mathematik"),
-            ("fs-rein", "Reine Mathematik / studienbegleitend"),
             ("angewandt", "Angewandte Mathematik"),
-            ("fs-angewandt", "Angewandte Mathematik / studienbegleitend"),
             ("1nf", "Erstes Nebenfach"),
             ("2nf", "Angewandte Informatik"),
             ("diplomarbeit", "Diplomarbeit"),
             ("ueb-rein", "&Uuml;bungsschein reine Mathematik"),
             ("ueb-angewandt", "&Uuml;bungsschein angewandte Mathematik"),
+            ("seminar", "Seminarschein"),
+            ]
+
+    def examSources(self):
+        return [
+            ("uni", "Uni KA, regul&auml;r"),
+            ("freischuss", "Uni KA, studienbegleitend"),
+            ("ausland", "Ausland"),
+            ("industrie", "Industrie"),
+            ("andere", "Andere dt. Hochschule"),
             ]
 
     def isComplete(self, student):

@@ -9,14 +9,24 @@ $doctype
     <table>
       <tr>
         #foreach ($field in $fields)
-          <td><u><b>$field.description()</b></u></td>
+          #if ($field.isShownInOverview())
+            <td>
+              #if ($field.isSortable())
+                <a href="sortBy$field.name()">$field.description()</a>
+              #else
+                <u>$field.description()<u>
+              #end
+            </td>
+          #end
         #end
       </tr>
-    #foreach ($row_key in $database.keys())
+    #foreach ($row_key in $keys)
       #set ($row_obj = $database.__getitem__($row_key))
       <tr>
         #foreach ($field in $fields)
-          <td>$field.getDisplayHTML($row_obj)</td>
+          #if ($field.isShownInOverview())
+            <td>$field.getDisplayHTML($row_obj)</td>
+          #end
         #end
         <td>
           <a href="edit/$row_key">Bearbeiten</a>

@@ -16,6 +16,7 @@ import tools
 
 class tNotFoundError(Exception):
     def __init__(self, value):
+        Exception.__init__(self)
         self.Value = value
     def __str__(self):
         return str(self.Value)
@@ -24,12 +25,25 @@ class tNotFoundError(Exception):
 
 
 class tField:
-    def __init__(self, name, description):
+    def __init__(self, name, description, shown_in_overview = True):
         self.Name = name
         self.Description = description
+        self.ShownInOverview = shown_in_overview
         
+    def name(self):
+        return self.Name
+
     def description(self):
         return self.Description
+
+    def isShownInOverview(self):
+        return self.ShownInOverview
+
+    def getValue(self, object):
+        return getattr(object, self.Name)
+
+    def isSortable(self):
+        return True
 
     def getDisplayHTML(self, object):
         raise NotImplementedError
@@ -43,7 +57,7 @@ class tField:
     def isValid(self, form_input):
         raise NotImplementedError
 
-    def setValue(self, form_input, object):
+    def setValue(self, key, form_input, object):
         raise NotImplementedError
         
 
@@ -51,14 +65,15 @@ class tField:
 
 
 class tDisplayField(tField):
-    def __init__(self, name, description):
-        self.Name = name
-        self.Description = description
+    def __init__(self, name, description, 
+                 shown_in_overview = True):
+        tField.__init__(self, name, description,
+                        shown_in_overview)
         
     def isValid(self, form_input):
         return True
 
-    def setValue(self, form_input, object):
+    def setValue(self, key, form_input, object):
         pass
         
 
@@ -66,12 +81,12 @@ class tDisplayField(tField):
 
 
 class tStringField(tField):
-    def __init__(self, name, description, validation_re = None):
-        tField.__init__(self, name, description)
+    def __init__(self, name, description, 
+                 shown_in_overview = True,
+                 validation_re = None):
+        tField.__init__(self, name, description,
+                        shown_in_overview)
         self.ValidationRE = validation_re
-
-    def getValue(self, object):
-        return getattr(object, self.Name)
 
     def getDisplayHTML(self, object):
         return self.getValue(object)
@@ -93,29 +108,25 @@ class tStringField(tField):
         else:
             return True
 
-    def setValue(self, form_input, object):
+    def setValue(self, key, form_input, object):
         setattr(object, self.Name, form_input[self.Name])
 
 
 
 
 class tDateField(tField):
-    def __init__(self, name, description, none_ok = False):
-        tField.__init__(self, name, description)
+    def __init__(self, name, description, 
+                 shown_in_overview = True, 
+                 none_ok = False):
+        tField.__init__(self, name, description,
+                        shown_in_overview)
         self.NoneOK = none_ok
-
-    def isValid(self, input):
-        return True
-
-    def getValue(self, object):
-        return getattr(object, self.Name)
 
     def getDisplayHTML(self, object):
         date = self.getValue(object)
         if date is None:
             return "-/-"
         else:
-            print repr(date)
             return date.isoformat()
 
     def _getHTML(self, is_none, y, m, d):
@@ -166,12 +177,12 @@ class tDateField(tField):
             y = int(form_input["%s-y" % self.Name])
             m = int(form_input["%s-m" % self.Name])
             d = int(form_input["%s-d" % self.Name])
-            date = datetime.date(y, m, d)
+            datetime.date(y, m, d)
             return True
-        except ValueError, e:
+        except ValueError:
             return False
 
-    def setValue(self, form_input, object):
+    def setValue(self, key, form_input, object):
         if self.NoneOK and form_input["%s-null" % self.Name] == "1":
             date = None
         else:
@@ -185,8 +196,10 @@ class tDateField(tField):
 
 
 class tChoiceField(tField):
-    def __init__(self, name, description, choices, none_ok = False):
-        tField.__init__(self, name, description)
+    def __init__(self, name, description, 
+                 shown_in_overview, choices, none_ok = False):
+        tField.__init__(self, name, description, 
+                        shown_in_overview)
         self.Choices = choices
         self.ChoicesDict = dict(choices)
         self.NoneOK = none_ok
@@ -194,9 +207,6 @@ class tChoiceField(tField):
     def isValid(self, input):
         return True
 
-    def _getValue(self, object):
-        return getattr(object, self.Name)
-    
     def _getValueFromInput(self, form_input):
         v = form_input[self.Name]
         if self.NoneOK:
@@ -208,7 +218,7 @@ class tChoiceField(tField):
             return v
 
     def getDisplayHTML(self, object):
-        value = self._getValue(object)
+        value = self.getValue(object)
         if value is None:
             return "-/-"
         else:
@@ -240,8 +250,7 @@ class tChoiceField(tField):
              "sel_index": sel_index })
 
     def getWidgetHTML(self, key, object):
-        value = self._getValue(object)
-        print "YOOHOO", value
+        value = self.getValue(object)
         return self._getHTML(value)
 
     def getWidgetHTMLFromInput(self, key, object, form_input):
@@ -249,9 +258,158 @@ class tChoiceField(tField):
         return self._getHTML(value)
 
 
-    def setValue(self, form_input, object):
+    def setValue(self, key, form_input, object):
         value = self._getValueFromInput(form_input)
         setattr(object, self.Name, value)
+
+
+
+
+class tFloatField(tField):
+    def __init__(self, name, description, 
+                 shown_in_overview = True, 
+                 min = None, max = None, none_ok = False):
+        tField.__init__(self, name, description,
+                        shown_in_overview)
+        self.Minimum = min
+        self.Maximum = max
+        self.NoneOK = none_ok
+
+    def isValid(self, input):
+        try:
+            self._getValueFromInput(input)
+            return True
+        except ValueError:
+            return False
+
+    def _getValueFromInput(self, form_input):
+        v = form_input[self.Name]
+        if v == "":
+            if self.NoneOK:
+                return None
+            else:
+                raise ValueError, "None not allowed for this field"
+        else:
+            fv = float(v)
+            if self.Minimum is not None and fv < self.Minimum:
+                raise ValueError, "Value below allowed minimum"
+            if self.Maximum is not None and fv > self.Maximum:
+                raise ValueError, "Value above allowed maximum"
+            return fv
+
+    def getDisplayHTML(self, object):
+        value = self.getValue(object)
+        if value is None:
+            return "-/-"
+        else:
+            return str(value)
+
+    def _getWidget(self, value):
+        if value is None:
+            svalue = ""
+        else:
+            svalue = str(value)
+
+        return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % (
+            self.Name, svalue)
+
+    def getWidgetHTML(self, key, object):
+        value = self.getValue(object)
+        return self._getWidget(value)
+
+    def getWidgetHTMLFromInput(self, key, object, form_input):
+        return "<input type=\"text\" name=\"%s\" value=\"%s\"/>" % (
+            self.Name, form_input[self.Name])
+
+    def setValue(self, key, form_input, object):
+        value = self._getValueFromInput(form_input)
+        setattr(object, self.Name, value)
+
+
+
+
+class tCheckField(tField):
+    def __init__(self, name, description, 
+                 shown_in_overview = True):
+        tField.__init__(self, name, description,
+                        shown_in_overview)
+
+    def isValid(self, input):
+        return True
+
+    def _getValueFromInput(self, form_input):
+        try:
+            form_input[self.Name]
+            return True
+        except KeyError:
+            return False
+            
+
+    def getDisplayHTML(self, object):
+        value = self.getValue(object)
+        if value:
+            return "X"
+        else:
+            return "-"
+
+    def _getWidget(self, value):
+        if value:
+            svalue = " checked=\"checked\""
+        else:
+            svalue = ""
+
+        return "<input type=\"checkbox\" name=\"%s\" value=\"%s\"%s/>" % (
+            self.Name, "1", svalue)
+
+    def getWidgetHTML(self, key, object):
+        value = self.getValue(object)
+        return self._getWidget(value)
+
+    def getWidgetHTMLFromInput(self, key, object, form_input):
+        return self._getWidget(self._getValueFromInput(form_input))
+
+    def setValue(self, key, form_input, object):
+        value = self._getValueFromInput(form_input)
+        setattr(object, self.Name, value)
+
+
+
+
+class tChangeOnCreateAdapter(tField):
+    def __init__(self, slave):
+        tField.__init__(self, 
+                        slave.Name,
+                        slave.Description,
+                        slave.ShownInOverview)
+        self.Slave = slave
+
+    def getValue(self, object):
+        return self.Slave.getValue(object)
+
+    def isSortable(self):
+        return self.Slave.isSortable()
+
+    def getDisplayHTML(self, object):
+        return self.Slave.getDisplayHTML(object)
+
+    def getWidgetHTML(self, key, object):
+        if key is None:
+            return self.Slave.getWidgetHTML(key, object)
+        else:
+            return self.Slave.getDisplayHTML(object)
+
+    def getWidgetHTMLFromInput(self, key, object, form_input):
+        if key is None:
+            return self.Slave.getWidgetHTML(key, object)
+        else:
+            return self.Slave.getDisplayHTML(object)
+
+    def isValid(self, form_input):
+        return self.Slave.isValid(form_input)
+
+    def setValue(self, key, form_input, object):
+        if key is None:
+            self.Slave.setValue(key, form_input, object)
 
 
 
@@ -276,13 +434,36 @@ class tDatabaseHandler:
     def deleteHook(self, key):
         pass
 
+    def defaultSortField(self):
+        return None
+
     def getCustomization(self, element, situation, db_key):
         return ""
 
-    def handleOverviewPage(self, path, form_input):
+    def handleOverviewPage(self, path, form_input, sort_by):
+        keys = self.Database.keys()
+        if sort_by is not None:
+            sort_fields = [f for f in self.Fields
+                           if f.name() == sort_by]
+            if len(sort_fields) != 1:
+                raise tNotFoundError, \
+                      "Cannot sort by unknown field %s" % sort_by
+            sort_field = sort_fields[0]
+            if not sort_field.isSortable():
+                raise tNotFoundError, \
+                      "Cannot sort by unordered field %s" % sort_by
+
+            def cmp_func(a, b):
+                return cmp(
+                    sort_field.getValue(self.Database[a]),
+                    sort_field.getValue(self.Database[b]))
+
+            keys.sort(cmp_func)
+
         return tHTTPResponse(
             expandHTMLTemplate("db-overview.html",
                                {"database": self.Database,
+                                "keys": keys,
                                 "handler": self,
                                 "fields": self.Fields}
                                ))
@@ -299,7 +480,7 @@ class tDatabaseHandler:
                     break
             if valid:
                 for field in self.Fields:
-                    field.setValue(form_input, obj)
+                    field.setValue(key, form_input, obj)
 
                 new_key = self.getObjectKey(obj)
                 if key is None:
@@ -374,13 +555,22 @@ class tDatabaseHandler:
             return tHTTPResponse("", 302, {"Location": ".."})
 
     def getPage(self, path, form_input):
+        sort_re = re.compile("^sortBy([a-zA-Z0-9_]+)$")
+        sort_match = sort_re.search(path)
         edit_re = re.compile("^edit/([a-zA-Z0-9]+)$")
         edit_match = edit_re.search(path)
         delete_re = re.compile("^delete/([a-zA-Z0-9]+)$")
         delete_match = delete_re.search(path)
 
         if path == "":
-            return self.handleOverviewPage(path, form_input)
+            if self.defaultSortField() is None:
+                return self.handleOverviewPage(path, form_input, None)
+            else:
+                return tHTTPResponse("", 302, 
+                                     {"Location": "sortBy%s" % self.defaultSortField()})
+        elif sort_match:
+            return self.handleOverviewPage(path, form_input, 
+                                           sort_match.group(1))
         elif path == "new/":
             return self.handleNewPage(path, form_input)
         elif edit_match:
@@ -437,6 +627,10 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
         self.handlePage(self.path, parseQuery(post_data))
 
     def handlePage(self, path, form_input):
+        if self.client_address[0] != "127.0.0.1":
+            self.send_error(403, "Non-local access denied")
+            return
+
         for path_re, handler in self.pageHandlers():
             path_match = re.compile(path_re).match(path)
             if path_match:

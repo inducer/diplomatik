@@ -1,4 +1,36 @@
-#if ($student.ID)
+#if ($degree_id)
+  <table>
+    <tr>
+      <td><u>Datum</u></td>
+      <td><u>Komponente</u></td>
+      <td><u>Beschreibung</u></td>
+      <td><u>Pr&uuml;fer</u></td>
+      <td><u>Ergebnis</u></td>
+      <td><u>SWS</u></td>
+    </tr>
+    #foreach ($exam in $exams)
+      <tr>
+        <td>$exam.Date.isoformat()</td>
+        <td>$components.__getitem__($exam.DegreeComponent)</td>
+        <td>$exam.Description</td>
+        <td>$exam.Examiner</td>
+        <td>
+          #if ($exam.CountedResult)
+            $exam.CountedResult
+          #else
+            -/-
+          #end
+        </td>
+        <td>
+          #if ($exam.Credits)
+            $exam.Credits
+          #else
+            -/-
+          #end
+        </td>
+      </tr>
+    #end
+  </table>
   <p>
     <a href="/exams/$student.ID/$degree_id/">Bearbeiten</a>
   </p>
