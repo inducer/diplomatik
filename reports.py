@@ -168,7 +168,7 @@ class tPerDegreeReportHandler(tReportHandler):
 
     def getList(self):
         return tReportHandler.getList(self) + [
-            ("transcript", "Notenauszug")
+            ("transcript", "Notenauszug (teilweise)")
             ]
 
     def getPDF(self, report_id, form_data):
@@ -318,5 +318,5 @@ class tTeMaHDAltReportHandler(tPerDegreeReportHandler):
                 {"student": self.Student,
                  "drs_map": self.DRSMap})
         else:
-            return tPerDegreeReportHandler.getPDF(self, report_id)
+            return tPerDegreeReportHandler.getPDF(self, report_id, form_data)
 
