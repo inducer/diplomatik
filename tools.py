@@ -295,8 +295,7 @@ def parseQuery(query):
             value = None
         else:
             key = kvlist[0].replace("+", " ")
-            value = unicode(urllib.unquote(
-                kvlist[1].replace("+", " ")),
+            value = unicode(urllib.unquote_plus(kvlist[1]),
                 "utf-8")
         result[key] = value
     return result
@@ -309,7 +308,7 @@ def composeQuery(items, previous_query = {}):
     query_items.update(items)
     if query_items:
         str_items = ["%s=%s" % (key,
-                                urllib.quote(value.encode("utf-8")))
+                                urllib.quote_plus(value.encode("utf-8")))
                      for key, value in query_items.iteritems()]
         return "?"+ "&".join(str_items)
     else:
