@@ -491,8 +491,6 @@ class tDatabaseHandler:
             current_filter = "none"
             keys = self.Database.keys()
 
-        print keys
-
         try:
             sort_by = request.Query["sortby"]
         except KeyError:
@@ -706,9 +704,12 @@ class tAppServer(BaseHTTPServer.BaseHTTPRequestHandler):
             self.path)
         self.handlePage(request)
 
+    def isAllowed(self, socket):
+        return True
+
     def handlePage(self, request):
-        if self.client_address[0] != socket.gethostbyname("localhost"):
-            self.send_error(403, "Non-local access denied")
+        if not self.isAllowed(socket):
+            self.send_error(403, "Access denied")
             return
 
         for path_re, handler in self.pageHandlers():

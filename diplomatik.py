@@ -5,6 +5,7 @@ import re
 import sys
 import os
 import os.path
+import getopt
 
 import tools
 import semester
@@ -12,12 +13,13 @@ import degreeruleset
 import reports
 import datamodel
 import appserver
-import webbrowser
 
 from tools import expandHTMLTemplate
 
 __VERSION__ = file("VERSION").read()
 LISTEN_PORT = 8000
+ALLOW_NON_LOCAL = False
+DO_START_BROWSER = False
 
 
 
@@ -495,6 +497,10 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
 
 # Request dispatcher ---------------------------------------
 class tMainAppServer(appserver.tAppServer):
+    def isAllowed(self, socket):
+        return ALLOW_NON_LOCAL \
+               or self.client_address[0] == socket.gethostbyname("localhost")
+
     def resolveStudent(self, stud_id):
         try:
             student = store[stud_id]
@@ -690,9 +696,26 @@ class tMainAppServer(appserver.tAppServer):
 
 
 # Main program ---------------------------------------------
-if len(sys.argv) != 2:
-    print "Benutzung: %s <Verzeichnis mit Studentendaten>" % sys.argv[0]
-    sys.exit(0)
+opts, args = getopt.getopt(sys.argv[1:], [], 
+                           ["allow-non-local",
+                            "start-browser"])
+if len(args) != 1:
+    print "Benutzung: %s [Optionen] <Verzeichnis mit Studentendaten>" % sys.argv[0]
+    print
+    print "Optionen:"
+    print "  --allow-non-local"
+    print "      Nichtlokalen Zugriff erlauben (gefaehrlich!)"
+    print "  --start-browser"
+    print "      Automatische einen Webbrowser starten"
+    sys.exit(1)
+
+for opt, value in opts:
+    if opt == "--allow-non-local":
+        print "WARNUNG: Nichtlokaler Zugriff wird zugelassen"
+        ALLOW_NON_LOCAL = True
+    if opt == "--start-browser":
+        DO_START_BROWSER = True
+
 
 degree_rule_sets = [
     degreeruleset.tTemaVDAltDegreeRuleSet(),
@@ -705,7 +728,7 @@ for drs in degree_rule_sets:
 
 print "Lade Studentendaten...",
 sys.stdout.flush()
-store = datamodel.tDataStore(sys.argv[1], 
+store = datamodel.tDataStore("example-data", 
                              degree_rule_sets)
 print "erledigt"
 httpd = BaseHTTPServer.HTTPServer(('', LISTEN_PORT), 
@@ -714,9 +737,12 @@ httpd = BaseHTTPServer.HTTPServer(('', LISTEN_PORT),
 url = "http://localhost:%d." % LISTEN_PORT
 print "Horche nach Anfragen auf", url
 
-# FIXME race condition
-webbrowser.open(url)
-print "Webbrowser gestartet"
+if DO_START_BROWSER:
+    # FIXME race condition
+    import webbrowser
+
+    webbrowser.open(url)
+    print "Webbrowser gestartet"
 
 quitflag = tools.tReference(False)
 while not quitflag.get():

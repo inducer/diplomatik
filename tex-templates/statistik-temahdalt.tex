@@ -128,10 +128,11 @@
       & $nf_hist.__getitem__($nf) \\\\
     #end ##
     \\\\
-    \textbf{Anzahl der studienbegleitenden Pr\"ufungen:}
+    \textbf{Anzahl der gewerteten studienbegl. Pr\"ufungen:}
     #foreach ($sb in $h.sort($sb_hist.keys())) ##
-      & $sb
-      & $sb_hist.__getitem__($sb) \\\\
+      & $sb Pr\"ufungen
+      & $sb_hist.__getitem__($sb)
+      & Studierende(r) \\\\
     #end ##
     \\\\
     \textbf{Pr\"ufungen aus dem Ausland:}
