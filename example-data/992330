@@ -11,6 +11,54 @@ Degrees:
             month: 10
             year: 2000
         Exams:
+            '1106379': !!datamodel.tExam
+                Counted: True
+                CountedResult: 2.0
+                Credits: 8.0
+                CreditsPrintable: ''
+                Date:
+                    day: 7
+                    month: 8
+                    year: 2000
+                DegreeComponent: "zusatz"
+                Description: Technische Informatik I-II
+                Examiner: Dillmann
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '1197502': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.1
+                Credits: 16.0
+                CreditsPrintable: ''
+                Date:
+                    day: 16
+                    month: 10
+                    year: 2000
+                DegreeComponent: "zusatz"
+                Description: Informatik I-IV
+                Examiner: "Tichy, Waibel, Prautzsch, Beth"
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '2041044': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: '3+1'
+                Date:
+                    day: 7
+                    month: 2
+                    year: 2001
+                DegreeComponent: '2nf'
+                Description: Formale Systeme
+                Examiner: Schmitt
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
             '2463974': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.0
@@ -20,7 +68,7 @@ Degrees:
                     day: 29
                     month: 7
                     year: 2001
-                DegreeComponent: rein
+                DegreeComponent: angewandt
                 Description: "Rand- und Eigenwertprobleme"
                 Examiner: Lemmert
                 NativeResult: ''
@@ -119,6 +167,22 @@ Degrees:
                 DegreeComponent: rein
                 Description: "Funktionalanalysis II"
                 Examiner: Schmoeger
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '5081679': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.3
+                Credits: 4.0
+                CreditsPrintable: '3+1'
+                Date:
+                    day: 7
+                    month: 7
+                    year: 2001
+                DegreeComponent: '2nf'
+                Description: Kognitive Systeme
+                Examiner: Nagel
                 NativeResult: ''
                 Remarks: ''
                 Source: "uni"
@@ -222,7 +286,7 @@ Degrees:
             '8110132': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.0
-                Credits: 4.0
+                Credits: ~
                 CreditsPrintable: ''
                 Date:
                     day: 30
@@ -230,7 +294,7 @@ Degrees:
                     year: 2004
                 DegreeComponent: diplomarbeit
                 Description: "On the Computation of Maximally Localized Wannier Functions"
-                Examiner: "D\xf6rfler"
+                Examiner: "Prof. Dr. W. D\xf6rfler"
                 NativeResult: ''
                 Remarks: ''
                 Source: "uni"
@@ -303,15 +367,47 @@ Degrees:
             day: 26
             month: 1
             year: 2005
-        MinorSubject: "Elektrotechnik"
-        Remark: ""
+        MinorSubject: ETECHNIK
+        Remark: ''
     '4269868': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
         EnrolledDate:
             day: 1
             month: 10
             year: 1998
-        Exams: {}
+        Exams:
+            '195525': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 12.0
+                CreditsPrintable: ""
+                Date:
+                    day: 7
+                    month: 2
+                    year: 2000
+                DegreeComponent: "ana"
+                Description: "Analysis I-III"
+                Examiner: "Herzog"
+                NativeResult: ""
+                Remarks: ""
+                Source: "uni"
+                SourceDescription: ""
+            '993550': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.7
+                Credits: 8.0
+                CreditsPrintable: ""
+                Date:
+                    day: 7
+                    month: 10
+                    year: 1999
+                DegreeComponent: "la"
+                Description: "Lineare Algebra I-II"
+                Examiner: "Drumm"
+                NativeResult: ""
+                Remarks: ""
+                Source: "uni"
+                SourceDescription: ""
         FinishedDate:
             day: 16
             month: 10

@@ -1,34 +1,54 @@
 \input header
-\def\DATUM{$helper.formatDate($degree.EnrolledDate)}% Datum der Akten-Anlage (xx.xx.xxxx)
-\def\NAME{$student.LastName}% 
-\def\VORNAME{$student.FirstName}% 
-\def\GEBDAT{$helper.formatDate($student.DateOfBirth)}% 
-\def\GEBORT{$student.PlaceOfBirth}% Geburtsort
-\def\MATRIKEL{$student.ID}%
-\def\STUDBEG{$studienbeginn_sem}% Semester des Studienbeginns (WS xx/xx oder SS xx)
-\def\VORDIPL{$helper.formatDate($vddat)}% Datum der Vordiplompruefung (xx.xx.xxxx)
-\def\TECHFACH{$degree.MinorSubject}% Technisches Fach, Abkuerzungen:
-    % BAUINGW, CHEMIE, ETECHNIK, MASCHBAU, MECHANIK, PHYSIK
-\def\ZUSFACH{}% Zusatzfach, optional
+\def\DATUM{$h.formatDate($degree.EnrolledDate)}
+\def\NAME{$h.escapeTeX($student.LastName)}
+\def\VORNAME{$h.escapeTeX($student.FirstName)}
+\def\GEBDAT{$h.formatDate($student.DateOfBirth)}
+\def\GEBORT{$h.escapeTeX($student.PlaceOfBirth)}
+\def\MATRIKEL{$student.ID}
+\def\STUDBEG{$studienbeginn_sem}
+\def\VORDIPL{$h.formatDate($vddat)}
+\def\TECHFACH{$h.escapeTeX($degree.MinorSubject)}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Abschluss
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\Semesterzahl{$semzahl}%
-\def\RMdatum{24.01.05}\def\RMnoteZ{1.3}%
-    \def\RMpruefer{K\"uhnlein, Lemmert, UNCC*}%
-\def\AMdatum{23.07.01}\def\AMnoteZ{1.0}%
-    \def\AMpruefer{Lemmert, Kadelka, UNCC*}%
-\def\TFdatum{28.07.03}\def\TFnoteZ{2.0}%
-    \def\TFpruefer{Jondral, Krebs, UNCC*}%
-\def\AIdatum{21.07.01}\def\AInoteZ{1.1}%
-    \def\AIpruefer{Nagel, Schmitt, UNCC*}%
-\def\ZFdatum{}\def\ZFnoteZ{}%
-    \def\ZFpruefer{}%
-\def\DAabgabe{30.09.04}\def\DAref{Prof.~W. D\"orfler}\def\DAnote{1.0}
-    \def\DAtitel{On the computation of maximally localized Wannier Functions}
-\def\Abschlussdatum{24.01.2005}%
-\def\Bemerkung{*Teile der Pr\"ufung wurden an der University of
-North Carolina at Charlotte (UNCC) abgelegt.}%
+\def\Semesterzahl{$semzahl}
+
+\def\RMdatum{$h.formatDate($rein.EndDate)}
+    \def\RMnoteZ{$h.formatNumber("%.1f", $rein.AvgGrade)}
+    \def\RMpruefer{$h.escapeTeX($rein.Examiners)}
+
+\def\AMdatum{$h.formatDate($angewandt.EndDate)}
+    \def\AMnoteZ{$h.formatNumber("%.1f", $angewandt.AvgGrade)}
+    \def\AMpruefer{$h.escapeTeX($angewandt.Examiners)}
+
+\def\TFdatum{$h.formatDate($nf1.EndDate)}
+    \def\TFnoteZ{$h.formatNumber("%.1f", $nf1.AvgGrade)}
+    \def\TFpruefer{$h.escapeTeX($nf1.Examiners)}
+
+\def\AIdatum{$h.formatDate($nf2.EndDate)}
+    \def\AInoteZ{$h.formatNumber("%.1f", $nf2.AvgGrade)}
+    \def\AIpruefer{$h.escapeTeX($nf2.Examiners)}
+
+#if ($zusatz)
+  \def\ZUSFACH{$h.escapeTeX($zusatz.Exams)}
+  \def\ZFdatum{$h.formatDate($zusatz.EndDate)}
+  \def\ZFnoteZ{$h.formatNumber("%.1f", $zusatz.AvgGrade)}
+  \def\ZFnoteW{$h.gradeToWords($zusatz.AvgGrade)}
+  \def\ZFpruefer{$h.escapeTeX($zusatz.Examiners)}
+#else
+  \def\ZUSFACH{}
+  \def\ZFdatum{}
+  \def\ZFnoteZ{}
+  \def\ZFnoteW{}
+  \def\ZFpruefer{}
+#end
+
+\def\DAabgabe{$h.formatDate($da.Date)}
+    \def\DAref{$h.escapeTeX($da.Examiner)}
+    \def\DAnote{$h.formatNumber("%.1f", $da.CountedResult)}
+    \def\DAtitel{$h.escapeTeX($da.Description)}
+\def\Abschlussdatum{$h.formatDate($degree.FinishedDate)}
+\def\Bemerkung{$h.escapeTeX($remarks)}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Sonstiges
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,6 +1,56 @@
 import codecs
 import os
+import sets
+
 import airspeed
+
+
+
+
+def escapeTeX(value):
+    value = value.replace("\\", "--BS-ESCAPE--")
+    value = value.replace("&", "\\&")
+    value = value.replace("~", "\\~")
+    value = value.replace("$", "\\$")
+    value = value.replace("--BS-ESCAPE--", "$\\backslash$")
+    return value
+
+
+
+
+def uniq(list):
+    seen_keys = sets.Set()
+    result = []
+    for i in list:
+        if not i in seen_keys:
+            result.append(i)
+            seen_keys.add(i)
+    return result
+
+
+
+
+def unifyGrade(grade):
+    base_grade = round(grade)
+    diff = grade - base_grade
+    if diff < -1./6:
+        return base_grade - 1./3
+    elif diff < 1./6:
+        return base_grade
+    else:
+        return base_grade + 1./3
+
+
+
+
+def makeObject(dict):
+    class tInnocentContainer:
+        pass
+
+    result = tInnocentContainer()
+    for key, value in dict.iteritems():
+        setattr(result, key, value)
+    return result
 
 
 
@@ -71,7 +121,7 @@ def copyFile(dest, src):
 
 
 def runLatex(text, included_files):
-    temp_dir_name = os.tempnam()
+    temp_dir_name = os.tempnam(None, "diplomatik")
     print "*** PROCESSING TeX JOB under", temp_dir_name
     previous_wd = os.getcwd()
     os.mkdir(temp_dir_name)
@@ -86,7 +136,13 @@ def runLatex(text, included_files):
     outf.write(text)
     outf.close()
 
-    os.system("pdflatex output")
+    # three times so that the .aux can settle
+    if os.system("pdflatex output") != 0:
+        raise RuntimeError, "LaTeX run failed"
+    if os.system("pdflatex output") != 0:
+        raise RuntimeError, "LaTeX run failed"
+    if os.system("pdflatex output") != 0:
+        raise RuntimeError, "LaTeX run failed"
 
     pdff = file("output.pdf", "rb")
     pdf_string = pdff.read()

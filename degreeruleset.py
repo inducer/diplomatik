@@ -1,12 +1,34 @@
+# -*- coding: utf-8 -*-
 import tools
 import semester
-
 
 
 
 class tReportHelper:
     def formatDate(self, date):
         return date.strftime("%d.%m.%Y")
+
+    def formatNumber(self, format, number):
+        return format % number
+
+    def escapeTeX(self, value):
+        return tools.escapeTeX(value)
+
+    def gradeToWords(self, grade):
+        if grade < 1.5:
+            return "sehr gut"
+        elif grade < 2.5:
+            return "gut"
+        elif grade < 3.5:
+            return "befriedigend"
+        elif grade <= 4:
+            return "ausreichend"
+        else:
+            return "mangelhaft"
+
+    def round(self, value, decimals):
+        return round(value, decimals)
+
 
 
 
@@ -120,6 +142,66 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
 
     def doPerDegreeReport(self, id, student, degree):
         if id == "hdfinal":
+            def gatherComponent(comp):
+                def getExaminer(exam):
+                    if exam.Source == "ausland":
+                        return exam.Examiner+"*"
+                    else:
+                        return exam.Examiner
+
+                def getRemark(exam):
+                    if exam.Source == "ausland":
+                        return u"""
+                        (*) Teile der Prüfung wurden 
+                        an der %s abgelegt.""" % exam.SourceDescription
+                    else:
+                        return None
+
+                exams = [exam
+                         for exam in degree.Exams.values()
+                         if exam.DegreeComponent == comp]
+
+                def date_sort_func(a, b):
+                    return cmp(a.Date, b.Date)
+                exams.sort(date_sort_func)
+
+                if len(exams) == 0:
+                    return None
+                       
+                return tools.makeObject({
+                    "Exams": u", ".join([
+                    exam.Description
+                    for exam in exams
+                    if exam.Counted]),
+
+                    "AvgGrade": sum([
+                    tools.unifyGrade(exam.CountedResult) 
+                    * exam.Credits
+                    for exam in exams 
+                    if exam.CountedResult and exam.Credits])\
+                    / sum([ 
+                    exam.Credits 
+                    for exam in exams 
+                    if exam.CountedResult and exam.Credits]), 
+
+                    "Examiners": u", ".join(
+                    tools.uniq([ 
+                    getExaminer(exam)
+                    for exam in exams 
+                    if exam.Counted])), 
+
+                    "EndDate": max([ 
+                    exam.Date 
+                    for exam in exams 
+                    if exam.Counted]), 
+
+                    "Remarks": [ 
+                    getRemark(exam)
+                    for exam in exams
+                    if exam.Counted
+                    if getRemark(exam)]
+                    })
+
             vordiplome = [deg
                           for deg in student.Degrees.values()
                           if deg.DegreeRuleSet == "tema-vd-alt"]
@@ -141,6 +223,27 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             semzahl = semester.countSemesters(
                 studienbeginn_sem,
                 studienende_sem)
+
+            rein = gatherComponent("rein")
+            angewandt = gatherComponent("angewandt")
+            nf1 = gatherComponent("1nf")
+            nf2 = gatherComponent("2nf")
+            zusatz = gatherComponent("zusatz")
+
+            all_remarks = rein.Remarks + \
+                          angewandt.Remarks + \
+                          nf1.Remarks + \
+                          nf2.Remarks
+            if zusatz:
+                all_remarks += zusatz.Remarks
+            remarks = u"\\\\".join(tools.uniq(all_remarks))
+
+            diplomarbeiten = [exam
+                              for exam in degree.Exams.values()
+                              if exam.DegreeComponent == "diplomarbeit"]
+            if len(diplomarbeiten) != 1:
+                raise RuntimeError, "Anzahl Diplomarbeiten ist ungleich eins"
+            da = diplomarbeiten[0]
             
             return tools.runLatexOnTemplate("hddefs.tex",
                                             {"student": student,
@@ -150,9 +253,16 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
                                              "vddat": vordiplom.FinishedDate,
                                              "semzahl": semzahl,
                                              "studienbeginn_sem": studienbeginn_sem,
+                                             "rein": rein,
+                                             "angewandt": angewandt,
+                                             "nf1": nf1,
+                                             "nf2": nf2,
+                                             "zusatz": zusatz,
+                                             "da": da,
+                                             "remarks": remarks,
 
                                              "form": "noten-hd.tex",
-                                             "helper": tReportHelper(),
+                                             "h": tReportHelper(),
                                              },
                                             ["noten-hd.tex", "header.tex"])
         else:

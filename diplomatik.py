@@ -180,7 +180,7 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
                 "degrees-header.html",
                 {"student": self.Student})
 
-            if situation == "edit":
+            if situation == "edit" and db_key:
                 degree = self.Database[db_key]
                 drs = degree_rule_sets_map[degree.DegreeRuleSet]
                 result += expandHTMLTemplate(
