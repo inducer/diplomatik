@@ -12,6 +12,7 @@ import degreeruleset
 import reports
 import datamodel
 import appserver
+import webbrowser
 
 from tools import expandHTMLTemplate
 
@@ -710,7 +711,13 @@ print "erledigt"
 httpd = BaseHTTPServer.HTTPServer(('', LISTEN_PORT), 
                                   tMainAppServer)
 
-print "Horche nach Anfragen auf http://localhost:%d." % LISTEN_PORT
+url = "http://localhost:%d." % LISTEN_PORT
+print "Horche nach Anfragen auf", url
+
+# FIXME race condition
+webbrowser.open(url)
+print "Webbrowser gestartet"
+
 quitflag = tools.tReference(False)
 while not quitflag.get():
     httpd.handle_request()
