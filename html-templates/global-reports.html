@@ -1,5 +1,9 @@
 <p>Berichte:
+  #set ($len = $h.len($reports.keys()))
+  #set ($i = 0)
   #foreach ($rep_desc in $reports.iteritems())
     <a href="/report/global/${rep_desc.__getitem__(0)}.pdf">$rep_desc.__getitem__(1) (PDF)</a>
+    #set ($i = $h.add($i, 1))
+    #if ($i != $len)&middot;#end
   #end
 </p>

@@ -12,7 +12,7 @@ Degrees:
             year: 1998
         Exams: {}
         FinishedDate: ~
-        MinorSubject: ""
+        MinorSubject: ''
         Remark: "Nach Australien ausgewandert"
 Email: ''
 FirstName: Albert

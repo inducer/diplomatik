@@ -239,8 +239,8 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             return "Studierendendatenbank"
 
         if element == "extra-commands":
-            return '<a href="/quit">Diplomatik beenden</a> ' + \
-                   '<a href="/export-all">Exporte aktualisieren</a>'
+            return '&middot; <a href="/quit">Diplomatik beenden</a> ' + \
+                   '&middot; <a href="/export-all">Exporte aktualisieren</a>'
 
         if element == "header":
             result = expandHTMLTemplate("main-header.html")
@@ -255,17 +255,18 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
                     degree_rule_sets_map)
                 
                 result += expandHTMLTemplate(
-                    "global-reports.html",
-                    {"reports": report_handler.getList()})
+                    "reports.html",
+                    {"reports": report_handler.getList(),
+                     "urlscheme": "global"})
 
             if situation == "edit" and db_key:
                 rep_handler = reports.tPerStudentReportHandler(
                     self.Database[db_key],
                     degree_rule_sets_map)
                 result += expandHTMLTemplate(
-                    "student-reports.html",
-                    {"student": self.Database[db_key],
-                     "reports": rep_handler.getList()
+                    "reports.html",
+                    {"reports": rep_handler.getList(),
+                     "urlscheme": "perstudent/%s" % db_key,
                      })
 
             return result
@@ -402,10 +403,10 @@ class tDegreeDatabaseHandler(appserver.tDatabaseHandler):
                 report_handler = drs.getPerDegreeReportHandler(
                     self.Student, degree)
                 result += expandHTMLTemplate(
-                    "degree-reports.html",
-                    {"student": self.Student,
-                     "degree_id": db_key,
-                     "reports": report_handler.getList()
+                    "reports.html",
+                    {"reports": report_handler.getList(),
+                     "urlscheme": "perdegree/%s/%s" % \
+                     (self.Student.ID, db_key)
                      })
             return result
 
@@ -485,12 +486,10 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                 report_handler = drs.getPerExamReportHandler(
                     self.Student, self.Degree, exam)
                 result += expandHTMLTemplate(
-                    "exam-reports.html",
-                    {"student": self.Student,
-                     "degree_id": self.DegreeID,
-                     "degree": self.Degree,
-                     "exam_id": db_key,
-                     "reports": report_handler.getList()})
+                    "reports.html",
+                    {"reports": report_handler.getList(),
+                     "urlscheme": "perexam/%s/%s/%s" % \
+                     (self.Student.ID, self.DegreeID, db_key)})
 
             return result
         return ""

@@ -10,10 +10,14 @@ $doctype
     #if ($h.len($filters) > 1)
       <p>
         Filter:
+        #set ($len = $h.len($filters))
+        #set ($i = 0)
         #foreach ($filter in $filters)
           #set ($filter_name = $filter.__getitem__(0))
           #set ($filter_desc = $filter.__getitem__(1))
           <a href="$h.composeQuery("filter", $filter_name, $previous_query)">#if ($current_filter == $filter_name)[#end$filter_desc#if ($current_filter == $filter_name)]#end</a>
+          #set ($i = $h.add($i, 1))
+          #if ($i != $len)&middot;#end
         #end
       </p>
     #end
