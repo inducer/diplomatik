@@ -1,0 +1,30 @@
+$doctype
+<html>
+  <head>
+    <title>$title</title>
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+  </head>
+  <body>
+    <h1>$title</h1>
+
+    <p>Bei der Verarbeitung Ihrer Eingaben sind Fehler 
+    aufgetreten. Bitte korrigieren Sie die 
+    hervorgehobenen Felder.</p>
+
+    <form method="POST" accept-charset="UTF-8">
+      <table>
+        #foreach ($field in $fields)
+          <tr>
+            <td class="Label">$field.description()</td>
+            <td #if ($field.isValid($input))#else class="InvalidEntry"#end>
+              $field.getWidgetHTMLFromInput($none, $obj, $input)
+            </td>
+          </tr>
+        #end
+      </table>
+      <p>
+        <input type="submit" name="save" value="OK">
+      </p>
+    </form>
+  </body>
+</html>

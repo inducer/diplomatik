@@ -1,0 +1,23 @@
+\input header
+\begin{document}
+\textbf{\Large Liste der Abschl\"usse}
+
+Von: $h.formatDate($form_data.From)
+
+Bis: $h.formatDate($form_data.To)
+
+\begin{longtable}[l]{|l|l|l|}
+\hline
+\textbf{Name} & \textbf{Abschluss} & \textbf{Datum} \\\\
+\hline
+#foreach ($sd in $stud_deg)##
+#set ($student = $sd.__getitem__(0))##
+#set ($degree = $sd.__getitem__(1))##
+$student.FirstName $student.LastName & 
+$drs_map.__getitem__($degree.DegreeRuleSet).description() &
+$h.formatDate($degree.FinishedDate) \\\\
+\hline
+#end##
+\end{longtable}
+\end{document}
+

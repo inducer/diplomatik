@@ -1,0 +1,23 @@
+$doctype
+<html>
+  <head>
+    <title>$title</title>
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+  </head>
+  <body>
+    <h1>$title</h1>
+    <form method="POST" accept-charset="UTF-8">
+      <table>
+        #foreach ($field in $fields)
+          <tr>
+            <td class="Label">$field.description()</td>
+            <td>$field.getWidgetHTML($none, $obj)</td>
+          </tr>
+        #end
+      </table>
+      <p>
+        <input type="submit" name="save" value="OK">
+      </p>
+    </form>
+  </body>
+</html>
