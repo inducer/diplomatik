@@ -6,7 +6,6 @@ import tools
 import degreeruleset
 import datamodel
 import appserver
-import texpdf
 
 from tools import expandHTMLTemplate
 
