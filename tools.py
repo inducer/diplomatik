@@ -199,11 +199,11 @@ def histogram(values, start = {}):
 def gradeToWords(grade):
     if grade < 1:
         return "?"
-    elif grade < 1.5:
+    elif grade <= 1.5:
         return "sehr gut"
-    elif grade < 2.5:
+    elif grade <= 2.5:
         return "gut"
-    elif grade < 3.5:
+    elif grade <= 3.5:
         return "befriedigend"
     elif grade <= 4:
         return "ausreichend"
@@ -249,6 +249,9 @@ def _expandTemplate(dir, filename, globals_dict):
 
         def add(self, value, value2):
             return value + value2
+
+        def multiply(self, value, value2):
+            return value * value2
 
         def sort(self, list):
             result = list[:]

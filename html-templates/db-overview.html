@@ -38,11 +38,11 @@ $doctype
       </tr>
     #foreach ($row_key in $keys)
       #set ($row_obj = $database.__getitem__($row_key))
-      <tr>
+      <tr class="ListRow">
         #foreach ($field in $fields)
           #if ($field.isShownInOverview())
             <td class="DataBox">
-              $field.getDisplayHTML($row_obj)
+              $field.getDisplayHTML($row_key, $row_obj)
             </td>
           #end
         #end

@@ -6,10 +6,9 @@ DateOfBirth:
 Degrees:
     '410874': !!datamodel.tDegree
         DegreeRuleSet: tema-hd-alt
-        EnrolledDate:
-            day: 1
-            month: 3
-            year: 2005
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 2004
         Exams:
             '8294134': !!datamodel.tExam
                 Counted: True
@@ -32,10 +31,9 @@ Degrees:
         Remark: ''
     '5635708': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-alt
-        EnrolledDate:
-            day: 1
-            month: 3
-            year: 2003
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 2002
         Exams: {}
         FinishedDate:
             day: 1

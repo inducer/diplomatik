@@ -1,2 +1,2 @@
 #! /bin/bash
-./diplomatik.py example-data
+./diplomatik.py --debug-tex example-data

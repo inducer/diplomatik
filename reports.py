@@ -73,10 +73,6 @@ class tReportHandler:
                      "title": title,
                      "obj": print_parms}))
 
-
-
-
-
     def getForm(self, report_id):
         return [], None
 
@@ -345,10 +341,11 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
         return tPerDegreeReportHandler.getList(self) + \
                tools.tAssociativeList([
             ("hdfinal", u"Ausfertigung für die Prüfungsabteilung..."),
+            ("overview", u"Übersichtszettel"),
             ("zulassung-leer", u"Zulassung zur Prüfung (blanko)"),
             ])
 
-    def getZeugnisTeXDefs(self):
+    def getZeugnisData(self):
         def gatherComponent(comp):
             def getExaminer(exam):
                 if exam.Source == "ausland":
@@ -388,6 +385,12 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                 for exam in exams]),
 
                 "AvgGrade": drs.getComponentAverageGrade(
+                self.Student, self.Degree, comp),
+
+                "WeightedGradeSum": drs.getWeightedGradeSum(
+                self.Student, self.Degree, comp),
+
+                "Credits": drs.getCreditsSum(
                 self.Student, self.Degree, comp),
 
                 "Examiners": ", ".join(examiners),
@@ -448,19 +451,23 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
         except tSubjectError:
             overall_grade = None
 
+        return {"student": self.Student,
+                "degree": self.Degree,
+                "rein": rein,
+                "angewandt": angewandt,
+                "ing": ing,
+                "inf": inf,
+                "zusatz": zusatz,
+                "da": da,
+                "remarks": remarks,
+                "overall_grade": overall_grade,
+                }
+
+
+    def getZeugnisTeXDefs(self):
         return tools.expandTeXTemplate(
                 "hddefs-zeugnis.tex",
-                {"student": self.Student,
-                 "degree": self.Degree,
-                 "rein": rein,
-                 "angewandt": angewandt,
-                 "ing": ing,
-                 "inf": inf,
-                 "zusatz": zusatz,
-                 "da": da,
-                 "remarks": remarks,
-                 "overall_grade": overall_grade,
-                 })
+                self.getZeugnisData())
 
     def getPDF(self, report_id, form_data):
         if report_id == "hdfinal":
@@ -508,6 +515,23 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
                  "drs": self.DegreeRuleSet,
                  "today": datetime.date.today(),
                  },
+                ["header.tex"])
+
+        elif report_id == "overview":
+            data = {}
+            data.update(self.getZeugnisData())
+            counted_exams = [ex
+                             for ex in self.Degree.Exams.values()
+                             if ex.Counted]
+            data["exams"] = tools.sortBy(counted_exams, "Date")
+
+            data["math_complete"] = data["rein"] and data["angewandt"] \
+                                    and (data["rein"].Credits + data["angewandt"].Credits) >= 28 \
+                                    and min(data["rein"].Credits, data["angewandt"].Credits) >= 12
+
+            return tools.runLatexOnTemplate(
+                "temahdalt-overview.tex",
+                data,
                 ["header.tex"])
 
         else:

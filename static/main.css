@@ -9,29 +9,42 @@ a:link {
 a:visited {
   color: blue;
 }
+
+/* do not highlight the quick edit links */
+td.DataBox a:link {
+  color: black;
+  text-decoration: none;
+}
+td.DataBox a:visited {
+  color: black;
+  text-decoration: none;
+}
+
 th { 
   background-color: #b0b0b0;
-}
-th {
   text-align: left;
 }
+
 th a:link { 
-  color: #000000; 
+  color: black; 
   text-decoration: none;
 }
 th a:visited { 
-  color: #000000; 
+  color: black; 
   text-decoration: none;
 }
 td.CommandBox {
   background-color: #e0e0e0;
 }
-td.DataBox {
+tr.ListRow {
   background-color: #f8f8f8;
+}
+tr.ListRow:hover {
+  background-color: #f0f0f0;
 }
 td.Label {
   background-color: #e0e0e0;
 }
 td.InvalidEntry {
-  background-color: Red;
+  background-color: red;
 }

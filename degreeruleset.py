@@ -45,22 +45,33 @@ class tDegreeRuleSet(object):
     def getExportData(self, student, degree):
         return ""
 
-    def getComponentAverageGrade(self, student, degree, component):
+    def getCreditsSum(self, student, degree, component):
         exams = [exam
                  for exam in degree.Exams.values()
                  if exam.DegreeComponent == component
                  if exam.Counted
                  if exam.CountedResult and exam.Credits]
 
-        credits = sum([exam.Credits for exam in exams])
+        return sum([exam.Credits for exam in exams])
+
+    def getWeightedGradeSum(self, student, degree, component):
+        exams = [exam
+                 for exam in degree.Exams.values()
+                 if exam.DegreeComponent == component
+                 if exam.Counted
+                 if exam.CountedResult and exam.Credits]
+        return sum([exam.CountedResult
+                    * exam.Credits
+                    for exam in exams])
+
+    def getComponentAverageGrade(self, student, degree, component):
+        grade_sum = self.getWeightedGradeSum(student, degree, component)
+        credits = self.getCreditsSum(student, degree, component)
+
         if credits == 0:
             raise tSubjectError, \
                   "Student %s hat in Komponente %s keine Pruefungen abgelegt" \
                   % (student.LastName, component)
-        grade_sum = sum([
-                    exam.CountedResult
-                    * exam.Credits
-                    for exam in exams])
 
         return tools.roundGrade(grade_sum / credits)
 

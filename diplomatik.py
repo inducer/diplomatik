@@ -38,7 +38,7 @@ class tSemesterField(appserver.tField):
     def isMandatory(self):
         return not self.NoneOK
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         sem = self.getValue(object)
         if sem is None:
             return "-/-"
@@ -95,10 +95,14 @@ class tDegreesField(appserver.tDisplayField):
     def isSortable(self):
         return False
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         value = self.getValue(object)
         return ", ".join([
-            degree_rule_sets_map[deg.DegreeRuleSet].description()
+            '<a href="/degrees/%s/edit/%s">%s</a>' % (
+            object.ID,
+            deg_key,
+            degree_rule_sets_map[deg.DegreeRuleSet].description(),
+            )
             for deg_key, deg in value.iteritems()
             ])
 
@@ -123,7 +127,7 @@ class tExamsField(appserver.tDisplayField):
     def isSortable(self):
         return False
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         value = self.getValue(object)
         return ", ".join([
             ex.Description
@@ -165,7 +169,7 @@ class tSpecialSemestersField(appserver.tDisplayField):
     def isSortable(self):
         return False
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         value = self.getValue(object)
         return ", ".join([
             str(sem.Semester)
@@ -438,20 +442,20 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                   min = 0.0, 
                                   max = None, 
                                   none_ok = True),
-            appserver.tStringField("Description", "Fach"),
-            appserver.tStringField("SourceDescription", u"Herkunft (ausführlich)",
+            appserver.tStringField("CreditsPrintable", u"SWS (ausführlich)",
                                    shown_in_overview = False),
-            appserver.tStringField("Examiner", u"Prüfer"),
-            appserver.tCheckField("Counted", "Gewertet?"),
-            appserver.tFloatField("CountedResult", u"Gezähltes Ergebnis",
+            appserver.tFloatField("CountedResult", "Note",
                                   shown_in_overview = True,
                                   min = 1.0, 
                                   max = 6.0, 
                                   none_ok = True),
             appserver.tStringField("NativeResult", "Original-Ergebnis (falls abweichend)",
                                    shown_in_overview = False),
-            appserver.tStringField("CreditsPrintable", u"SWS (ausführlich)",
+            appserver.tStringField("Description", "Fach"),
+            appserver.tStringField("SourceDescription", u"Herkunft (ausführlich)",
                                    shown_in_overview = False),
+            appserver.tStringField("Examiner", u"Prüfer"),
+            appserver.tCheckField("Counted", "Gewertet"),
             appserver.tStringField("Remarks", "Bemerkung",
                                    shown_in_overview = False),
             ])

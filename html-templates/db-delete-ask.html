@@ -12,7 +12,7 @@ $doctype
       #foreach ($field in $fields)
         <tr>
           <td>$h.escapeHTML($field.description())</td>
-          <td>$field.getDisplayHTML($obj)</td>
+          <td>$field.getDisplayHTML($key, $obj)</td>
         </tr>
       #end
     </table>

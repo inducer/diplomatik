@@ -47,7 +47,7 @@ class tField:
     def isSortable(self):
         return True
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         raise NotImplementedError
 
     def getWidgetHTML(self, key, object):
@@ -94,7 +94,7 @@ class tStringField(tField):
         return self.ValidationRE is not None and \
                self.ValidationRE.match("") is None
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         return tools.escapeHTML(self.getValue(object))
 
     def getWidgetHTML(self, key, object):
@@ -134,7 +134,7 @@ class tDateField(tField):
     def isSortable(self):
         return not self.NoneOK
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         date = self.getValue(object)
         if date is None:
             return "-/-"
@@ -242,7 +242,7 @@ class tChoiceField(tField):
             return supposed_value
 
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         value = self.getValue(object)
         if value is None:
             return "-/-"
@@ -327,7 +327,7 @@ class tFloatField(tField):
                 raise ValueError, "Value above allowed maximum"
             return fv
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         value = self.getValue(object)
         if value is None:
             return "-/-"
@@ -378,7 +378,7 @@ class tCheckField(tField):
             return False
             
 
-    def getDisplayHTML(self, object):
+    def getDisplayHTML(self, key, object):
         value = self.getValue(object)
         if value:
             return "X"
@@ -425,20 +425,20 @@ class tChangeOnCreateAdapter(tField):
     def isSortable(self):
         return self.Slave.isSortable()
 
-    def getDisplayHTML(self, object):
-        return self.Slave.getDisplayHTML(object)
+    def getDisplayHTML(self, key, object):
+        return self.Slave.getDisplayHTML(key, object)
 
     def getWidgetHTML(self, key, object):
         if key is None:
             return self.Slave.getWidgetHTML(key, object)
         else:
-            return self.Slave.getDisplayHTML(object)
+            return self.Slave.getDisplayHTML(key, object)
 
     def getWidgetHTMLFromInput(self, key, object, form_input):
         if key is None:
             return self.Slave.getWidgetHTML(key, object)
         else:
-            return self.Slave.getDisplayHTML(object)
+            return self.Slave.getDisplayHTML(key, object)
 
     def isValid(self, form_input):
         return self.Slave.isValid(form_input)
