@@ -58,7 +58,7 @@ class tDegreeRuleSet(object):
                   "Student %s hat in Komponente %s keine Pruefungen abgelegt" \
                   % (student.LastName, component)
         grade_sum = sum([
-                    tools.unifyGrade(exam.CountedResult) 
+                    exam.CountedResult
                     * exam.Credits
                     for exam in exams])
 
