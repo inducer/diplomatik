@@ -1,5 +1,8 @@
 --- !!datamodel.tStudent
-DateOfBirth: ~
+DateOfBirth:
+    day: 5
+    month: 8
+    year: 1977
 Degrees:
     '3271585': !!datamodel.tDegree
         DegreeRuleSet: tema-hd-alt
@@ -83,7 +86,7 @@ Degrees:
                     year: 2001
                 DegreeComponent: rein
                 Description: "Partial Differential Equations"
-                Examiner: Molchanov
+                Examiner: ''
                 NativeResult: A
                 Remarks: ''
                 Source: "ausland"
@@ -413,6 +416,7 @@ Degrees:
         Remark: ''
 Email: "mathem@tiker.net"
 FirstName: "Andreas"
+Gender: "m"
 ID: "992330"
 LastName: "Kl\xf6ckner"
 MiddleName: "Paul Eberhard"

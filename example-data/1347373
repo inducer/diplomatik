@@ -5,8 +5,11 @@ DateOfBirth:
     year: 1978
 Degrees: {}
 Email: "hans@wurst.de"
-FirstName: Hans
-ID: '1347373'
+FirstName: "Hans"
+Gender: "m"
+ID: "1347373"
 LastName: "Wurst"
-MiddleName: Friedrich
-Notes: ''
+MiddleName: "Friedrich"
+Notes: ""
+PlaceOfBirth: ""
+SpecialSemesters: {}

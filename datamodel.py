@@ -105,6 +105,7 @@ class tStudent:
         self.FirstName = ""
         self.MiddleName = ""
         self.LastName = ""
+        self.Gender = None # "m" / "w"
         self.SpecialSemesters = {} # list of semesters
         self.DateOfBirth = None
         self.PlaceOfBirth = ""
@@ -112,12 +113,20 @@ class tStudent:
         self.Notes = "" # str
         self.Email = "" # str
 
+    def anrede(self):
+        if self.Gender == "m":
+            return "Herr"
+        else:
+            return "Frau"
+
     def to_yaml(self):
         result = self.__dict__.copy()
         result["DateOfBirth"] = dateToYaml(self.DateOfBirth)
         return (result, "!!datamodel.tStudent")
 
     def from_yaml(self, new_dict):
+        if "Gender" not in new_dict:
+            self.Gender = None
         if "SpecialSemesters" not in new_dict:
             self.SpecialSemesters = {}
         if "Notes" not in new_dict:

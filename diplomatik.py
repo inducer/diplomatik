@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import BaseHTTPServer
 import re
 import sys
@@ -13,7 +15,7 @@ import appserver
 
 from tools import expandHTMLTemplate
 
-__VERSION__ = "0.90"
+__VERSION__ = file("VERSION").read()
 LISTEN_PORT = 8000
 
 
@@ -195,6 +197,10 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             appserver.tStringField("MiddleName", "Weitere Vornamen",
                                    False),
             appserver.tStringField("LastName", "Nachname"),
+            appserver.tChoiceField("Gender", "Geschlecht",
+                                   False,
+                                   [("m", u"Männlich"),
+                                    ("w", "Weiblich")]),
             appserver.tDateField("DateOfBirth", "Geburtsdatum", 
                                  shown_in_overview = False,
                                  none_ok = True),
@@ -202,9 +208,9 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
                                    shown_in_overview = False),
             tDegreesField("Degrees", "Abschl&uuml;sse"),
             tSpecialSemestersField("SpecialSemesters", "Spezielle Semester"),
-            appserver.tStringField("Notes", "Notizen",
-                                   shown_in_overview = False),
             appserver.tStringField("Email", "Email-Adresse",
+                                   shown_in_overview = False),
+            appserver.tStringField("Notes", "Notizen",
                                    shown_in_overview = False)
             ])
 
