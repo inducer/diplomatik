@@ -1,0 +1,18 @@
+@[if student.ID is not None]
+  <table border="1">
+    <tr>
+      <td>Abschluss</td>
+      <td>Begonnen</td>
+      <td>Abgeschlossen</td>
+      <td>Vollst&auml;ndig?</td>
+      <td>Pr&uuml;fungen</td>
+    </tr>
+  </table>
+
+    <p>
+    <a href="/degrees/@(student.ID)/">Bearbeiten</a>
+  </p>
+@[else]
+  Abschl&uuml;sse k&ouml;nnen erst nach dem ersten
+  Speichern bearbeitet werden.
+@[end if]

@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+  <head>
+    <title>Datensatz bearbeiten</title>
+  </head>
+  <body>
+    <h1>Datensatz bearbeiten</h1>
+
+    <p>Bei der Verarbeitung Ihrer Eingaben sind Fehler 
+    aufgetreten. Bitte korrigieren Sie die rot 
+    hervorgehobenen Felder.</p>
+
+    <form method="POST" accept-charset="UTF-8">
+      <table>
+        @[for field in fields]
+          <tr>
+            <td>
+              @[if field.isValid(input)]
+                @(field.description())
+              @[else]
+                <span style="color:red">@(field.description())</span>
+              @[end if]
+            </td>
+            <td>@(field.getWidgetHTMLFromInput(input))</td>
+          </tr>
+        @[end for]
+      </table>
+      <p>
+        <input type="submit" name="save" value="Speichern">
+        <input type="submit" name="cancel" value="Abbrechen">
+      </p>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+@[if none_ok]
+  <input type="radio" name="@name-null" 
+    value="1" id="@name-null-yes"
+    @(is_none ? "checked")/>
+  <label for="@name-null-yes">ungesetzt</label>
+
+  <input type="radio" name="@name-null" 
+    value="0" id="@name-null-no"
+    @(not is_none ? "checked")/>
+  <label for="@name-null-no">gesetzt:</label>
+@[end if]
+
+<select name="@name-d">
+  @[for i in range(1,32)]
+    <option value="@i" @(i==d ? "selected")>@i</option>
+  @[end for]
+</select>.
+
+@{months=["Januar", "Februar", "M&auml;rz", "April"]}
+@{months+=["Mai", "Juni", "Juli", "August", "September", "Oktober"]}
+@{months+=["November", "Dezember"]}
+
+<select name="@name-m">
+  @[for i, month in enumerate(months)]
+    <option value="@(i+1)" @(i+1==m ? "selected")>@month</option>
+  @[end for]
+</select>
+
+<input type="text" name="@name-y" value="@y"/>

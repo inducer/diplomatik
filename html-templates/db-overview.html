@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+  <head>
+    <title>Datenbank&uuml;bersicht</title>
+  </head>
+  <body>
+    <h1>Datenbank&uuml;bersicht</h1>
+    <table border="1">
+      <tr>
+        @#<td>Key</td>
+        @[for field in fields]
+          <td>@(field.description())</td>
+        @[end for]
+      </tr>
+    @[for row_key in database.keys()]
+      @{row_obj = database[row_key]}
+      <tr>
+        @#<td>@(repr(row_key))</td>
+        @[for field in fields]
+          <td>@(field.getDisplayHTML(row_obj))</td>
+        @[end for]
+        <td>
+          <a href="edit/@row_key">Bearbeiten</a>
+          <a href="delete/@row_key">L&ouml;schen</a>
+        </td>
+      </tr>
+    @[end for]
+    </table>
+    <p>
+      <a href="new/">Neuen Datensatz anlegen</a>
+    </p>
+  </body>
+</html>

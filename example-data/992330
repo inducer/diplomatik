@@ -1,0 +1,33 @@
+--- !!datamodel.tStudent
+DateOfBirth:
+    day: 5
+    month: 8
+    year: 1977
+Degrees:
+    '3271585': !!datamodel.tDegree
+        DegreeRuleSet: ~
+        EnrolledDate:
+            day: 17
+            month: 10
+            year: 2000
+        Exams: {}
+        FinishedDate: ~
+        Remark: ""
+    '5802243': !!datamodel.tDegree
+        DegreeRuleSet: ~
+        EnrolledDate:
+            day: 1
+            month: 10
+            year: 1998
+        Exams: {}
+        FinishedDate:
+            day: 16
+            month: 10
+            year: 2000
+        Remark: "Vordiplom"
+FirstName: "Andreas"
+ID: "992330"
+LastName: "Kl\xf6ckner"
+MiddleName: "Paul Eberhard"
+Notes: ""
+VacationSemesters: []

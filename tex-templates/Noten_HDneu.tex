@@ -1,0 +1,135 @@
+\renewcommand{\baselinestretch}{1.1}
+
+\begin{center}
+{\large AUSFERTIGUNG F\"UR DIE PR\"UFUNGSABTEILUNG UND DEN PR\"UFUNGSAUSSCHUSS\\
+DIPLOMHAUPTPR\"UFUNG TECHNOMATHEMATIK}
+
+{\bf (Pr\"uf.-Ordn.\ vom \PRUEFORDDAT)}
+\end{center}
+\vspace*{0.4cm}
+
+NAME, VORNAME: \makebox[7.2cm]{\dotfill\qh{\tt\NAME,
+ \VORNAME}\qh\dotfill}\hspace{0.25cm}
+ Matrikelnummer: \hfill{\tt\MATRIKEL}
+
+geb.~am
+\makebox[5.0cm]{\dotfill\qh{\tt\GEBDAT}\qh\dotfill}\hspace{0.25cm}
+ in\hspace{0.25cm}\dotfill\qh{\tt\GEBORT}\qh\dotfill
+
+Beginn des Studiums:
+\makebox[4.5cm]{\dotfill\qh{\tt\STUDBEG}\qh\dotfill}\hspace{0.25cm}
+ Diplomvorpr\"ufung: \dotfill\qh{\tt\VORDIPL}\qh\dotfill
+
+Zahl der Fachsemester bei Abschlu\ss{} der Hauptpr\"ufung:
+ \makebox[2.0cm]{\dotfill\Semesterzahl\dotfill}
+\vspace*{0.2cm}
+
+% Notenwoerter berechnen
+\def\RMnoteW{mangelhaft}%
+\FPiflt{\RMnoteZ}{4.01}\def\RMnoteW{ausreichend}\fi
+\FPiflt{\RMnoteZ}{3.51}\def\RMnoteW{befriedigend}\fi
+\FPiflt{\RMnoteZ}{2.51}\def\RMnoteW{gut}\fi
+\FPiflt{\RMnoteZ}{1.51}\def\RMnoteW{sehr gut}\fi
+\FPiflt{\RMnoteZ}{0.9}\def\RMnoteW{}\fi
+\def\AMnoteW{mangelhaft}%
+\FPiflt{\AMnoteZ}{4.01}\def\AMnoteW{ausreichend}\fi
+\FPiflt{\AMnoteZ}{3.51}\def\AMnoteW{befriedigend}\fi
+\FPiflt{\AMnoteZ}{2.51}\def\AMnoteW{gut}\fi
+\FPiflt{\AMnoteZ}{1.51}\def\AMnoteW{sehr gut}\fi
+\FPiflt{\AMnoteZ}{0.9}\def\AMnoteW{}\fi
+\def\TFnoteW{mangelhaft}%
+\FPiflt{\TFnoteZ}{4.01}\def\TFnoteW{ausreichend}\fi
+\FPiflt{\TFnoteZ}{3.51}\def\TFnoteW{befriedigend}\fi
+\FPiflt{\TFnoteZ}{2.51}\def\TFnoteW{gut}\fi
+\FPiflt{\TFnoteZ}{1.51}\def\TFnoteW{sehr gut}\fi
+\FPiflt{\TFnoteZ}{0.9}\def\TFnoteW{}\fi
+\def\AInoteW{mangelhaft}%
+\FPiflt{\AInoteZ}{4.01}\def\AInoteW{ausreichend}\fi
+\FPiflt{\AInoteZ}{3.51}\def\AInoteW{befriedigend}\fi
+\FPiflt{\AInoteZ}{2.51}\def\AInoteW{gut}\fi
+\FPiflt{\AInoteZ}{1.51}\def\AInoteW{sehr gut}\fi
+\FPiflt{\AInoteZ}{0.9}\def\AInoteW{}\fi
+\def\ZFnoteW{}%
+
+\renewcommand{\arraystretch}{1.5}
+\begin{center}
+\begin{tabular}{p{4.6cm}|c|c|p{2.0cm}|p{4.3cm}}
+{\bf PR\"UFUNGSF\"ACHER} & {\bf PR\"UF.--} & {\bf IN WORTEN} &
+{\bf\qh DATUM} & {\bf\qh PR\"UFER} \\[-0.3cm]
+                & {\bf NOTEN} &  &  & \\
+\hline
+{\bf Reine Mathematik} & {\tt\RMnoteZ} & {\tt\RMnoteW} & {\tt\RMdatum} & {\tt\RMpruefer} \\[8pt]
+\hline
+{\bf Angew.~Mathematik} & {\tt\AMnoteZ} & {\tt\AMnoteW} & {\tt\AMdatum} & {\tt\AMpruefer} \\[8pt]
+\hline
+{\bf Techn.~Fach {\tt\TECHFACH}} & {\tt\TFnoteZ} & {\tt\TFnoteW} & {\tt\TFdatum} & {\tt\TFpruefer} \\[8pt]
+\hline
+{\bf Angew.~Informatik} & {\tt\AInoteZ} & {\tt\AInoteW} & {\tt\AIdatum} & {\tt\AIpruefer} \\[8pt]
+\hline
+{\bf Zusatzfach} {\tt\ZUSFACH} & {\tt\ZFnoteZ} & {\tt\ZFnoteW} & {\tt\ZFdatum} & {\tt\ZFpruefer} \\[8pt]
+\hline
+\end{tabular}
+\end{center}
+\renewcommand{\arraystretch}{1}
+\normalsize
+
+{\bf \underline{Diplomarbeit}}
+
+\begin{center}
+   {\tt\DAtitel}\\
+   (Abgegeben am {\tt\DAabgabe})
+\end{center}
+
+\begin{tabular}{p{5.0cm}p{10.0cm}}
+   {\bf Note:}\q\DAnote & {\bf Referent:}\q\DAref
+%   {\bf Note:}\makebox[2cm]{\DAnote}\makebox[4cm]{}{\bf Referent:}\q\DAref
+\end{tabular}
+
+\rule{17cm}{0.03in} \\
+
+% Die Abschlussrechnung
+\FPset{\Gnote}{\RMnoteZ}%
+\FPadd{\Gnote}{\Gnote}{\AMnoteZ}
+\FPadd{\Gnote}{\Gnote}{\TFnoteZ}
+\FPadd{\Gnote}{\Gnote}{\AInoteZ}
+\FPmul{\DAnote}{2}{\DAnote}\FPround{\DAnote}{\DAnote}{1}
+\FPadd{\Gnote}{\Gnote}{\DAnote}
+\FPdiv{\Enote}{\Gnote}{6}
+\FPtrunc{\Gnote}{\Gnote}{1}\FPtrunc{\Enote}{\Enote}{1}
+\def\EnoteW{{\tt Mangelhaft}}
+\FPiflt{\Enote}{4.01}\def\EnoteW{AUSREICHEND}\fi
+\FPiflt{\Enote}{3.51}\def\EnoteW{BEFRIEDIGEND}\fi
+\FPiflt{\Enote}{2.51}\def\EnoteW{GUT}\fi
+\FPiflt{\Enote}{1.51}\def\EnoteW{SEHR GUT}\fi
+\FPiflt{\Enote}{0.9}\def\EnoteW{}\fi
+
+\begin{tabular}{lcp{2.2cm}p{3cm}p{6cm}}
+\multicolumn{4}{l}{\bf Berechnung des Gesamturteils} &
+{\bf Hauptpr\"ufung abgeschlossen} \\[0.2cm]
+Reine Math.\ & (1x) & \makebox[2cm]{\dotfill\RMnoteZ\dotfill}
+             & \hspace*{3cm} & am \dotfill\Abschlussdatum\dotfill \\
+Angew. Math.\ & (1x) & \makebox[2cm]{\dotfill\AMnoteZ\dotfill}
+              &\hspace*{3cm} & mit dem Gesamturteil \\
+Techn.~Nebenfach & (1x) & \makebox[2cm]{\dotfill\TFnoteZ\dotfill}
+& \hspace*{3cm} & \\
+Angew.~Informatik & (1x) & \makebox[2cm]{\dotfill\AInoteZ\dotfill} &
+&\hrulefill\qh\texttt{\large\EnoteW}\qh\hrulefill \\
+Diplomarbeit & (2x) &  \makebox[2cm]{\dotfill\DAnote\dotfill}
+\begin{minipage}[t]{2.2cm}
+\makebox[2cm]{\hrulefill}%$= = = = = = =$
+\end{minipage}
+& & F\"ur den Pr\"ufungs\-ausschuss f\"ur die Diplompr\"ufung
+in Mathematik \\
+\\
+& & \makebox[0.8cm]{\hrulefill}\qh\Gnote\qh\makebox[0.8cm]{\hrulefill}
+& : 6 =\makebox[0.4cm]{\hrulefill}\qh\textbf{\large\Enote}
+\qh\makebox[0.4cm]{\hrulefill} & \makebox[6cm]{\dotfill}\\
+& & & & \hspace{1.5cm}{\small Prof.~Dr.~W. D\"orfler}
+\end{tabular}
+
+\vspace*{0.3cm}
+
+\rule{17cm}{0.02in} \\
+{\bf\underline{Bemerkungen}:}\\
+\Bemerkung
+\newpage

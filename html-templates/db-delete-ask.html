@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+  <head>
+    <title>Datensatz l&ouml;schen</title>
+  </head>
+  <body>
+    <h1>Datensatz l&ouml;schen</h1>
+    <table border="1">
+      @[for field in fields]
+        <tr>
+          <td>@(field.description())</td>
+          <td>@(field.getDisplayHTML(obj))</td>
+        </tr>
+      @[end for]
+    </table>
+    <p>
+      Sind Sie sicher, dass Sie diesen Datensatz 
+      unwiederbringlich l&ouml;schen m&ouml;chten?
+    </p>
+    <p>
+      <form method="POST">
+        <input type="submit" name="delete" value="L&ouml;schen">
+        <input type="submit" name="cancel" value="Abbrechen">
+      </form>
+    </p>
+  </body>
+</html>
