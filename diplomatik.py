@@ -279,8 +279,9 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             ayf.append(("ay-%d" % ay, "Ak.J. %d" % ay))
         ayf.sort()
 
-        return appserver.tDatabaseHandler.getFilterList(self) \
-               + lnf + ayf
+        return tools.uniq(
+            appserver.tDatabaseHandler.getFilterList(self) \
+            + lnf + ayf)
 
     def enumerateFilteredKeys(self, filter_name):
         lastname_re = re.compile("^lastname-(.)$")
