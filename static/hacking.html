@@ -115,19 +115,177 @@
       <code>tDegreeRuleSet</code>.
     </p>
 
+    <h2>Die Datenablage (<code>datastore.py</code>)</h2>
+    <p>
+      Diplomatiks Datenablage (<code>datastore.tDataStore</code>)
+      implementiert im Wesentlichen das Interface eines Dictionary,
+      hat aber auch noch einige Extra-Methoden, die einen zeitgleichen
+      Export in TeX-Dateien gewährleisten können. Die Schl&uuml;ssel
+      dieses Dictionary sind die Matrikelnummern
+      (<code>tStudent.ID</code>, als Strings abgelegt), und die Werte
+      sind die jeweiligen <code>tStudent</code>-Instanzen.
+    </p>
+    <p>
+      Bei der Konstruktion (mittels <code>__init__</code>) wird
+      ein Verzeichnis angegeben, das eine Diplomatik-Datenbank
+      enthält (falls <code>create == True</code> angegeben wird,
+      wird diese auch angelegt). Unter diesem Verzeichnis wird dann
+      eine Struktur angelegt, die etwa so aussieht:
+
+      <pre>
+        &lt;Wurzel&gt;/
+          version-tag                <i>Ein Versionskennzeichen</i>
+          data/                      <i>Das eigentliche Datenverzeichnis</i>
+            &lt;Matrikelnummer1&gt;        <i>Ein Studentendatensatz</i>
+            &lt;Matrikelnummer2&gt;        <i>Noch einer</i>
+            usw...
+          export/                    <i>Das Verzeichnis des TeX-Exports</i>
+            kein-aj/                 <i>Studenten, f&uuml;r die noch kein ak. Jahr des Anfangs vorliegt</i>
+              &lt;Matrikelnummer1&gt;.tex  <i>Ein exportierter Studentendatensatz</i>
+              usw.
+            aj-1998/                 <i>Studenten, die im ak. Jahr 1998 zu studieren begonnen haben</i>
+              &lt;Matrikelnummer2&gt;.tex  <i>Ein exportierter Studentendatensatz</i>
+              usw.
+            usw.
+      </pre>
+
+      Falls die Struktur des angegebenen Verzeichnisses nicht erkannt
+      wird, wird eine Exception ausgelöst.  Im Normalbetrieb wird der
+      Datenbaum durch zweierlei Ereignisse auf dem aktuellen Stand
+      gehalten:
+
+      <ul>
+        <li> Durch die Dictionary-Operationen
+          <code>__setitem__()</code>, <code>__getitem__()</code> und
+          <code>__delitem__()</code> </li>
+
+        <li> Durch die Methode <code>writeStudent()</code>, die von
+        der Anwendungslogik nach jeder &Auml;nderung aufgerufen wird,
+        die nicht durch die obigen Methoden abgedeckt ist. Dies tritt
+        z.B. dann auf, wenn innerhalb eines Datensatzes
+        &Auml;nderungen vorgenommen werden, die nicht die
+        Matrikelnummer betreffen--also der weitaus h&auml;ufigere
+        Fall.</li> 
+      </ul>
+
+      Wenn Studentendaten auf die Festplatte geschrieben werden,
+      wird automatisch mit Hilfe des Templates 
+      <code>tex-templates/export.tex</code> auch eine Exportdatei
+      im richtigen <code>aj-NNNN</code>-Verzeichnis erzeugt. Veraltete
+      Exporte werden dabei nat&uuml;rlich gel&ouml;scht.
+    </p>
+
     <h2>Der Anwendungsserver (<code>appserver.py</code>)</h2>
     <p>
-      Der Anwendungsserver ist diejenige Komponente von Diplomatik, die
-      die vom Browser ankommenden HTTP-Requests in Anfragen an die 
-      Anwendungslogik und deren Antwort wieder in g&uuml;ltige 
-      HTTP-Responses zu verwandeln.
-
-      TBD.
+      Der Anwendungsserver ist diejenige Komponente von Diplomatik,
+      die die vom Browser ankommenden HTTP-Requests in Anfragen an die
+      Anwendungslogik und deren Antwort wieder in g&uuml;ltige
+      HTTP-Responses verwandelt.  Der <code>tAppServer</code> muss von
+      der Client-Applikation (hier Diplomatik) vererbt werden und
+      verteilt dann mit Hilfe einer URL-Tabelle verschiedenen
+      Request-Arten in Form von <code>tHTTPRequest</code>s direkt an
+      die Behandlungsroutinen.
+    </p>
+    <p>
+      Eine solche Behandlungsroutine ist z.B. der
+      <code>tDatabaseHandler</code>. Dieser ist eigentlich eine
+      Klasse, deren Hauptfunktion die Methode <code>getPage()</code>
+      darstellt. Ein solcher <code>tDatabaseHandler</code> bekommt bei
+      seiner Konstruktion eine <code>database</code>, die ein
+      Dictionary von Datens&auml;tzen sein muss, sowie eine Liste von
+      Instanzen von <code>tField</code>, die die Felder der einzelnen
+      Datens&auml;tze beschreiben. Der Handler &uuml;bernimmt nun die
+      Generierung von Formular- und Listenseiten, die den Benutzer die
+      Datenbank via HTTP bearbeiten lassen.
+    </p>
+    <p>
+      Als Subklassen von <code>tField</code> stehen
+      z.B. <code>tStringField</code>, <code>tFloatField</code>,
+      <code>tChoiceField</code> und viele andere zur Verf&uuml;gung,
+      die die Bearbeitung von unterschiedlichsten Datentypen
+      m&ouml;glich machen. Diese Objekte &uuml;bernehmen dabei auch
+      die Validierung der Benutzereingaben.
+    </p>
+    <p>
+      In Diplomatik werden bei jedem Request, je nach aufgerufener
+      URL, z.B. der <code>tStudentDatabaseHandler</code>, der
+      <code>tDegreeDatbaseHandler</code> oder der
+      <code>tExamDatabaseHandler</code> (mit entsprechenden
+      Feldbeschreibungen) konstruiert und aufgerufen.  Diese
+      verarbeiten dann angefallene Eingaben (z.B. die Neuanlage eines
+      Datensatzes) und liefern eine Antwortseite. Falls dabei keine
+      nat&uuml;rlichen Schl&uuml;ssel (wie z.B. Matrikelnummern) zur
+      Verf&uuml;gung stehen, generiert der Handler automatisch
+      zuf&auml;llige Schl&uuml;ssel f&uuml;r das Dictionary, die jeden
+      Datensatz fortan eindeutig identifizieren.  Da die
+      <code>tDataStore</code> das Dictionary-(i.e. Mapping-)Protokoll
+      implementiert, gilt diese auch als Datenbank f&uuml;r einen
+      <code>tDatabaseHandler</code>.
+    </p>
+    <p>
+      Letztlich ist der <code>tDatabaseHandler</code> eine abstrakte
+      Schicht, die das Bearbeiten von Tabellen (mitsamt des
+      Neuanlegens, L&ouml;schens und &Auml;nderns von Datens&auml;tzen
+      zur Verf&uuml;gung stellt. Die konkreten Datenbanken werden dann
+      vom Programm durch Erben vom Handler implementiert.
     </p>
 
     <h2>Das Berichtssystem (<code>reports.py</code>)</h2>
     <p>
-      TBD
+      Eine andere Behandlungsroutine f&uuml;r HTTP-Requests ist ein
+      <code>tReportHandler</code>. Dieser kann Eingaben empfangen und
+      liefert dann (in der Regel) PDF-Dateien als Ausgabe. Dazu hat
+      auch er die M&ouml;glichkeit, HTTP-Requests zu verarbeiten und
+      HTTP-Responses zu generieren.
+    </p>
+    <p>
+      In Diplomatik gibt es mehrere verschiedene
+      <code>tReportHandler</code>, die jeweils in einer eigenen
+      Subklasse dieser Superklasse implementiert sind. Es gibt:
+      <ul>
+        <li> 
+          Den globalen Report-Handler <code>tGlobalReportHandler</code>.
+          Er generiert globale Statistiken, die keinem speziellen
+          Studenten zugeordnet sind.
+        </li>
+        <li> 
+          Den studentenspezifischen Report-Handler <code>tPerStudentReportHandler</code>.
+          Er generiert Berichte, die einem speziellen
+          Studenten, aber keinem speziellen Abschluss zugeordnet sind, so
+          z.B. den Notenauszug.
+        </li>
+        <li> 
+          Den abschlussspezifischen Report-Handler <code>tPerDegreeReportHandler</code>.
+          Er generiert Berichte, die einem speziellen Abschluss zugeordnet sind. 
+          Da Abschl&uuml;sse von unterschiedlichen Regels&auml;tzen geleitet
+          werden, gibt es die Methode <code>tDegreeRuleSet.getPerDegreeReportHandler()</code>,
+          die einen zum Regelsatz passenden Report-Handler konstruiert und zur&uum;ckgibt.
+          Dieser Report-Handler generiert z.B. spezifische Zeugnisformulare.
+        </li>
+        <li> 
+          Den pr&uuml;fungssspezifischen Report-Handler <code>tPerExamReportHandler</code>.
+          Er generiert Berichte, die einer speziellen Pr&uuml;fung zugeordnet sind. 
+          &Auml;hnlich wie der <code>tPerDegreeReportHandler</code> wird er von
+          einer Methode <code>tDegreeRuleSet.getPerExamReportHandler()</code>
+          erzeugt, die typischerweise eine Subklasse von <code>tPerExamReportHandler</code>
+          konstruiert und liefert.
+        </li>
+      </ul>
+
+      Um einen neuen Report-Handler von der Basisklasse
+      <code>tReportHandler</code> abzuleiten, gen&uuml;gt es
+      normalerweise, die Methoden <code>getList()</code> (die alle
+      m&ouml;glichen Berichte mit Beschreibungen in einer
+      <code>tAssociativeList</code> auflistest) und
+      <code>getPDF()</code> (die das PDF als String
+      zur&uuml;ckliefert) zu &uuml;berladen. Falls Eingaben
+      verarbeitet werden sollen, braucht man auch noch die Methode
+      <code>getForm()</code>.
+    </p>
+
+    <p>
+      Die PDFs in der Methode <code>getPDF()</code> werden normalerweise
+      mittels der Funktion <code>tools.runLatexOnTemplate</code> erzeugt.
     </p>
 
     <h2>Wie kann ich...</h2>
