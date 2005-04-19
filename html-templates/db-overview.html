@@ -7,17 +7,21 @@ $doctype
   <body>
     <h1>$handler.getCustomization("title", "overview", $none)</h1>
     $handler.getCustomization("header", "overview", $none)
-    #if ($h.len($filters) > 1)
+    #if ($h.len($filter_groups) > 0)
       <p>
         Filter:
-        #set ($len = $h.len($filters))
-        #set ($i = 0)
-        #foreach ($filter in $filters)
-          #set ($filter_name = $filter.__getitem__(0))
-          #set ($filter_desc = $filter.__getitem__(1))
-          <a href="$h.composeQuery("filter", $filter_name, $previous_query)">#if ($current_filter == $filter_name)[#end$h.escapeHTML($filter_desc)#if ($current_filter == $filter_name)]#end</a>
-          #set ($i = $h.add($i, 1))
-          #if ($i != $len)&middot;#end
+        #foreach ($filter_group in $filter_groups)
+          [
+          #set ($len = $h.len($filter_group))
+          #set ($i = 0)
+          #foreach ($filter in $filter_group)
+            #set ($filter_name = $filter.__getitem__(0))
+            #set ($filter_desc = $filter.__getitem__(1))
+            #if ($current_filters.__contains__($filter_name))<span class="ActiveFilter">#end<a href="$h.composeQuery("filter", $toggleFilter($current_filters, $filter_name), $previous_query)">$h.escapeHTML($filter_desc)</a>#if ($current_filters.__contains__($filter_name))</span>#end
+            #set ($i = $h.add($i, 1))
+            #if ($i != $len)&middot;#end
+          #end
+          ]
         #end
       </p>
     #end

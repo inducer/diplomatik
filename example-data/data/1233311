@@ -1,4 +1,5 @@
 --- !!datamodel.tStudent
+Active: False
 DateOfBirth:
     day: 17
     month: 5
@@ -13,12 +14,12 @@ Degrees:
         FinishedDate: ~
         MinorSubject: ''
         Remark: "Nach Australien ausgewandert"
-Email: ''
-FirstName: Albert
-Gender: m
-ID: '1233311'
-LastName: Karl
-MiddleName: ''
-Notes: nix
-PlaceOfBirth: ''
+Email: ""
+FirstName: "Albert"
+Gender: "m"
+ID: "1233311"
+LastName: "Karl"
+MiddleName: ""
+Notes: "nix"
+PlaceOfBirth: ""
 SpecialSemesters: {}

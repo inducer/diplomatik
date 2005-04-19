@@ -107,6 +107,7 @@ class tSpecialSemester:
 class tStudent:
     def __init__(self):
         self.ID = None # str
+        self.Active = True # bool
         self.FirstName = ""
         self.MiddleName = ""
         self.LastName = ""
@@ -130,6 +131,8 @@ class tStudent:
         return (result, "!!datamodel.tStudent")
 
     def from_yaml(self, new_dict):
+        if "Active" not in new_dict:
+            self.Active = True
         if "Gender" not in new_dict:
             self.Gender = None
         if "SpecialSemesters" not in new_dict:
@@ -190,3 +193,9 @@ def countStudySemesters(student):
         return 0
 
     return semester.countSemesters(fe_sem, le_sem)
+
+def isDone(student):
+    for deg in student.Degrees.values():
+        if deg.FinishedDate is None:
+            return False
+    return True

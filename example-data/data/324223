@@ -1,4 +1,5 @@
 --- !!datamodel.tStudent
+Active: True
 DateOfBirth: ~
 Degrees: {}
 Email: ''

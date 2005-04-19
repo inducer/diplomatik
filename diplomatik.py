@@ -205,6 +205,8 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
                                    shown_in_overview = True,
                                    validation_re = \
                                    re.compile("^[a-zA-Z0-9]+$")),
+            appserver.tCheckField("Active", "Aktiv?",
+                                  shown_in_overview = False),
             appserver.tStringField("FirstName", "Vorname"),
             appserver.tStringField("MiddleName", "Weitere Vornamen",
                                    False),
@@ -276,12 +278,13 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             return result
         return ""
 
-    def getFilterList(self):
+    def getFilterGroupList(self):
         lnf = [("lastname-"+value.LastName[0].lower(), 
                 value.LastName[0])
                 for key, value in self.Database.iteritems()
                 if value.LastName]
         lnf.sort()
+        lnf = tools.uniq(lnf)
         ayf = []
         for key, value in self.Database.iteritems():
             if datamodel.firstEnrollment(value) is None:
@@ -289,31 +292,50 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             ay = semester.getAcademicYear(datamodel.firstEnrollment(value))
             ayf.append(("ay-%d" % ay, "Ak.J. %d" % ay))
         ayf.sort()
+        ayf = tools.uniq(ayf)
 
-        return tools.uniq(
-            appserver.tDatabaseHandler.getFilterList(self) \
-            + lnf + ayf)
+        return appserver.tDatabaseHandler.getFilterGroupList(self) + \
+               [lnf, ayf, [("active", "Aktiv"), ("inactive", "Inaktiv")], 
+                           [("done", "Fertig"), ("not-done", "Nicht fertig")]]
 
-    def enumerateFilteredKeys(self, filter_name):
+    def getDefaultFilters(self):
+        return ["active"]
+
+    def filterKeys(self, filter_name, keys):
         lastname_re = re.compile("^lastname-(.)$")
         lastname_match = lastname_re.match(filter_name)
         ay_re = re.compile("^ay-([0-9]+)$")
         ay_match = ay_re.match(filter_name)
 
+        kv = [(key, self.Database[key]) for key in keys]
         if lastname_match:
             start_char = lastname_match.group(1).lower()
-            return [key for key, value in self.Database.iteritems()
+            return [key for key, value in kv
                     if value.LastName and value.LastName[0].lower() == start_char]
         elif ay_match:
             academic_year = int(ay_match.group(1))
             return [key 
-                    for key, value in self.Database.iteritems()
+                    for key, value in kv
                     if datamodel.firstEnrollment(value) is not None
                     if semester.getAcademicYear(datamodel.firstEnrollment(value)) == academic_year]
+        elif filter_name == "active":
+            return [key 
+                    for key, value in kv
+                    if value.Active]
+        elif filter_name == "inactive":
+            return [key 
+                    for key, value in kv
+                    if not value.Active]
+        elif filter_name == "done":
+            return [key 
+                    for key, value in kv
+                    if datamodel.isDone(value)]
+        elif filter_name == "not-done":
+            return [key 
+                    for key, value in kv
+                    if not datamodel.isDone(value)]
         else:
-            return appserver.tDatabaseHandler.enumerateFilteredKeys(
-                self, filter_name)
-            
+            return appserver.tDatabaseHandler.filterKeys(self, filter_name, keys)
 
 
 

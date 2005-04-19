@@ -476,23 +476,31 @@ class tDatabaseHandler:
     def getCustomization(self, element, situation, db_key):
         return ""
 
-    def getFilterList(self):
-        return [("none", "-")]
+    def getFilterGroupList(self):
+        return []
 
-    def enumerateFilteredKeys(self, filter_name):
+    def getDefaultFilters(self):
+        return []
+
+    def filterKeys(self, filter_name, keys):
         if filter_name == "none":
-            return self.Database.keys()
+            return keys
         else:
             raise RuntimeError, "unknown filter: %s" % filter_name
 
     def handleOverviewPage(self, request):
+        keys = self.Database.keys()
         try:
-            current_filter = request.Query["filter"]
-            keys = self.enumerateFilteredKeys(
-                current_filter)
+            filter_str = request.Query["filter"]
+            if filter_str == "":
+                current_filters = []
+            else:
+                current_filters = filter_str.split(",")
         except KeyError:
-            current_filter = "none"
-            keys = self.Database.keys()
+            current_filters = self.getDefaultFilters()
+
+        for filter_name in current_filters:
+            keys = self.filterKeys(filter_name, keys)
 
         try:
             sort_by = request.Query["sortby"]
@@ -517,6 +525,21 @@ class tDatabaseHandler:
 
             keys.sort(cmp_func)
 
+        def toggleFilter(current_filters, toggle_filter):
+            result = current_filters[:]
+            if toggle_filter in result:
+                result.remove(toggle_filter)
+            else:
+                # remove any filter from toggle_filter's filter group
+                for fgroup in self.getFilterGroupList():
+                    if toggle_filter in [filt[0] for filt in fgroup]:
+                        for filt in fgroup:
+                            if filt[0] in result:
+                                result.remove(filt[0])
+
+                result.append(toggle_filter)
+            return ",".join(result)
+
         return tHTTPResponse(
             expandHTMLTemplate("db-overview.html",
                                {"database": self.Database,
@@ -524,8 +547,9 @@ class tDatabaseHandler:
                                 "handler": self,
                                 "fields": self.Fields,
                                 "previous_query": request.Query,
-                                "filters": self.getFilterList(),
-                                "current_filter": current_filter}
+                                "filter_groups": self.getFilterGroupList(),
+                                "current_filters": current_filters,
+                                "toggleFilter": toggleFilter}
                                ))
 
     def generateEditPage(self, request, key, obj):

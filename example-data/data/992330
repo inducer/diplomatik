@@ -1,4 +1,5 @@
 --- !!datamodel.tStudent
+Active: True
 DateOfBirth:
     day: 5
     month: 8
