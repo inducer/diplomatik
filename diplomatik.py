@@ -201,7 +201,7 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
         appserver.tDatabaseHandler.__init__(self,
                                             store,
                                             [
-            appserver.tStringField("ID", "Matrikelnummer", 
+            appserver.tStringField("ID", "Matrikelnr.", 
                                    shown_in_overview = True,
                                    validation_re = \
                                    re.compile("^[a-zA-Z0-9]+$")),
