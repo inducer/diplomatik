@@ -27,6 +27,7 @@ $doctype
     #end
     <table>
       <tr>
+        <th>Nr.</th>
         #foreach ($field in $fields)
           #if ($field.isShownInOverview())
             <th>
@@ -40,9 +41,11 @@ $doctype
         #end
         <th>Befehle</th>
       </tr>
+    #set ($row_number = 1)
     #foreach ($row_key in $keys)
       #set ($row_obj = $database.__getitem__($row_key))
       <tr class="ListRow">
+	<td>$row_number</td>
         #foreach ($field in $fields)
           #if ($field.isShownInOverview())
             <td class="DataBox">
@@ -55,6 +58,7 @@ $doctype
           <a href="delete/$row_key">L&ouml;schen</a>
         </td>
       </tr>
+      #set ($row_number = $h.add($row_number,1))
     #end
     </table>
     <p>
