@@ -277,6 +277,41 @@ class tGlobalReportHandler(tReportHandler):
 
 
 
+def getTranscriptForm():
+    return [
+        appserver.tCheckField("IncludeFailed", 
+                              u"Nicht bestandene Prüfungen einbeziehen?"),
+        appserver.tCheckField("IncludeNonCounted", 
+                              u"Nicht gewertete Prüfungen einbeziehen?"),
+        ], tools.makeObject(
+        {"IncludeFailed": True,
+         "IncludeNonCounted": True})
+
+def getTranscriptData(drs_map, form_data, student, degree=None):
+    def filter_func(exams):
+        result = exams
+        if not form_data.IncludeNonCounted:
+            result = [exam for exam in result
+                      if exam.Counted]
+        if not form_data.IncludeFailed:
+            result = [exam for exam in result
+                      if exam.CountedResult < 5]
+        print "YO", result
+        return result
+
+    result = {"student": student,
+              "drs_map": drs_map,
+              "filter_func": filter_func,
+              "include_non_counted": form_data.IncludeNonCounted}
+
+    if degree:
+        result["degree"] = degree
+        result["drs"] = drs_map[degree.DegreeRuleSet]
+    return result
+
+
+
+
 class tPerStudentReportHandler(tReportHandler):
     def __init__(self, student, drs_map):
         self.Student = student
@@ -288,12 +323,18 @@ class tPerStudentReportHandler(tReportHandler):
             ("transcript", "Notenauszug")
             ])
 
+    def getForm(self, report_id):
+        if report_id == "transcript":
+            return getTranscriptForm()
+        else:
+            return tReportHandler.getForm(self, report_id)
+
     def getPDF(self, report_id, form_data):
         if report_id == "transcript":
             return tools.runLatexOnTemplate(
-                "complete-transcript.tex",
-                {"student": self.Student,
-                 "drs_map": self.DRSMap})
+                "complete-transcript.tex", 
+                getTranscriptData(self.DRSMap, form_data,
+                                  self.Student))
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
 
@@ -313,13 +354,18 @@ class tPerDegreeReportHandler(tReportHandler):
             ("transcript", "Notenauszug (teilweise)")
             ])
 
+    def getForm(self, report_id):
+        if report_id == "transcript":
+            return getTranscriptForm()
+        else:
+            return tReportHandler.getForm(self, report_id)
+
     def getPDF(self, report_id, form_data):
         if report_id == "transcript":
             return tools.runLatexOnTemplate(
-                "degree-transcript.tex",
-                {"student": self.Student,
-                 "degree": self.Degree,
-                 "drs": self.DegreeRuleSet})
+                "degree-transcript.tex", 
+                getTranscriptData(self.DRSMap, form_data,
+                                  self.Student, self. Degree))
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
 

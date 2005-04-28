@@ -36,11 +36,17 @@ th a:visited {
 td.CommandBox {
   background-color: #e0e0e0;
 }
-tr.ListRow {
+tr.OddListRow {
   background-color: #f8f8f8;
 }
-tr.ListRow:hover {
+tr.EvenListRow {
+  background-color: #e0e0e0;
+}
+tr.OddListRow:hover {
   background-color: #f0f0f0;
+}
+tr.EvenListRow:hover {
+  background-color: #d8d8d8;
 }
 td.Label {
   background-color: #e0e0e0;
@@ -49,5 +55,11 @@ td.InvalidEntry {
   background-color: red;
 }
 .ActiveFilter {
-  background-color: #e0e0e0;
+  background-color: black;
+}
+.ActiveFilter a:link {
+  color: white;
+}
+.ActiveFilter a:visited {
+  color: white;
 }

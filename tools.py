@@ -228,6 +228,12 @@ def _expandTemplate(dir, filename, globals_dict):
         def formatDate(self, date):
             return formatDate(date)
 
+        def oddEven(self, data):
+            if data % 2 == 0:
+                return "Even"
+            else:
+                return "Odd"
+
         def formatNumber(self, format, number):
             return format % number
 

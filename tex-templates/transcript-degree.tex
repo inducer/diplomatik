@@ -17,9 +17,9 @@ Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\
 & \multicolumn{2}{l|}{\textbf{Pr\"ufer, Universit\"at}} & & \\\\
 \hline
 \endhead
-#foreach ($exam in $h.sortBy($degree.Exams.values(), "Date"))##
+#foreach ($exam in $h.sortBy($filter_func($degree.Exams.values()), "Date"))##
   $h.formatDate($exam.Date) &
-  $h.escapeTeX($exam.Description) &
+  \\raggedright $h.escapeTeX($exam.Description) &
   $h.escapeTeX($drs.degreeComponents().__getitem__($exam.DegreeComponent)) &
   #if ($exam.Credits)##
     #if ($exam.CreditsPrintable)##
@@ -43,7 +43,7 @@ Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\
       - ##
     #end##
   #end \\\\*
-  & \multicolumn{2}{p{9cm}|}{
+  & \multicolumn{2}{p{9cm}|}{\raggedright
     #if ($exam.Examiner)##
       $h.escapeTeX($exam.Examiner), 
     #end##

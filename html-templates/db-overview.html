@@ -44,7 +44,7 @@ $doctype
     #set ($row_number = 1)
     #foreach ($row_key in $keys)
       #set ($row_obj = $database.__getitem__($row_key))
-      <tr class="ListRow">
+      <tr class="$h.oddEven($row_number)ListRow">
 	<td>$row_number</td>
         #foreach ($field in $fields)
           #if ($field.isShownInOverview())
