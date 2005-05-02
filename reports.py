@@ -287,7 +287,7 @@ def getTranscriptForm():
         {"IncludeFailed": True,
          "IncludeNonCounted": True})
 
-def getTranscriptData(drs_map, form_data, student, degree=None):
+def getTranscriptData(form_data, student, degree=None, drs=None, drs_map=None):
     def filter_func(exams):
         result = exams
         if not form_data.IncludeNonCounted:
@@ -300,13 +300,17 @@ def getTranscriptData(drs_map, form_data, student, degree=None):
         return result
 
     result = {"student": student,
-              "drs_map": drs_map,
               "filter_func": filter_func,
               "include_non_counted": form_data.IncludeNonCounted}
 
     if degree:
+        assert drs is not None
         result["degree"] = degree
-        result["drs"] = drs_map[degree.DegreeRuleSet]
+        result["drs"] = drs
+    else:
+        assert drs_map is not None
+        result["drs_map"] = drs_map
+
     return result
 
 
@@ -333,8 +337,7 @@ class tPerStudentReportHandler(tReportHandler):
         if report_id == "transcript":
             return tools.runLatexOnTemplate(
                 "complete-transcript.tex", 
-                getTranscriptData(self.DRSMap, form_data,
-                                  self.Student))
+                getTranscriptData(form_data, self.Student, drs_map=self.DRSMap))
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
 
@@ -364,8 +367,9 @@ class tPerDegreeReportHandler(tReportHandler):
         if report_id == "transcript":
             return tools.runLatexOnTemplate(
                 "degree-transcript.tex", 
-                getTranscriptData(self.DRSMap, form_data,
-                                  self.Student, self. Degree))
+                getTranscriptData(form_data,
+                                  self.Student, degree=self.Degree, 
+                                  drs=self.DegreeRuleSet))
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
 
