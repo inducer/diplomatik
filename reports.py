@@ -336,7 +336,7 @@ class tPerStudentReportHandler(tReportHandler):
     def getPDF(self, report_id, form_data):
         if report_id == "transcript":
             return tools.runLatexOnTemplate(
-                "complete-transcript.tex", 
+                "transcript-complete.tex", 
                 getTranscriptData(form_data, self.Student, drs_map=self.DRSMap))
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
@@ -366,7 +366,7 @@ class tPerDegreeReportHandler(tReportHandler):
     def getPDF(self, report_id, form_data):
         if report_id == "transcript":
             return tools.runLatexOnTemplate(
-                "degree-transcript.tex", 
+                "transcript-single.tex", 
                 getTranscriptData(form_data,
                                   self.Student, degree=self.Degree, 
                                   drs=self.DegreeRuleSet))

@@ -1,18 +1,28 @@
-{\Large\bfseries $drs.description()}
+{\Large\bfseries $drs.TeXtitle()}
 
-\begin{tabular}{lp{10cm}}
+\begin{tabular}{@{}lp{10cm}}
 Begonnen & $degree.EnrolledSemester.__str__() \\\\
 Abgeschlossen & 
 #if ($degree.FinishedDate) $h.formatDate($degree.FinishedDate) #else \textit{noch nicht} #end \\\\
-Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\
+$h.escapeTeX($drs.minorSubjectDescription()) & $h.escapeTeX($degree.MinorSubject) \\\\
 \end{tabular}
 
+\provideboolean{swsfootnoterendered}
+\ifthenelse{\boolean{swsfootnoterendered}}{}{%
+  \addtocounter{footnote}{1}
+  \footnotetext[\value{footnote}]{SWS: Semesterwochenstunden}
+  \newcounter{swsfootnotenumber}
+  \setcounter{swsfootnotenumber}{\value{footnote}}
+  \setboolean{swsfootnoterendered}{true}
+}
+
+#if ($h.len($filter_func($degree.Exams.values()))>0)## if not empty
 \begin{longtable}[l]{|l|p{5cm}p{4cm}|p{1cm}p{1.5cm}|}
 \hline
 \textbf{Datum} & 
   \textbf{Pr\"ufung} & 
   \textbf{Komponente} & 
-  \textbf{SWS} & 
+  \textbf{SWS}\footnotemark[\value{swsfootnotenumber}] & 
   \textbf{Note} \\\\
 & \multicolumn{2}{l|}{\textbf{Pr\"ufer, Universit\"at}} & & \\\\
 \hline
@@ -55,3 +65,6 @@ Erstes Nebenfach & $h.escapeTeX($degree.MinorSubject) \\\\
   \hline
 #end##
 \end{longtable}
+#else## if empty
+\vspace{0.4cm}
+#end## if not empty

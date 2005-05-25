@@ -19,6 +19,12 @@ class tDegreeRuleSet(object):
     def description(self):
         return "base"
         
+    def TeXtitle(self):
+        return tools.escapeTeX(self.description())
+
+    def minorSubjectDescription(self):
+        return "Nebenfach"
+        
     def degreeComponents(self):
         """Returns an associative list that enumerates the types of
         exams that count towards this degree.
@@ -104,6 +110,12 @@ class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
 
     def description(self):
         return "Technomathematik Vordiplom/PO vom 03.06.1983"
+
+    def TeXtitle(self):
+        return "Technomathematik Vordiplom\\footnote{Pr\\\"ufungsordnung vom 03.06.1983}"
+        
+    def minorSubjectDescription(self):
+        return "Technisches Nebenfach"
         
     def degreeComponents(self):
         return tools.tAssociativeList([
@@ -142,11 +154,17 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
     def description(self):
         return "Technomathematik Hauptdiplom/PO vom 03.06.1983"
         
+    def TeXtitle(self):
+        return "Technomathematik Hauptdiplom\\footnote{Pr\\\"ufungsordnung vom 03.06.1983}"
+
+    def minorSubjectDescription(self):
+        return "Technisches Nebenfach"
+        
     def degreeComponents(self):
         return tools.tAssociativeList([
             ("rein", "Reine Mathematik"),
             ("angewandt", "Angewandte Mathematik"),
-            ("ing", "Erstes Nebenfach"),
+            ("ing", "Technisches Nebenfach"),
             ("inf", "Angewandte Informatik"),
             ("diplomarbeit", "Diplomarbeit"),
             ("uebrein", u"Übung Reine Mathematik"),
