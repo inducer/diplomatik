@@ -7,6 +7,7 @@ Abgeschlossen &
 $h.escapeTeX($drs.minorSubjectDescription()) & $h.escapeTeX($degree.MinorSubject) \\\\
 \end{tabular}
 
+#if ($h.len($filter_func($degree.Exams.values()))>0)## if not empty
 \provideboolean{swsfootnoterendered}
 \ifthenelse{\boolean{swsfootnoterendered}}{}{%
   \addtocounter{footnote}{1}
@@ -16,7 +17,6 @@ $h.escapeTeX($drs.minorSubjectDescription()) & $h.escapeTeX($degree.MinorSubject
   \setboolean{swsfootnoterendered}{true}
 }
 
-#if ($h.len($filter_func($degree.Exams.values()))>0)## if not empty
 \begin{longtable}[l]{|l|p{5cm}p{4cm}|p{1cm}p{1.5cm}|}
 \hline
 \textbf{Datum} & 

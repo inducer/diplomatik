@@ -247,3 +247,369 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
     def ruleSetDate(self):
         return datetime.date(1983, 6, 3)
 
+
+
+
+class tTemaVDNeuDegreeRuleSet(tDegreeRuleSet):
+    def __init__(self):
+        tDegreeRuleSet.__init__(self)
+
+    def id(self):
+        return "tema-vd-neu"
+
+    def description(self):
+        return "Technomathematik Vordiplom/Neue PO (???)"
+
+    def TeXtitle(self):
+        return "Technomathematik Vordiplom\\footnote{Neue (???) Pr\\\"ufungsordnung vom XX.XX.XXXX}"
+        
+    def minorSubjectDescription(self):
+        return "Technisches Nebenfach"
+        
+    def degreeComponents(self):
+        return tools.tAssociativeList([
+            ("ana", "Analysis"),
+            ("la", "Lineare Algebra"),
+            ("stoch", "Stochastik"),
+            ("num", "Numerik"),
+            ("scheine", "Scheine"),
+            ])
+
+    def examSources(self):
+        return tools.tAssociativeList([
+            ("uni", "Uni Karlsruhe"),
+            ("ausland", "Ausland"),
+            ("andere", "Andere dt. Hochschule"),
+            ])
+
+    def expectedExamCount(self, component):
+        if component == "scheine":
+            return 2
+        else:
+            return 1
+
+    def ruleSetDate(self):
+        return datetime.date(1970, 1, 1)
+
+
+
+
+class tTemaHDNeuDegreeRuleSet(tDegreeRuleSet):
+    def __init__(self):
+        tDegreeRuleSet.__init__(self)
+
+    def id(self):
+        return "tema-hd-neu"
+
+    def description(self):
+        return "Technomathematik Hauptdiplom/Neue PO (???)"
+        
+    def TeXtitle(self):
+        return "Technomathematik Hauptdiplom\\footnote{Neue (???) Pr\\\"ufungsordnung vom XX.XX.XXXX}"
+
+    def minorSubjectDescription(self):
+        return "Technisches Nebenfach"
+        
+    def degreeComponents(self):
+        return tools.tAssociativeList([
+            ("rein", "Reine Mathematik"),
+            ("angewandt", "Angewandte Mathematik"),
+            ("ing", "Technisches Nebenfach"),
+            ("inf", "Angewandte Informatik"),
+            ("diplomarbeit", "Diplomarbeit"),
+            ("uebrein", u"Übung Reine Mathematik"),
+            ("uebangewandt", u"Übung Angewandte Mathematik"),
+            ("seminar", "Seminar"),
+            ("mrp", "Mikrorechnerpraktikum"),
+            ("zusatz", "Zusatzfach"),
+            ])
+
+    def examSources(self):
+        return tools.tAssociativeList([
+            ("uni", "Uni Karlsruhe"),
+            ("freischuss", "Uni Karlsruhe, studienbegleitend"),
+            ("ausland", "Ausland"),
+            ("industrie", "Industrie"),
+            ("andere", "Andere dt. Hochschule"),
+            ])
+
+    def expectedExamCount(self, component):
+        if component in ["rein",
+                         "angewandt",
+                         "ing",
+                         "inf"]:
+            return 5
+        else:
+            return 1
+
+    def getExportData(self, student, degree):
+        rephand = self.getPerDegreeReportHandler(
+            student, degree)
+        try:
+            return rephand.getZeugnisTeXDefs()
+        except tSubjectError:
+            return "% degree-specific export failed"
+
+    def getVordiplom(self, student):
+        vds = [degree
+               for degree in student.Degrees.values()
+               if degree.DegreeRuleSet == "tema-vd-alt"
+               if degree.FinishedDate]
+        
+        if len(vds) != 1:
+            raise tSubjectError, \
+                  "Student %s: Anzahl beendeter TeMa-Vordiplome ist ungleich eins" \
+                  % student.LastName
+
+        return vds[0]
+
+    def getDiplomarbeit(self, student, degree):
+        assert degree.DegreeRuleSet == self.id()
+
+        diplomarbeiten = [exam
+                          for exam in degree.Exams.values()
+                          if exam.DegreeComponent == "diplomarbeit"
+                          if exam.Counted and exam.CountedResult]
+        if len(diplomarbeiten) != 1:
+            raise tSubjectError, \
+                  "Student %s: Anzahl benoteter Diplomarbeiten ist ungleich eins" \
+                  % student.LastName
+        return diplomarbeiten[0]
+
+    def getOverallGrade(self, student, degree):
+        assert degree.DegreeRuleSet == self.id()
+
+        rm = self.getComponentAverageGrade(student, degree, "rein")
+        am = self.getComponentAverageGrade(student, degree, "angewandt")
+        nf1 = self.getComponentAverageGrade(student, degree, "ing")
+        nf2 = self.getComponentAverageGrade(student, degree, "inf")
+        da = self.getDiplomarbeit(student, degree)
+        return tools.roundGrade((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
+
+    def getPerDegreeReportHandler(self, student, degree):
+        return reports.tTeMaHDAltPerDegreeReportHandler(
+            student, degree, self)
+
+    def getPerExamReportHandler(self, student, degree, exam):
+        return reports.tTeMaHDAltPerExamReportHandler(
+            student, degree, self, exam)
+
+    def ruleSetDate(self):
+        return datetime.date(1970, 1, 1)
+
+
+
+
+class tTemaBachelorDegreeRuleSet(tDegreeRuleSet):
+    def __init__(self):
+        tDegreeRuleSet.__init__(self)
+
+    def id(self):
+        return "tema-bachelor"
+
+    def description(self):
+        return "Technomathematik Bachelor (???)"
+        
+    def TeXtitle(self):
+        return "Technomathematik Bachelor\\footnote{Pr\\\"ufungsordnung vom XX.XX.XXXX}"
+
+    def minorSubjectDescription(self):
+        return "Technisches Nebenfach"
+        
+    def degreeComponents(self):
+        return tools.tAssociativeList([
+            ("rein", "Reine Mathematik"),
+            ("angewandt", "Angewandte Mathematik"),
+            ("ing", "Technisches Nebenfach"),
+            ("inf", "Angewandte Informatik"),
+            ("diplomarbeit", "Diplomarbeit"),
+            ("uebrein", u"Übung Reine Mathematik"),
+            ("uebangewandt", u"Übung Angewandte Mathematik"),
+            ("seminar", "Seminar"),
+            ("mrp", "Mikrorechnerpraktikum"),
+            ("zusatz", "Zusatzfach"),
+            ])
+
+    def examSources(self):
+        return tools.tAssociativeList([
+            ("uni", "Uni Karlsruhe"),
+            ("freischuss", "Uni Karlsruhe, studienbegleitend"),
+            ("ausland", "Ausland"),
+            ("industrie", "Industrie"),
+            ("andere", "Andere dt. Hochschule"),
+            ])
+
+    def expectedExamCount(self, component):
+        if component in ["rein",
+                         "angewandt",
+                         "ing",
+                         "inf"]:
+            return 5
+        else:
+            return 1
+
+    def getExportData(self, student, degree):
+        rephand = self.getPerDegreeReportHandler(
+            student, degree)
+        try:
+            return rephand.getZeugnisTeXDefs()
+        except tSubjectError:
+            return "% degree-specific export failed"
+
+    def getVordiplom(self, student):
+        vds = [degree
+               for degree in student.Degrees.values()
+               if degree.DegreeRuleSet == "tema-vd-alt"
+               if degree.FinishedDate]
+        
+        if len(vds) != 1:
+            raise tSubjectError, \
+                  "Student %s: Anzahl beendeter TeMa-Vordiplome ist ungleich eins" \
+                  % student.LastName
+
+        return vds[0]
+
+    def getDiplomarbeit(self, student, degree):
+        assert degree.DegreeRuleSet == self.id()
+
+        diplomarbeiten = [exam
+                          for exam in degree.Exams.values()
+                          if exam.DegreeComponent == "diplomarbeit"
+                          if exam.Counted and exam.CountedResult]
+        if len(diplomarbeiten) != 1:
+            raise tSubjectError, \
+                  "Student %s: Anzahl benoteter Diplomarbeiten ist ungleich eins" \
+                  % student.LastName
+        return diplomarbeiten[0]
+
+    def getOverallGrade(self, student, degree):
+        assert degree.DegreeRuleSet == self.id()
+
+        rm = self.getComponentAverageGrade(student, degree, "rein")
+        am = self.getComponentAverageGrade(student, degree, "angewandt")
+        nf1 = self.getComponentAverageGrade(student, degree, "ing")
+        nf2 = self.getComponentAverageGrade(student, degree, "inf")
+        da = self.getDiplomarbeit(student, degree)
+        return tools.roundGrade((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
+
+    def getPerDegreeReportHandler(self, student, degree):
+        return reports.tTeMaHDAltPerDegreeReportHandler(
+            student, degree, self)
+
+    def getPerExamReportHandler(self, student, degree, exam):
+        return reports.tTeMaHDAltPerExamReportHandler(
+            student, degree, self, exam)
+
+    def ruleSetDate(self):
+        return datetime.date(1970, 1, 1)
+
+
+
+
+class tTemaMasterDegreeRuleSet(tDegreeRuleSet):
+    def __init__(self):
+        tDegreeRuleSet.__init__(self)
+
+    def id(self):
+        return "tema-master"
+
+    def description(self):
+        return "Technomathematik Master (???)"
+        
+    def TeXtitle(self):
+        return "Technomathematik Master\\footnote{Pr\\\"ufungsordnung vom XX.XX.XXXX}"
+
+    def minorSubjectDescription(self):
+        return "Technisches Nebenfach"
+        
+    def degreeComponents(self):
+        return tools.tAssociativeList([
+            ("rein", "Reine Mathematik"),
+            ("angewandt", "Angewandte Mathematik"),
+            ("ing", "Technisches Nebenfach"),
+            ("inf", "Angewandte Informatik"),
+            ("diplomarbeit", "Diplomarbeit"),
+            ("uebrein", u"Übung Reine Mathematik"),
+            ("uebangewandt", u"Übung Angewandte Mathematik"),
+            ("seminar", "Seminar"),
+            ("mrp", "Mikrorechnerpraktikum"),
+            ("zusatz", "Zusatzfach"),
+            ])
+
+    def examSources(self):
+        return tools.tAssociativeList([
+            ("uni", "Uni Karlsruhe"),
+            ("freischuss", "Uni Karlsruhe, studienbegleitend"),
+            ("ausland", "Ausland"),
+            ("industrie", "Industrie"),
+            ("andere", "Andere dt. Hochschule"),
+            ])
+
+    def expectedExamCount(self, component):
+        if component in ["rein",
+                         "angewandt",
+                         "ing",
+                         "inf"]:
+            return 5
+        else:
+            return 1
+
+    def getExportData(self, student, degree):
+        rephand = self.getPerDegreeReportHandler(
+            student, degree)
+        try:
+            return rephand.getZeugnisTeXDefs()
+        except tSubjectError:
+            return "% degree-specific export failed"
+
+    def getVordiplom(self, student):
+        vds = [degree
+               for degree in student.Degrees.values()
+               if degree.DegreeRuleSet == "tema-vd-alt"
+               if degree.FinishedDate]
+        
+        if len(vds) != 1:
+            raise tSubjectError, \
+                  "Student %s: Anzahl beendeter TeMa-Vordiplome ist ungleich eins" \
+                  % student.LastName
+
+        return vds[0]
+
+    def getDiplomarbeit(self, student, degree):
+        assert degree.DegreeRuleSet == self.id()
+
+        diplomarbeiten = [exam
+                          for exam in degree.Exams.values()
+                          if exam.DegreeComponent == "diplomarbeit"
+                          if exam.Counted and exam.CountedResult]
+        if len(diplomarbeiten) != 1:
+            raise tSubjectError, \
+                  "Student %s: Anzahl benoteter Diplomarbeiten ist ungleich eins" \
+                  % student.LastName
+        return diplomarbeiten[0]
+
+    def getOverallGrade(self, student, degree):
+        assert degree.DegreeRuleSet == self.id()
+
+        rm = self.getComponentAverageGrade(student, degree, "rein")
+        am = self.getComponentAverageGrade(student, degree, "angewandt")
+        nf1 = self.getComponentAverageGrade(student, degree, "ing")
+        nf2 = self.getComponentAverageGrade(student, degree, "inf")
+        da = self.getDiplomarbeit(student, degree)
+        return tools.roundGrade((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
+
+    def getPerDegreeReportHandler(self, student, degree):
+        return reports.tTeMaHDAltPerDegreeReportHandler(
+            student, degree, self)
+
+    def getPerExamReportHandler(self, student, degree, exam):
+        return reports.tTeMaHDAltPerExamReportHandler(
+            student, degree, self, exam)
+
+    def ruleSetDate(self):
+        return datetime.date(1970, 1, 1)
+
+
+
+
+
