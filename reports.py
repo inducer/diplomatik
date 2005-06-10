@@ -14,6 +14,12 @@ from tools import tSubjectError
 
 
 
+UNIBRIEF_INCLUDES = ["unibrief/"+ name for name in 
+                     ["unibrief.cls", "dinbrief.cls", "headerdata.tex", "unilogo.pdf"]]
+
+
+
+
 class tReportHandler:
     def getList(self):
         return tools.tAssociativeList()
@@ -299,8 +305,19 @@ def getTranscriptData(form_data, student, degree=None, drs=None, drs_map=None):
         print "YO", result
         return result
 
+    def sort_func(drs, exams):
+        exams = exams[:]
+
+        def cmpexams(a, b):
+            return cmp(
+                (drs.mapComponentToSortKey(a.DegreeComponent), a.Date),
+                (drs.mapComponentToSortKey(b.DegreeComponent), b.Date))
+        exams.sort(cmpexams)
+        return exams
+
     result = {"student": student,
               "filter_func": filter_func,
+              "sort_func": sort_func,
               "include_non_counted": form_data.IncludeNonCounted}
 
     if degree:
@@ -337,7 +354,8 @@ class tPerStudentReportHandler(tReportHandler):
         if report_id == "transcript":
             return tools.runLatexOnTemplate(
                 "transcript-complete.tex", 
-                getTranscriptData(form_data, self.Student, drs_map=self.DRSMap))
+                getTranscriptData(form_data, self.Student, drs_map=self.DRSMap),
+                included_files=UNIBRIEF_INCLUDES)
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
 
@@ -369,7 +387,8 @@ class tPerDegreeReportHandler(tReportHandler):
                 "transcript-single.tex", 
                 getTranscriptData(form_data,
                                   self.Student, degree=self.Degree, 
-                                  drs=self.DegreeRuleSet))
+                                  drs=self.DegreeRuleSet),
+                included_files=UNIBRIEF_INCLUDES)
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
 

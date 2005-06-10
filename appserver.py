@@ -488,6 +488,14 @@ class tDatabaseHandler:
         else:
             raise RuntimeError, "unknown filter: %s" % filter_name
 
+    def sortKeys(self, field_name, field, keys):
+        def cmp_func(a, b):
+            return cmp(
+                field.getValue(self.Database[a]),
+                field.getValue(self.Database[b]))
+        
+        keys.sort(cmp_func)
+
     def handleOverviewPage(self, request):
         keys = self.Database.keys()
         try:
@@ -517,13 +525,7 @@ class tDatabaseHandler:
             if not sort_field.isSortable():
                 raise tNotFoundError, \
                       "Cannot sort by unordered field %s" % sort_by
-
-            def cmp_func(a, b):
-                return cmp(
-                    sort_field.getValue(self.Database[a]),
-                    sort_field.getValue(self.Database[b]))
-
-            keys.sort(cmp_func)
+            self.sortKeys(sort_by, sort_field, keys)
 
         def toggleFilter(current_filters, toggle_filter):
             result = current_filters[:]

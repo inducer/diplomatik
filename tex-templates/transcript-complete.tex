@@ -1,30 +1,19 @@
-\documentclass[10pt]{article}
+\documentclass[headerdata]{unibrief}
 \batchmode
 \usepackage[latin1]{inputenc}
 \usepackage{longtable}
 \usepackage{ifthen}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\q{\quad}%
-\def\qh{$\;$}%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\textheight250mm%
-\textwidth160mm%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\setlength{\parindent}{0cm}%
-\setlength{\topmargin}{-1.0cm}%
-\setlength{\headheight}{0cm}%
-\setlength{\headsep}{0cm}%
-\setlength{\oddsidemargin}{0.0cm}%
-\setlength{\evensidemargin}{0.0cm}%
-\pagestyle{empty}%
 \begin{document}
-{\huge\bfseries Notenauszug}
-\vskip 0.5cm%
 #parse ("transcript-header.tex")
-\vskip 0.5cm%
 #foreach ($degree in $h.sortBy($student.Degrees.values(), "EnrolledSemester"))
   #set ($drs = $drs_map.__getitem__($degree.DegreeRuleSet))
   #parse ("transcript-degree.tex")
 #end
+\begin{tabular}{@{}ll}
+\vspace*{0.5cm}\\\\Karlsruhe, den \today\\\\
+\hline
+& \footnotesize Stempel/Unterschrift\hspace*{5cm}
+\end{tabular}
+\end{letter}
 \end{document}

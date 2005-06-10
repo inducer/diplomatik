@@ -381,7 +381,7 @@ def runLatex(text, included_files):
     os.mkdir(temp_dir_name)
 
     for i in included_files:
-        copyFile(os.path.join(temp_dir_name, i),
+        copyFile(os.path.join(temp_dir_name, os.path.basename(i)),
                  os.path.join("tex-templates", i))
 
     os.chdir(temp_dir_name)

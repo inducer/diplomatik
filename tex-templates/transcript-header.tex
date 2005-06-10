@@ -1,11 +1,10 @@
-\begin{tabular}{@{}lp{10cm}}
-\textbf{Name} & \textbf{$h.escapeTeX($student.FirstName) ##
-       $h.escapeTeX($student.MiddleName) ##
-       $h.escapeTeX($student.LastName)} \\\\[0.2em]
-Matrikelnummer & $student.ID \\\\
-#if ($student.DateOfBirth)
-  Geburtsdatum & $h.formatDate($student.DateOfBirth) \\\\
-  Geburtsort & $h.escapeTeX($student.PlaceOfBirth) \\\\
-#end
-\end{tabular}
-
+\begin{letter}{
+    \textbf{$h.escapeTeX($student.FirstName) ##
+      $h.escapeTeX($student.MiddleName) ##
+      $h.escapeTeX($student.LastName) ##
+    } \\\\[0.2em]
+    Geboren am $h.formatDate($student.DateOfBirth) 
+    in $h.escapeTeX($student.PlaceOfBirth)
+  }
+\Betreff{Notenauszug}
+\opening{}

@@ -41,6 +41,19 @@ class tDegreeRuleSet(object):
         """
         return tools.tAssociativeList()
 
+    def mapComponentToSortKey(self, comp_id):
+        """Get a value that can serve as a sensible sort key for
+        the degree components.
+
+        Sorry---This method had to be added as an afterthought, since
+        some component IDs that were already in deployment were not
+        alphabetized to ensure correct sort order.
+
+        Of course, you don't need to reimplement this if your component
+        IDs already have the right order.
+        """
+        return comp_id
+
     def examSources(self):
         # id:str -> description:str
         return tools.tAssociativeList 
@@ -173,6 +186,19 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
             ("mrp", "Mikrorechnerpraktikum"),
             ("zusatz", "Zusatzfach"),
             ])
+
+    def mapComponentToSortKey(self, comp_id):
+        return {
+            "diplomarbeit": 0,
+            "rein": 10,
+            "uebrein":15,
+            "angewandt": 20,
+            "uebangewandt":25,
+            "ing": 30,
+            "inf": 40,
+            "seminar": 50,
+            "mrp": 60,
+            "zusatz": 70}[comp_id]
 
     def examSources(self):
         return tools.tAssociativeList([

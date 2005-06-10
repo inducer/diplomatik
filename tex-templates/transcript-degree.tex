@@ -1,4 +1,4 @@
-{\Large\bfseries $drs.TeXtitle()}
+\textbf{$drs.TeXtitle()}
 
 \begin{tabular}{@{}lp{10cm}}
 Begonnen & $degree.EnrolledSemester.__str__() \\\\
@@ -27,7 +27,7 @@ $h.escapeTeX($drs.minorSubjectDescription()) & $h.escapeTeX($degree.MinorSubject
 & \multicolumn{2}{l|}{\textbf{Pr\"ufer, Universit\"at}} & & \\\\
 \hline
 \endhead
-#foreach ($exam in $h.sortBy($filter_func($degree.Exams.values()), "Date"))##
+#foreach ($exam in $sort_func($drs, $filter_func($degree.Exams.values())))##
   $h.formatDate($exam.Date) &
   \\raggedright $h.escapeTeX($exam.Description) &
   $h.escapeTeX($drs.degreeComponents().__getitem__($exam.DegreeComponent)) &

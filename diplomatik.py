@@ -520,6 +520,19 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
             return result
         return ""
 
+    def sortKeys(self, field_name, field, keys):
+        if field_name == "DegreeComponent":
+            drs = degree_rule_sets_map[self.Degree.DegreeRuleSet]
+            def cmpexams(a, b):
+                a = self.Database[a]
+                b = self.Database[b]
+                return cmp(
+                    (drs.mapComponentToSortKey(a.DegreeComponent), a.Date),
+                    (drs.mapComponentToSortKey(b.DegreeComponent), b.Date))
+            keys.sort(cmpexams)
+        else:
+            appserver.tDatabaseHandler.sortKeys(self, field_name, field, keys)
+
 
 
 
