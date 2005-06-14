@@ -1,5 +1,7 @@
 \textbf{$drs.TeXtitle()}
 
+\nopagebreak[4]
+
 \begin{tabular}{@{}lp{10cm}}
 Begonnen & $degree.EnrolledSemester.__str__() \\\\
 Abgeschlossen & 
@@ -7,14 +9,22 @@ Abgeschlossen &
 $h.escapeTeX($drs.minorSubjectDescription()) & $h.escapeTeX($degree.MinorSubject) \\\\
 \end{tabular}
 
+\nopagebreak[4]
+
+#set ($credits_id = $drs.creditsUnitDescription().__getitem__(0))##
+#set ($credits_name = $drs.creditsUnitDescription().__getitem__(1))##
+#set ($credits_description = $drs.creditsUnitDescription().__getitem__(2))##
+##
 #if ($h.len($filter_func($degree.Exams.values()))>0)## if not empty
-\provideboolean{swsfootnoterendered}
-\ifthenelse{\boolean{swsfootnoterendered}}{}{%
+
+% Credits footnote handling
+\provideboolean{${credits_id}footnoterendered}
+\ifthenelse{\boolean{${credits_id}footnoterendered}}{}{%
   \addtocounter{footnote}{1}
-  \footnotetext[\value{footnote}]{SWS: Semesterwochenstunden}
-  \newcounter{swsfootnotenumber}
-  \setcounter{swsfootnotenumber}{\value{footnote}}
-  \setboolean{swsfootnoterendered}{true}
+  \footnotetext[\value{footnote}]{$h.escapeTeX($credits_name): $h.escapeTeX($credits_description)}
+  \newcounter{${credits_id}footnotenumber}
+  \setcounter{${credits_id}footnotenumber}{\value{footnote}}
+  \setboolean{${credits_id}footnoterendered}{true}
 }
 
 \begin{longtable}[l]{|l|p{5cm}p{4cm}|p{1cm}p{1.5cm}|}
@@ -22,7 +32,7 @@ $h.escapeTeX($drs.minorSubjectDescription()) & $h.escapeTeX($degree.MinorSubject
 \textbf{Datum} & 
   \textbf{Pr\"ufung} & 
   \textbf{Komponente} & 
-  \textbf{SWS}\footnotemark[\value{swsfootnotenumber}] & 
+  \textbf{$h.escapeTeX($credits_name)}\footnotemark[\value{${credits_id}footnotenumber}] & 
   \textbf{Note} \\\\
 & \multicolumn{2}{l|}{\textbf{Pr\"ufer, Universit\"at}} & & \\\\
 \hline

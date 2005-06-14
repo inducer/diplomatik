@@ -25,6 +25,17 @@ class tDegreeRuleSet(object):
     def minorSubjectDescription(self):
         return "Nebenfach"
         
+    def creditsUnitDescription(self):
+        """Returns a triple of
+        - symbolic identifier (only lowercase letters, no spaces or numbers),
+        - short description, and
+        - long description
+        of the used credit point system.  The symbolic identifier is only used
+        to identify the system and not print the corresponding explaining footnote
+        twice or more often.
+        """
+        return ("none", "CP", "Credit Points")
+        
     def degreeComponents(self):
         """Returns an associative list that enumerates the types of
         exams that count towards this degree.
@@ -130,6 +141,9 @@ class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
     def minorSubjectDescription(self):
         return "Technisches Nebenfach"
         
+    def creditsUnitDescription(self):
+        return ("sws", "SWS", "Semesterwochenstunden")
+        
     def degreeComponents(self):
         return tools.tAssociativeList([
             ("ana", "Analysis"),
@@ -172,6 +186,9 @@ class tTemaHDAltDegreeRuleSet(tDegreeRuleSet):
 
     def minorSubjectDescription(self):
         return "Technisches Nebenfach"
+
+    def creditsUnitDescription(self):
+        return ("sws", "SWS", "Semesterwochenstunden")
         
     def degreeComponents(self):
         return tools.tAssociativeList([
@@ -292,6 +309,9 @@ class tTemaVDNeuDegreeRuleSet(tDegreeRuleSet):
     def minorSubjectDescription(self):
         return "Technisches Nebenfach"
         
+    def creditsUnitDescription(self):
+        return ("sws", "SWS", "Semesterwochenstunden")
+        
     def degreeComponents(self):
         return tools.tAssociativeList([
             ("ana", "Analysis"),
@@ -335,6 +355,9 @@ class tTemaHDNeuDegreeRuleSet(tDegreeRuleSet):
 
     def minorSubjectDescription(self):
         return "Technisches Nebenfach"
+        
+    def creditsUnitDescription(self):
+        return ("sws", "SWS", "Semesterwochenstunden")
         
     def degreeComponents(self):
         return tools.tAssociativeList([

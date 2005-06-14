@@ -446,6 +446,9 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
         self.Student = student
         self.DegreeID = deg_id
         self.Degree = degree
+
+        drs = degree_rule_sets_map[self.Degree.DegreeRuleSet]
+
         appserver.tDatabaseHandler.__init__(self,
                                             degree.Exams,
                                             [
@@ -459,12 +462,12 @@ class tExamsDatabaseHandler(appserver.tDatabaseHandler):
                                    shown_in_overview = True,
                                    choices = degree_rule_sets_map[degree.DegreeRuleSet].degreeComponents()
                                    ),
-            appserver.tFloatField("Credits", "SWS", 
+            appserver.tFloatField("Credits", drs.creditsUnitDescription()[1], 
                                   shown_in_overview = True,
                                   min = 0.0, 
                                   max = None, 
                                   none_ok = True),
-            appserver.tStringField("CreditsPrintable", u"SWS (ausführlich)",
+            appserver.tStringField("CreditsPrintable", u"%s (ausführlich)" % drs.creditsUnitDescription()[1],
                                    shown_in_overview = False),
             appserver.tFloatField("CountedResult", "Note",
                                   shown_in_overview = True,
