@@ -6,7 +6,9 @@ rm -Rf $DESTDIR
 mkdir $DESTDIR
 cp START start-diplomatik.bat README VERSION LICENSE-* *.py $DESTDIR
 mkdir $DESTDIR/tex-templates
-cp tex-templates/*.tex $DESTDIR/tex-templates
+mkdir $DESTDIR/tex-templates/unibrief
+cp -R tex-templates/*.tex $DESTDIR/tex-templates
+cp -R tex-templates/unibrief/* $DESTDIR/tex-templates/unibrief
 mkdir $DESTDIR/html-templates
 cp html-templates/*.html $DESTDIR/html-templates
 mkdir $DESTDIR/static

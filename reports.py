@@ -8,13 +8,14 @@ import datamodel
 import semester
 import appserver
 import tools
+import os.path
 
 from tools import tSubjectError
 
 
 
 
-UNIBRIEF_INCLUDES = ["unibrief/"+ name for name in 
+UNIBRIEF_INCLUDES = [os.path.join("unibrief", name) for name in 
                      ["unibrief.cls", "dinbrief.cls", "headerdata.tex", "unilogo.pdf"]]
 
 

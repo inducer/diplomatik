@@ -3,8 +3,13 @@
       $h.escapeTeX($student.MiddleName) ##
       $h.escapeTeX($student.LastName) ##
     } \\\\[0.2em]
-    Geboren am $h.formatDate($student.DateOfBirth) 
-    in $h.escapeTeX($student.PlaceOfBirth)
+    Matrikelnummer $h.escapeTeX($student.ID)\\\\
+    #if ($student.DateOfBirth)##
+      Geboren am $h.formatDate($student.DateOfBirth) 
+      #if ($student.PlaceOfBirth)##
+        in $h.escapeTeX($student.PlaceOfBirth)
+      #end##
+    #end##
   }
 \Betreff{Notenauszug}
 \opening{}

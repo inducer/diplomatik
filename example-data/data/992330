@@ -439,14 +439,14 @@ Degrees:
                 Counted: True
                 CountedResult: 1.0
                 Credits: 3.0
-                CreditsPrintable: "3"
+                CreditsPrintable: ""
                 Date:
                     day: 14
                     month: 6
                     year: 2005
                 DegreeComponent: "rein"
                 Description: "Technische Modellierung von Kalten F\xfc\xdfen"
-                Examiner: "Giesler"
+                Examiner: ""
                 NativeResult: ""
                 Remarks: ""
                 Source: "uni"
