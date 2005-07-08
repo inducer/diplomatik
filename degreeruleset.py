@@ -150,6 +150,8 @@ class tTemaVDAltDegreeRuleSet(tDegreeRuleSet):
             ("la", "Lineare Algebra"),
             ("stoch", "Stochastik"),
             ("num", "Numerik"),
+            ("techfach", "Technisches Fach"),
+            ("info", "Angewandte Informatik"),
             ("scheine", "Scheine"),
             ])
 
@@ -301,10 +303,10 @@ class tTemaVDNeuDegreeRuleSet(tDegreeRuleSet):
         return "tema-vd-neu"
 
     def description(self):
-        return "Technomathematik Vordiplom/Neue PO (???)"
+        return "Technomathematik Vordiplom/Neue PO"
 
     def TeXtitle(self):
-        return "Technomathematik Vordiplom\\footnote{Neue (???) Pr\\\"ufungsordnung vom XX.XX.XXXX}"
+        return "Technomathematik Vordiplom\\footnote{Neue Pr\\\"ufungsordnung vom 10.09.2003}"
         
     def minorSubjectDescription(self):
         return "Technisches Nebenfach"
@@ -318,6 +320,8 @@ class tTemaVDNeuDegreeRuleSet(tDegreeRuleSet):
             ("la", "Lineare Algebra"),
             ("stoch", "Stochastik"),
             ("num", "Numerik"),
+            ("techfach", "Technisches Fach"),
+            ("info", "Angewandte Informatik"),
             ("scheine", "Scheine"),
             ])
 
@@ -331,11 +335,13 @@ class tTemaVDNeuDegreeRuleSet(tDegreeRuleSet):
     def expectedExamCount(self, component):
         if component == "scheine":
             return 2
+        elif component == "techfach":
+            return 4
         else:
             return 1
 
     def ruleSetDate(self):
-        return datetime.date(1970, 1, 1)
+        return datetime.date(2003, 9, 10)
 
 
 
@@ -348,10 +354,10 @@ class tTemaHDNeuDegreeRuleSet(tDegreeRuleSet):
         return "tema-hd-neu"
 
     def description(self):
-        return "Technomathematik Hauptdiplom/Neue PO (???)"
+        return "Technomathematik Hauptdiplom/Neue PO"
         
     def TeXtitle(self):
-        return "Technomathematik Hauptdiplom\\footnote{Neue (???) Pr\\\"ufungsordnung vom XX.XX.XXXX}"
+        return "Technomathematik Hauptdiplom\\footnote{Neue Pr\\\"ufungsordnung vom 10.09.2003}"
 
     def minorSubjectDescription(self):
         return "Technisches Nebenfach"
@@ -361,13 +367,13 @@ class tTemaHDNeuDegreeRuleSet(tDegreeRuleSet):
         
     def degreeComponents(self):
         return tools.tAssociativeList([
-            ("rein", "Reine Mathematik"),
-            ("angewandt", "Angewandte Mathematik"),
-            ("ing", "Technisches Nebenfach"),
-            ("inf", "Angewandte Informatik"),
+            ("alggeo", "Algebra/Geometrie"),
+            ("ana", "Analysis"),
+            ("num", "Numerik/Wissenschaftliches Rechnen"),
+            ("stoch", "Stochastik"),
+            ("techfach", "Technisches Nebenfach"),
+            ("info", "Angewandte Informatik"),
             ("diplomarbeit", "Diplomarbeit"),
-            ("uebrein", u"Übung Reine Mathematik"),
-            ("uebangewandt", u"Übung Angewandte Mathematik"),
             ("seminar", "Seminar"),
             ("mrp", "Mikrorechnerpraktikum"),
             ("zusatz", "Zusatzfach"),
@@ -383,11 +389,11 @@ class tTemaHDNeuDegreeRuleSet(tDegreeRuleSet):
             ])
 
     def expectedExamCount(self, component):
-        if component in ["rein",
-                         "angewandt",
-                         "ing",
-                         "inf"]:
-            return 5
+        if component in ["alggeo",
+                         "ana",
+                         "num",
+                         "stoch"]:
+            return 3
         else:
             return 1
 
@@ -436,15 +442,15 @@ class tTemaHDNeuDegreeRuleSet(tDegreeRuleSet):
         return tools.roundGrade((rm+am+nf1+nf2+2.*da.CountedResult)/6.,1)
 
     def getPerDegreeReportHandler(self, student, degree):
-        return reports.tTeMaHDAltPerDegreeReportHandler(
+        return reports.tTeMaHDNeuPerDegreeReportHandler(
             student, degree, self)
 
     def getPerExamReportHandler(self, student, degree, exam):
-        return reports.tTeMaHDAltPerExamReportHandler(
+        return reports.tTeMaHDNeuPerExamReportHandler(
             student, degree, self, exam)
 
     def ruleSetDate(self):
-        return datetime.date(1970, 1, 1)
+        return datetime.date(2003, 9, 10)
 
 
 

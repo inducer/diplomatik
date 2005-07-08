@@ -406,7 +406,13 @@ class tPerExamReportHandler(tReportHandler):
 
 
 
-class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
+class tTemaHDDegreeReportHandler(tPerDegreeReportHandler):
+    pass
+
+
+
+
+class tTeMaHDAltPerDegreeReportHandler(tTemaHDDegreeReportHandler):
     def getList(self):
         return tPerDegreeReportHandler.getList(self) + \
                tools.tAssociativeList([
@@ -611,7 +617,20 @@ class tTeMaHDAltPerDegreeReportHandler(tPerDegreeReportHandler):
 
 
 
-class tTeMaHDAltPerExamReportHandler(tPerExamReportHandler):
+class tTeMaHDNeuPerDegreeReportHandler(tTemaHDDegreeReportHandler):
+    pass
+
+
+
+
+
+class tTeMaHDPerExamReportHandler(tPerExamReportHandler):
+    pass
+
+
+
+
+class tTeMaHDAltPerExamReportHandler(tTeMaHDPerExamReportHandler):
     def getList(self):
         return tPerExamReportHandler.getList(self) + \
                tools.tAssociativeList([
@@ -632,3 +651,8 @@ class tTeMaHDAltPerExamReportHandler(tPerExamReportHandler):
         else:
             return tPerExamReportHandler.getPDF(self, report_id, form_data)
 
+
+
+
+class tTeMaHDNeuPerExamReportHandler(tTeMaHDPerExamReportHandler):
+    pass
