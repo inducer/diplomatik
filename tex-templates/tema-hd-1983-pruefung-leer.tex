@@ -1,0 +1,31 @@
+\input header
+
+\begin{document}
+#parse ("tema-hd-pruefung-kopf.tex")
+\vspace*{0.2cm}
+
+\renewcommand{\arraystretch}{1.4}
+\begin{center}
+\begin{tabular}{|c|p{14.6cm}|}
+\hline
+\hspace*{0.3cm} 
+& {\large Reine Mathematik} \\\\
+\hline
+& {\large Angewandte Mathematik }\\\\
+\hline 
+& {\large Technisches Fach: {\tt $h.escapeTeX($degree.MinorSubject)}}\\\\
+\hline
+& {\large Angewandte Informatik}\\\\
+\hline
+& {\large Zusatzfach} \\\\
+\hline
+\end{tabular}
+\end{center}
+\renewcommand{\arraystretch}{1}
+\normalsize
+
+#parse ("tema-hd-pruefung-mittelteil.tex")
+\vspace*{0.3cm}
+#parse ("tema-hd-1983-po-noten.tex")
+#parse ("tema-hd-pruefung-fuss.tex")
+\end{document}

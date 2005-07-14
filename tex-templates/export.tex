@@ -56,7 +56,6 @@
     \def\ABSCH${dletter}NF{$h.escapeTeX($degree.MinorSubject)}
     \def\ABSCH${dletter}REGELN{$h.escapeTeX($degree.DegreeRuleSet)}
     \def\ABSCH${dletter}BEMERKUNG{$h.escapeTeX($degree.Remark)}
-    \def\ABSCH${dletter}PODATUM{$h.formatDate($drs.ruleSetDate())}
     #set ($exams = $h.sortBy($degree.Exams.values(), "Date"))##
     #set ($components = $drs.degreeComponents().keys())##
     #foreach ($component in $components)##

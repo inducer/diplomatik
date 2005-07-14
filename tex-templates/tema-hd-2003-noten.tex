@@ -1,0 +1,95 @@
+\input{tema-hd-noten-kopf}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{4.0cm}|c|c|p{2.0cm}|p{4.0cm}@{}}
+{\bf FACH} & {\bf NOTE} & {\bf IN WORTEN} &
+{\bf\qh DATUM} & {\bf\qh PR\"UFER}\\
+\hline
+\ifthenelse{\equal{\AGnoteZ}{}}{}{%
+{\bf Algebra/Geometrie} & {\tt\AGnoteZ} & {\tt\AGnoteW} & {\tt\AGdatum} & {\tt\AGpruefer} \\[8pt]
+\hline
+}%
+\ifthenelse{\equal{\ANAnoteZ}{}}{}{%
+{\bf Analysis} & {\tt\ANAnoteZ} & {\tt\ANAnoteW} & {\tt\ANAdatum} & {\tt\ANApruefer} \\[8pt]
+\hline
+}%
+\ifthenelse{\equal{\NWRnoteZ}{}}{}{%
+{\bf Numerik/W.~Rechnen} & {\tt\NWRnoteZ} & {\tt\NWRnoteW} & {\tt\NWRdatum} & {\tt\NWRpruefer} \\[8pt]
+\hline
+}%
+\ifthenelse{\equal{\STOCHnoteZ}{}}{}{%
+{\bf Stochastik} & {\tt\STOCHnoteZ} & {\tt\STOCHnoteW} & {\tt\STOCHdatum} & {\tt\STOCHpruefer} \\[8pt]
+\hline
+}%
+{\bf Techn.~Fach {\tt\TECHFACH}} & {\tt\TFnoteZ} & {\tt\TFnoteW} & {\tt\TFdatum} & {\tt\TFpruefer} \\[8pt]
+\hline
+{\bf Angew.~Informatik} & {\tt\AInoteZ} & {\tt\AInoteW} & {\tt\AIdatum} & {\tt\AIpruefer} \\[8pt]
+\hline
+\ifthenelse{\equal{\ZFnoteZ}{}}{}{%
+{\bf Zusatzfach} {\tt\ZUSFACH} & {\tt\ZFnoteZ} & {\tt\ZFnoteW} & {\tt\ZFdatum} & {\tt\ZFpruefer} \\[8pt]
+\hline
+}%
+\end{tabular}
+\renewcommand{\arraystretch}{1}
+\vspace*{0.3cm}
+
+{\bf \underline{Diplomarbeit}}
+
+\begin{center}
+   {\tt\DAtitel}\\
+   (Abgegeben am {\tt\DAabgabe})
+\end{center}
+
+\begin{tabular}{@{}p{5.0cm}p{10.0cm}}
+   {\bf Note:}\q\DAnote & {\bf Referent:}\q\DAref
+\end{tabular}
+
+\rule{\textwidth}{0.5pt} \\
+
+% Die Abschlussrechnung
+\FPset{\NOTENSUMME}{\AGnoteZ}%
+\FPadd{\NOTENSUMME}{\NOTENSUMME}{\ANAnoteZ}
+\FPadd{\NOTENSUMME}{\NOTENSUMME}{\NWRnoteZ}
+\FPadd{\NOTENSUMME}{\NOTENSUMME}{\STOCHnoteZ}
+\FPadd{\NOTENSUMME}{\NOTENSUMME}{\TFnoteZ}
+\FPadd{\NOTENSUMME}{\NOTENSUMME}{\AInoteZ}
+\FPmul{\DAnote}{2}{\DAnote}\FPround{\DAnote}{\DAnote}{1}
+\FPadd{\NOTENSUMME}{\NOTENSUMME}{\DAnote}
+\FPtrunc{\NOTENSUMME}{\NOTENSUMME}{1}
+
+\begin{minipage}[t]{0.65\textwidth}
+{\bf Berechnung des Gesamturteils:}\\[0.2cm]
+\begin{tabular}{@{}lcp{2.2cm}l}
+\ifthenelse{\equal{\AGnoteZ}{}}{}{
+  Algebra/Geometrie\ & (1x) & \makebox[2cm]{\dotfill\AGnoteZ\dotfill} \\
+}
+Analysis\ & (1x) & \makebox[2cm]{\dotfill\ANAnoteZ\dotfill} \\
+Numerik/WR\ & (1x) & \makebox[2cm]{\dotfill\NWRnoteZ\dotfill} \\
+\ifthenelse{\equal{\STOCHnoteZ}{}}{}{%
+Stochastik\ & (1x) & \makebox[2cm]{\dotfill\STOCHnoteZ\dotfill} \\
+}%
+Techn.~Nebenfach & (1x) & \makebox[2cm]{\dotfill\TFnoteZ\dotfill} \\
+Angew.~Informatik & (1x) & \makebox[2cm]{\dotfill\AInoteZ\dotfill} \\
+Diplomarbeit & (2x) &  \makebox[2cm]{\dotfill\DAnote\dotfill} \\
+& & \begin{minipage}[t]{2.2cm} \makebox[2cm]{\hrulefill} \end{minipage} \\
+& & \makebox[0.8cm]{\hrulefill}\qh\NOTENSUMME\qh\makebox[0.8cm]{\hrulefill} 
+& : 7 =\makebox[0.4cm]{\hrulefill}\qh\textbf{\large\Enote}
+\qh\makebox[0.4cm]{\hrulefill} \\
+\end{tabular}
+\end{minipage}
+% ---------------------------------------------------
+\begin{minipage}[t]{0.35\textwidth}
+{\bf Hauptpr\"ufung abgeschlossen}\\[0.2cm]
+am \dotfill\Abschlussdatum\dotfill \\
+mit dem Gesamturteil \\
+\makebox[\textwidth]{\hrulefill\qh\texttt{\large\EnoteW}\qh\hrulefill} \\
+ F\"ur den Pr\"ufungs\-ausschuss f\"ur die Diplompr\"ufung in Mathematik \\[1.5em]
+\makebox[\textwidth]{\dotfill}\\
+\makebox[\textwidth]{\hfill\small\ProfessorName\hfill}\\
+\end{minipage}
+
+\vspace*{0.3cm}
+
+\rule{\textwidth}{0.5pt} \\
+{\bf\underline{Bemerkungen}:}\\
+\Bemerkung
+\newpage

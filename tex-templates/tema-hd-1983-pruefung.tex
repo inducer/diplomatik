@@ -1,0 +1,34 @@
+\input header
+
+\begin{document}
+#parse ("tema-hd-pruefung-kopf.tex")
+\vspace*{0.2cm}
+
+\renewcommand{\arraystretch}{1.4}
+\begin{center}
+\begin{tabular}{|c|p{14.6cm}|}
+\hline
+#if ($exam.DegreeComponent == "rein")X#end ##
+& {\large Reine Mathematik} \\\\
+\hline
+#if ($exam.DegreeComponent == "angewandt")X#end ##
+& {\large Angewandte Mathematik }\\\\
+\hline 
+#if ($exam.DegreeComponent == "ing")X#end ##
+& {\large Technisches Fach: {\tt $h.escapeTeX($degree.MinorSubject)}}\\\\
+\hline
+#if ($exam.DegreeComponent == "inf")X#end ##
+& {\large Angewandte Informatik}\\\\
+\hline
+#if ($exam.DegreeComponent == "zusatz")X#end ##
+& {\large Zusatzfach} \\\\
+\hline
+\end{tabular}
+\end{center}
+\renewcommand{\arraystretch}{1}
+
+#parse ("tema-hd-pruefung-mittelteil.tex")
+\vspace*{0.3cm}
+#parse ("tema-hd-1983-po-noten.tex")
+#parse ("tema-hd-pruefung-fuss.tex")
+\end{document}

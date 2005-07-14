@@ -1,0 +1,40 @@
+\input header
+
+\begin{document}
+#parse ("tema-hd-pruefung-kopf.tex")
+\vspace*{0.2cm}
+
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+\begin{tabular}{|c|p{14.6cm}|}
+\hline
+#if ($exam.DegreeComponent == "alggeo")X#end ##
+& {\large Algebra/Geometrie} \\\\
+\hline ## ------------------------------------------
+#if ($exam.DegreeComponent == "ana")X#end ##
+& {\large Analysis} \\\\
+\hline ## ------------------------------------------
+#if ($exam.DegreeComponent == "num")X#end ##
+& {\large Numerik/Wissenschaftliches Rechnen}\\\\
+\hline ## ------------------------------------------
+#if ($exam.DegreeComponent == "stoch")X#end ##
+& {\large Stochastik}\\\\
+\hline ## ------------------------------------------
+#if ($exam.DegreeComponent == "techfach")X#end ##
+& {\large Technisches Fach: {\tt $h.escapeTeX($degree.MinorSubject)}}\\\\
+\hline ## ------------------------------------------
+#if ($exam.DegreeComponent == "info")X#end ##
+& {\large Angewandte Informatik}\\\\
+\hline ## ------------------------------------------
+#if ($exam.DegreeComponent == "zusatz")X#end ##
+& {\large Zusatzfach} \\\\
+\hline
+\end{tabular}
+\end{center}
+\renewcommand{\arraystretch}{1}
+
+#parse ("tema-hd-pruefung-mittelteil.tex")
+\vspace*{0.3cm}
+#parse ("tema-hd-2003-po-noten.tex")
+#parse ("tema-hd-pruefung-fuss.tex")
+\end{document}

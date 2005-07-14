@@ -1,0 +1,34 @@
+\input header
+
+\begin{document}
+#parse ("tema-hd-pruefung-kopf.tex")
+\vspace*{0.2cm}
+
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+\begin{tabular}{|c|p{14.6cm}|}
+\hline
+\hspace*{.3cm}
+& {\large Algebra/Geometrie} \\\\
+\hline ## ------------------------------------------
+& {\large Analysis} \\\\
+\hline ## ------------------------------------------
+& {\large Numerik/Wissenschaftliches Rechnen}\\\\
+\hline ## ------------------------------------------
+& {\large Stochastik}\\\\
+\hline ## ------------------------------------------
+& {\large Technisches Fach: {\tt $h.escapeTeX($degree.MinorSubject)}}\\\\
+\hline ## ------------------------------------------
+& {\large Angewandte Informatik}\\\\
+\hline ## ------------------------------------------
+& {\large Zusatzfach} \\\\
+\hline
+\end{tabular}
+\end{center}
+\renewcommand{\arraystretch}{1}
+
+#parse ("tema-hd-pruefung-mittelteil.tex")
+\vspace*{0.3cm}
+#parse ("tema-hd-2003-po-noten.tex")
+#parse ("tema-hd-pruefung-fuss.tex")
+\end{document}

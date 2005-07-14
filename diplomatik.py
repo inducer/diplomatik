@@ -782,12 +782,10 @@ for opt, value in opts:
 
 
 degree_rule_sets = [
-    degreeruleset.tTemaVDAltDegreeRuleSet(),
-    degreeruleset.tTemaHDAltDegreeRuleSet(),
-    degreeruleset.tTemaVDNeuDegreeRuleSet(),
-    degreeruleset.tTemaHDNeuDegreeRuleSet(),
-    degreeruleset.tTemaBachelorDegreeRuleSet(),
-    degreeruleset.tTemaMasterDegreeRuleSet(),
+    degreeruleset.tTema1983VDDegreeRuleSet(),
+    degreeruleset.tTema1983HDDegreeRuleSet(),
+    degreeruleset.tTema2003VDDegreeRuleSet(),
+    degreeruleset.tTema2003HDDegreeRuleSet(),
     ]
 
 degree_rule_sets_map = {}

@@ -1,0 +1,48 @@
+Sie werden gebeten, im angekreuzten Fach die Pr\"ufung (SWS)\\\\
+
+\dotfill
+#if ($exam)##
+  #if ($exam.CreditsPrintable) ##
+    \texttt{$h.escapeTeX($exam.Description) ($h.escapeTeX($exam.CreditsPrintable))} ##
+  #else ##
+    #if ($exam.Credits)##
+      \texttt{$h.escapeTeX($exam.Description) ##
+      ($h.formatNumber("%.0f", $exam.Credits))}##
+    #else ##
+      \texttt{$h.escapeTeX($exam.Description)}
+    #end ##
+  #end ##
+#end##
+\dotfill \\\\
+
+bis zum ##
+#if ($exam)##
+  \texttt{$h.formatDate($exam.Date)} ##
+#else ##
+  \texttt{\makebox[5cm]{\dotfill}}##
+#end
+abzunehmen.
+\vspace*{0.35cm}
+
+\hspace*{7cm} \dotfill \\\\
+\hspace*{8.5cm} {\small F\"ur den Pr\"ufungsausschuss{} f\"ur
+ Mathematik}\\\\
+\hspace*{10.0cm} {\small \ProfessorName} \\\\
+
+\fbox{\fbox{\parbox{15.5cm}{
+
+\vspace*{0.2cm}
+
+   {\quad \bf \underline{Bewertung der Pr\"ufung}:}
+
+\vspace*{0.5cm}
+
+\qquad \dotfill \qquad \\\\
+\qquad \hspace*{\fill} (Note) \hfill \hfill (in Worten)
+     \hfill \hfill (Datum der Pr\"ufung) \hspace*{\fill} \\\\
+
+\qquad \qquad
+  \dotfill \dotfill \qquad \qquad \\\\
+  \hspace*{\fill} (Unterschrift der Pr\"ufer bzw. Pr\"ufer und
+Beisitzer) \hspace*{\fill}
+ }}}

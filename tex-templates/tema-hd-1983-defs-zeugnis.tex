@@ -60,11 +60,11 @@
   \def\ZFpruefer{}
 #end
 
-#if ($da)
-  \def\DAabgabe{$h.formatDate($da.Date)}
-  \def\DAref{$h.escapeTeX($da.Examiner)}
-  \def\DAnote{$h.formatNumber("%.1f", $da.CountedResult)}
-  \def\DAtitel{$h.escapeTeX($da.Description)}
+#if ($diplomarbeit)
+  \def\DAabgabe{$h.formatDate($diplomarbeit.Date)}
+  \def\DAref{$h.escapeTeX($diplomarbeit.Examiner)}
+  \def\DAnote{$h.formatNumber("%.1f", $diplomarbeit.CountedResult)}
+  \def\DAtitel{$h.escapeTeX($diplomarbeit.Description)}
 #else
   \def\DAabgabe{}
   \def\DAref{}

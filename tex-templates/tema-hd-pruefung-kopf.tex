@@ -1,0 +1,23 @@
+\begin{tabular}{ccrl}
+{\bf UNIVERSIT\"AT KARLSRUHE (TH)}& \hspace{3.4cm}  & Karlsruhe,
+den $h.formatDate($today) \\\\
+{\bf Fakult\"at f\"ur Mathematik } & & &   \\\\
+\end{tabular}
+
+\vspace*{1cm}
+
+#if ($exam)##
+  {\large Herrn/Frau Professor/in \makebox[7cm]{\texttt{\dotfill $exam.Examiner\dotfill}}
+#else##
+  Herrn/Frau Professor/in \dotfill
+#end##
+\vspace*{0.3cm}
+
+\begin{center}
+{\Large\underline{Zulassung zur Diplom--Hauptpr\"ufung TECHNOMATHEMATIK}}\\
+\end{center}
+\vspace*{0.4cm}
+
+{\large Name, Vorname: \makebox[7.2cm]{\dotfill\qh{\tt $h.escapeTeX($student.LastName),
+ $h.escapeTeX($student.FirstName)}\qh\dotfill}\hspace{0.25cm}
+ Matrikelnummer: \hfill{\tt $student.ID}}

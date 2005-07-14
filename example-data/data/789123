@@ -1,0 +1,168 @@
+--- !!datamodel.tStudent
+Active: True
+DateOfBirth:
+    day: 12
+    month: 7
+    year: 1985
+Degrees:
+    '2179617': !!datamodel.tDegree
+        DegreeRuleSet: tema-hd-2003
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 2003
+        Exams:
+            '1903763': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 12
+                    month: 7
+                    year: 2005
+                DegreeComponent: alggeo
+                Description: Algebra I
+                Examiner: Schmidt
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '2375872': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: ~
+                CreditsPrintable: ''
+                Date:
+                    day: 12
+                    month: 7
+                    year: 2005
+                DegreeComponent: diplomarbeit
+                Description: "On the Distribution of Body Parts in Danish Splatter Movies"
+                Examiner: 'Harald '
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '3558292': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.7
+                Credits: 2.0
+                CreditsPrintable: ''
+                Date:
+                    day: 12
+                    month: 7
+                    year: 2005
+                DegreeComponent: info
+                Description: "Graphische Datenverarbeitung"
+                Examiner: "Schmusibert"
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '5153450': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.7
+                Credits: 4.0
+                CreditsPrintable: '3+1'
+                Date:
+                    day: 12
+                    month: 7
+                    year: 2005
+                DegreeComponent: techfach
+                Description: System Dynamics and Control Engineering
+                Examiner: Schnabel
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '5384173': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.3
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 12
+                    month: 7
+                    year: 2005
+                DegreeComponent: "zusatz"
+                Description: "Kulturelle Interaktionen mit Hindu-Kulturen"
+                Examiner: Albers
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '8060758': !!datamodel.tExam
+                Counted: True
+                CountedResult: 2.0
+                Credits: 4.0
+                CreditsPrintable: ''
+                Date:
+                    day: 12
+                    month: 7
+                    year: 2005
+                DegreeComponent: "numerik"
+                Description: "Numerik partieller Differentialgleichungen"
+                Examiner: "Heuveline"
+                NativeResult: ''
+                Remarks: ''
+                Source: "uni"
+                SourceDescription: ''
+            '851309': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: '3 (US)'
+                Date:
+                    day: 12
+                    month: 7
+                    year: 2005
+                DegreeComponent: "numerik"
+                Description: Mathematical Modelling II
+                Examiner: Smirnoff
+                NativeResult: A
+                Remarks: ''
+                Source: "ausland"
+                SourceDescription: Northwestern University
+            '9371555': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.3
+                Credits: 4.0
+                CreditsPrintable: ""
+                Date:
+                    day: 12
+                    month: 7
+                    year: 2005
+                DegreeComponent: "analysis"
+                Description: "Funktionalanalysis I"
+                Examiner: "Schmoeger"
+                NativeResult: ""
+                Remarks: ""
+                Source: "uni"
+                SourceDescription: ""
+        FinishedDate:
+            day: 12
+            month: 7
+            year: 2005
+        MinorSubject: ''
+        Remark: ''
+    '2329806': !!datamodel.tDegree
+        DegreeRuleSet: tema-vd-2003
+        EnrolledSemester: !!semester.tSemester
+            Term: w
+            Year: 2001
+        Exams: {}
+        FinishedDate:
+            day: 12
+            month: 9
+            year: 2003
+        MinorSubject: ''
+        Remark: ''
+Email: "hunde@china.de"
+FirstName: Arvid
+Gender: m
+ID: '789123'
+LastName: Blixen
+MiddleName: ''
+Notes: ''
+PlaceOfBirth: "G\xf6teborg"
+SpecialSemesters: {}

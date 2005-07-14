@@ -143,18 +143,18 @@ Degrees:
                 Counted: True
                 CountedResult: 1.0
                 Credits: 4.0
-                CreditsPrintable: ''
+                CreditsPrintable: ""
                 Date:
                     day: 7
                     month: 3
                     year: 2001
-                DegreeComponent: rein
+                DegreeComponent: "rein"
                 Description: "Funktionalanalysis I"
-                Examiner: Lemmert
-                NativeResult: ''
-                Remarks: ''
+                Examiner: "Lemmert"
+                NativeResult: ""
+                Remarks: ""
                 Source: "freischuss"
-                SourceDescription: ''
+                SourceDescription: ""
             '4382490': !!datamodel.tExam
                 Counted: True
                 CountedResult: ~
@@ -428,31 +428,6 @@ Degrees:
             month: 10
             year: 2000
         MinorSubject: ETECHNIK
-        Remark: ''
-    '4985255': !!datamodel.tDegree
-        DegreeRuleSet: tema-bachelor
-        EnrolledSemester: !!semester.tSemester
-            Term: s
-            Year: 2005
-        Exams:
-            '2704468': !!datamodel.tExam
-                Counted: True
-                CountedResult: 1.0
-                Credits: 3.0
-                CreditsPrintable: ""
-                Date:
-                    day: 14
-                    month: 6
-                    year: 2005
-                DegreeComponent: "rein"
-                Description: "Technische Modellierung von Kalten F\xfc\xdfen"
-                Examiner: ""
-                NativeResult: ""
-                Remarks: ""
-                Source: "uni"
-                SourceDescription: ""
-        FinishedDate: ~
-        MinorSubject: ''
         Remark: ''
 Email: mathem@tiker.net
 FirstName: Andreas

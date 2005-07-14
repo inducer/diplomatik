@@ -20,6 +20,7 @@
 #else
   \def\URLAUBSSEMESTERTEXT{}
 #end
+\def\PRUEFUNGSORDNUNG{$h.escapeTeX($drs.description())}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Abschluss
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,12 +29,6 @@
 $zeugnis_defs
 
 \def\Abschlussdatum{$h.formatDate($degree.FinishedDate)}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Sonstiges
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\PRUEFORDDAT{$h.formatDate($drs.ruleSetDate())}
-\def\PRUEFORDPARA{\S 10 (2)}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 \input $form
 \end{document}

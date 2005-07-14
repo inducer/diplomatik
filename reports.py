@@ -16,7 +16,9 @@ from tools import tSubjectError
 
 
 UNIBRIEF_INCLUDES = [os.path.join("unibrief", name) for name in 
-                     ["unibrief.cls", "dinbrief.cls", "headerdata.tex", "unilogo.pdf"]]
+                     ["unibrief.cls", "dinbrief.cls", "headerdata.tex", "unilogo.pdf"]] \
+                     + ["variables.tex"]
+
 
 
 
@@ -144,7 +146,7 @@ class tGlobalReportHandler(tReportHandler):
                 {"stud_deg": stud_deg,
                  "form_data": form_data,
                  "drs_map": self.DRSMap},
-                ["header.tex"])
+                ["header.tex", "variables.tex"])
         elif report_id == "statistik-temahdalt":
             stud_deg = []
             for student in self.StudentDB.values():
@@ -275,7 +277,7 @@ class tGlobalReportHandler(tReportHandler):
                  "begun": begun,
                  "finished": finished,
                  "drs_map": self.DRSMap},
-                ["header.tex"])
+                ["header.tex", "variables.tex"])
 
         else:
             return tReportHandler.getPDF(self, report_id, form_data)
@@ -406,13 +408,10 @@ class tPerExamReportHandler(tReportHandler):
 
 
 
-class tTemaHDDegreeReportHandler(tPerDegreeReportHandler):
-    pass
+class tTemaHDPerDegreeReportHandler(tPerDegreeReportHandler):
+    def prefix(self):
+        return self.DegreeRuleSet.id()
 
-
-
-
-class tTeMaHDAltPerDegreeReportHandler(tTemaHDDegreeReportHandler):
     def getList(self):
         return tPerDegreeReportHandler.getList(self) + \
                tools.tAssociativeList([
@@ -421,128 +420,9 @@ class tTeMaHDAltPerDegreeReportHandler(tTemaHDDegreeReportHandler):
             ("zulassung-leer", u"Zulassung zur Prüfung (blanko)"),
             ])
 
-    def getZeugnisData(self):
-        def gatherComponent(comp):
-            def getExaminer(exam):
-                if exam.Source == "ausland":
-                    return "*"
-                else:
-                    return exam.Examiner
-
-            def getRemark(exam):
-                if exam.Source == "ausland":
-                    return u"""
-                    (*) Teile der Prüfung wurden 
-                    an der %s abgelegt.""" % exam.SourceDescription
-                else:
-                    return None
-
-            exams = [exam
-                     for exam in self.Degree.Exams.values()
-                     if exam.DegreeComponent == comp
-                     if exam.Counted]
-
-            def date_sort_func(a, b):
-                return cmp(a.Date, b.Date)
-            exams.sort(date_sort_func)
-
-            examiners = tools.uniq(
-                [getExaminer(exam) for exam in exams])
-            star_in_examiners = "*" in examiners
-            if star_in_examiners:
-                examiners.remove("*")
-            examiners.sort()
-            if star_in_examiners:
-                examiners.append("*")
-
-            return tools.makeObject({
-                "Exams": u", ".join([
-                exam.Description
-                for exam in exams]),
-
-                "AvgGrade": drs.getComponentAverageGrade(
-                self.Student, self.Degree, comp),
-
-                "WeightedGradeSum": drs.getWeightedGradeSum(
-                self.Student, self.Degree, comp),
-
-                "Credits": drs.getCreditsSum(
-                self.Student, self.Degree, comp),
-
-                "Examiners": ", ".join(examiners),
-
-                "EndDate": 
-                max([exam.Date for exam in exams]), 
-
-                "Remarks": [ 
-                getRemark(exam)
-                for exam in exams
-                if getRemark(exam)]
-                })
-
-        drs = self.DegreeRuleSet
-
-        all_remarks = []
-
-        try:
-            rein = gatherComponent("rein")
-            all_remarks += rein.Remarks
-        except tSubjectError:
-            rein = None
-
-        try:
-            angewandt = gatherComponent("angewandt")
-            all_remarks += angewandt.Remarks
-        except tSubjectError:
-            angewandt = None
-
-        try:
-            ing = gatherComponent("ing")
-            all_remarks += ing.Remarks
-        except tSubjectError:
-            ing = None
-
-        try:
-            inf = gatherComponent("inf")
-            all_remarks += inf.Remarks
-        except tSubjectError:
-            inf = None
-
-        try:
-            zusatz = gatherComponent("zusatz")
-            all_remarks += zusatz.Remarks
-        except tSubjectError:
-            zusatz = None
-
-        remarks = u"\\\\".join(
-            [tools.escapeTeX(s) for s in tools.uniq(all_remarks)])
-
-        try:
-            da = drs.getDiplomarbeit(self.Student, self.Degree)
-        except tSubjectError:
-            da = None
-
-        try:
-            overall_grade = drs.getOverallGrade(self.Student, self.Degree)
-        except tSubjectError:
-            overall_grade = None
-
-        return {"student": self.Student,
-                "degree": self.Degree,
-                "rein": rein,
-                "angewandt": angewandt,
-                "ing": ing,
-                "inf": inf,
-                "zusatz": zusatz,
-                "da": da,
-                "remarks": remarks,
-                "overall_grade": overall_grade,
-                }
-
-
     def getZeugnisTeXDefs(self):
         return tools.expandTeXTemplate(
-                "hddefs-zeugnis.tex",
+                "%s-defs-zeugnis.tex" % self.prefix(),
                 self.getZeugnisData())
 
     def getPDF(self, report_id, form_data):
@@ -569,7 +449,7 @@ class tTeMaHDAltPerDegreeReportHandler(tTemaHDDegreeReportHandler):
             fachsem = semzahl - urlaubssem
 
             return tools.runLatexOnTemplate(
-                "hddefs.tex",
+                "tema-hd-defs.tex",
                 {"student": self.Student,
                  "degree": self.Degree,
                  "drs": drs,
@@ -577,21 +457,22 @@ class tTeMaHDAltPerDegreeReportHandler(tTemaHDDegreeReportHandler):
                  "semzahl": semzahl,
                  "studienbeginn_sem": studienbeginn_sem,
                  "zeugnis_defs": self.getZeugnisTeXDefs(),
-                 "form": "noten-hd.tex",
+                 "form": "%s-noten.tex" % self.prefix(),
                  "urlaubssem": urlaubssem,
                  "fachsem": fachsem,
                  },
-                ["noten-hd.tex", "header.tex"])
+                ["%s-noten.tex" % self.prefix(), "header.tex", "variables.tex",
+                 "tema-hd-noten-kopf.tex"])
 
         elif report_id == "zulassung-leer":
             return tools.runLatexOnTemplate(
-                "temahdalt-pruefung-leer.tex",
+                "%s-pruefung-leer.tex" % self.prefix(),
                 {"student": self.Student,
                  "degree": self.Degree,
                  "drs": self.DegreeRuleSet,
                  "today": datetime.date.today(),
                  },
-                ["header.tex"])
+                ["header.tex", "variables.tex"])
 
         elif report_id == "overview":
             data = {}
@@ -606,31 +487,160 @@ class tTeMaHDAltPerDegreeReportHandler(tTemaHDDegreeReportHandler):
                                     and min(data["rein"].Credits, data["angewandt"].Credits) >= 12
 
             return tools.runLatexOnTemplate(
-                "temahdalt-overview.tex",
+                "%s-overview.tex" % self.prefix(),
                 data,
-                ["header.tex"])
+                ["header.tex", "variables.tex"])
 
         else:
             return tPerDegreeReportHandler.getPDF(self, report_id, form_data)
 
+    def gatherComponentData(self, comp):
+        drs = self.DegreeRuleSet
+
+        def getExaminer(exam):
+            if exam.Source == "ausland":
+                return "*"
+            else:
+                return exam.Examiner
+
+        def getRemark(exam):
+            if exam.Source == "ausland":
+                return u"""
+                (*) Teile der Prüfung wurden 
+                an der %s abgelegt.""" % exam.SourceDescription
+            else:
+                return None
+
+        exams = [exam
+                 for exam in self.Degree.Exams.values()
+                 if exam.DegreeComponent == comp
+                 if exam.Counted]
+
+        def date_sort_func(a, b):
+            return cmp(a.Date, b.Date)
+        exams.sort(date_sort_func)
+
+        examiners = tools.uniq(
+            [getExaminer(exam) for exam in exams])
+        star_in_examiners = "*" in examiners
+        if star_in_examiners:
+            examiners.remove("*")
+        examiners.sort()
+        if star_in_examiners:
+            examiners.append("*")
+
+        return tools.makeObject({
+            "Exams": u", ".join([
+            exam.Description
+            for exam in exams]),
+
+            "AvgGrade": drs.getComponentAverageGrade(
+            self.Student, self.Degree, comp),
+
+            "WeightedGradeSum": drs.getWeightedGradeSum(
+            self.Student, self.Degree, comp),
+
+            "Credits": drs.getCreditsSum(
+            self.Student, self.Degree, comp),
+
+            "Examiners": ", ".join(examiners),
+
+            "EndDate": 
+            max([exam.Date for exam in exams]), 
+
+            "Remarks": [ 
+            getRemark(exam)
+            for exam in exams
+            if getRemark(exam)]
+            })
 
 
 
 
-class tTeMaHDNeuPerDegreeReportHandler(tTemaHDDegreeReportHandler):
-    pass
+
+class tTema1983HDPerDegreeReportHandler(tTemaHDPerDegreeReportHandler):
+    def prefix(self):
+        return "tema-hd-1983"
+
+    def getZeugnisData(self):
+        drs = self.DegreeRuleSet
+
+        all_remarks = []
+
+        data = {}
+        for component in ["rein", "angewandt", "ing", "inf", "zusatz"]:
+            try:
+                data[component] = comp_data = self.gatherComponentData(component)
+                all_remarks += comp_data.Remarks
+            except tSubjectError:
+                data[component] = None
+
+        remarks = u"\\\\".join(
+            [tools.escapeTeX(s) for s in tools.uniq(all_remarks)])
+
+        try:
+            data["diplomarbeit"]= drs.getDiplomarbeit(self.Student, self.Degree)
+        except tSubjectError:
+            data["diplomarbeit"] = None
+
+        try:
+            data["overall_grade"] = drs.getOverallGrade(self.Student, self.Degree)
+        except tSubjectError, e:
+            data["overall_grade"] = None
+
+        data.update({"student": self.Student,
+                     "degree": self.Degree,
+                     "remarks": remarks,
+                     })
+        return data
+
+
+
+
+class tTema2003HDPerDegreeReportHandler(tTemaHDPerDegreeReportHandler):
+    def getZeugnisData(self):
+
+        drs = self.DegreeRuleSet
+
+        all_remarks = []
+
+        data = {}
+        for component in ["alggeo", "analysis", "numerik", "stochastik",
+                          "techfach", "info", "zusatz"]:
+            try:
+                data[component] = comp_data = self.gatherComponentData(component)
+                all_remarks += comp_data.Remarks
+            except tSubjectError:
+                data[component] = None
+
+        remarks = u"\\\\".join(
+            [tools.escapeTeX(s) for s in tools.uniq(all_remarks)])
+
+        try:
+            data["diplomarbeit"]= drs.getDiplomarbeit(self.Student, self.Degree)
+        except tSubjectError:
+            data["diplomarbeit"] = None
+
+        try:
+            data["overall_grade"] = drs.getOverallGrade(self.Student, self.Degree)
+        except tSubjectError, e:
+            print "ERROR", unicode(e).encode("latin1")
+            data["overall_grade"] = None
+
+        data.update({"student": self.Student,
+                     "degree": self.Degree,
+                     "remarks": remarks,
+                     })
+        return data
 
 
 
 
 
-class tTeMaHDPerExamReportHandler(tPerExamReportHandler):
-    pass
+class tTemaHDPerExamReportHandler(tPerExamReportHandler):
+    def prefix(self):
+        return self.DegreeRuleSet.id()
 
-
-
-
-class tTeMaHDAltPerExamReportHandler(tTeMaHDPerExamReportHandler):
     def getList(self):
         return tPerExamReportHandler.getList(self) + \
                tools.tAssociativeList([
@@ -640,19 +650,25 @@ class tTeMaHDAltPerExamReportHandler(tTeMaHDPerExamReportHandler):
     def getPDF(self, report_id, form_data):
         if report_id == "zulassung":
             return tools.runLatexOnTemplate(
-                "temahdalt-pruefung.tex",
+                "%s-pruefung.tex" % self.prefix(),
                 {"student": self.Student,
                  "drs": self.DegreeRuleSet,
                  "degree": self.Degree,
                  "exam": self.Exam,
                  "today": datetime.date.today(),
                  },
-                ["header.tex"])
+                ["header.tex", "variables.tex"])
         else:
             return tPerExamReportHandler.getPDF(self, report_id, form_data)
 
 
 
 
-class tTeMaHDNeuPerExamReportHandler(tTeMaHDPerExamReportHandler):
+class tTema1983HDPerExamReportHandler(tTemaHDPerExamReportHandler):
+    def prefix(self):
+        return "tema-hd-1983";
+
+
+
+class tTema2003HDPerExamReportHandler(tTemaHDPerExamReportHandler):
     pass
