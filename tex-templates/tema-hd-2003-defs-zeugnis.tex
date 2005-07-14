@@ -1,0 +1,107 @@
+#if ($alggeo)
+  \def\AGdatum{$h.formatDate($alggeo.EndDate)}
+  \def\AGnoteZ{$h.formatNumber("%.1f", $alggeo.AvgGrade)}
+  \def\AGnoteW{$h.gradeToWords($alggeo.AvgGrade)}
+  \def\AGpruefer{$h.escapeTeX($alggeo.Examiners)}
+#else
+  \def\AGdatum{}
+  \def\AGnoteZ{}
+  \def\AGnoteW{}
+  \def\AGpruefer{}
+#end
+
+#if ($analysis)
+  \def\ANAdatum{$h.formatDate($analysis.EndDate)}
+  \def\ANAnoteZ{$h.formatNumber("%.1f", $analysis.AvgGrade)}
+  \def\ANAnoteW{$h.gradeToWords($analysis.AvgGrade)}
+  \def\ANApruefer{$h.escapeTeX($analysis.Examiners)}
+#else
+  \def\ANAdatum{}
+  \def\ANAnoteZ{}
+  \def\ANAnoteW{}
+  \def\ANApruefer{}
+#end
+
+#if ($numerik)
+  \def\NWRdatum{$h.formatDate($numerik.EndDate)}
+  \def\NWRnoteZ{$h.formatNumber("%.1f", $numerik.AvgGrade)}
+  \def\NWRnoteW{$h.gradeToWords($numerik.AvgGrade)}
+  \def\NWRpruefer{$h.escapeTeX($numerik.Examiners)}
+#else
+  \def\NWRdatum{}
+  \def\NWRnoteZ{}
+  \def\NWRnoteW{}
+  \def\NWRpruefer{}
+#end
+
+#if ($stochastik)
+  \def\STOCHdatum{$h.formatDate($stochastik.EndDate)}
+  \def\STOCHnoteZ{$h.formatNumber("%.1f", $stochastik.AvgGrade)}
+  \def\STOCHnoteW{$h.gradeToWords($stochastik.AvgGrade)}
+  \def\STOCHpruefer{$h.escapeTeX($stochastik.Examiners)}
+#else
+  \def\STOCHdatum{}
+  \def\STOCHnoteZ{}
+  \def\STOCHnoteW{}
+  \def\STOCHpruefer{}
+#end
+
+#if ($techfach)
+  \def\TFdatum{$h.formatDate($techfach.EndDate)}
+  \def\TFnoteZ{$h.formatNumber("%.1f", $techfach.AvgGrade)}
+  \def\TFnoteW{$h.gradeToWords($techfach.AvgGrade)}
+  \def\TFpruefer{$h.escapeTeX($techfach.Examiners)}
+#else
+  \def\TFdatum{}
+  \def\TFnoteZ{}
+  \def\TFnoteW{}
+  \def\TFpruefer{}
+#end
+
+#if ($info)
+  \def\AIdatum{$h.formatDate($info.EndDate)}
+  \def\AInoteZ{$h.formatNumber("%.1f", $info.AvgGrade)}
+  \def\AInoteW{$h.gradeToWords($info.AvgGrade)}
+  \def\AIpruefer{$h.escapeTeX($info.Examiners)}
+#else
+  \def\AIdatum{}
+  \def\AInoteZ{}
+  \def\AInoteW{}
+  \def\AIpruefer{}
+#end
+
+#if ($zusatz)
+  \def\ZUSFACH{$h.escapeTeX($zusatz.Exams)}
+  \def\ZFdatum{$h.formatDate($zusatz.EndDate)}
+  \def\ZFnoteZ{$h.formatNumber("%.1f", $zusatz.AvgGrade)}
+  \def\ZFnoteW{$h.gradeToWords($zusatz.AvgGrade)}
+  \def\ZFpruefer{$h.escapeTeX($zusatz.Examiners)}
+#else
+  \def\ZUSFACH{}
+  \def\ZFdatum{}
+  \def\ZFnoteZ{}
+  \def\ZFnoteW{}
+  \def\ZFpruefer{}
+#end
+
+#if ($diplomarbeit)
+  \def\DAabgabe{$h.formatDate($diplomarbeit.Date)}
+  \def\DAref{$h.escapeTeX($diplomarbeit.Examiner)}
+  \def\DAnote{$h.formatNumber("%.1f", $diplomarbeit.CountedResult)}
+  \def\DAtitel{$h.escapeTeX($diplomarbeit.Description)}
+#else
+  \def\DAabgabe{}
+  \def\DAref{}
+  \def\DAnote{}
+  \def\DAtitel{-/-}
+#end
+
+#if ($overall_grade)
+  \def\Enote{$h.formatNumber("%.1f", $overall_grade)}
+  \def\EnoteW{$h.gradeToWords($overall_grade).upper()}
+#else
+  \def\Enote{}
+  \def\EnoteW{}
+#end
+
+\def\Bemerkung{$remarks}
