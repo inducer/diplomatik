@@ -100,12 +100,13 @@ class tGlobalReportHandler(tReportHandler):
         return tReportHandler.getList(self) + \
                tools.tAssociativeList([
             ("abschluesse", u"Abschlüsse in Zeitraum"),
-            ("statistik-temahdalt", "Statistik TeMa alte PO"),
+            ("statistik-tema-hd-1983", "Statistik TeMa 83er PO"),
+            ("statistik-tema-hd-2003", "Statistik TeMa 03er PO"),
             ("what-became-of", "Was ist geworden aus...?"),
             ])
 
     def getForm(self, report_id):
-        if report_id in ["abschluesse", "statistik-temahdalt"]:
+        if report_id in ["abschluesse", "statistik-tema-hd-1983", "statistik-tema-hd-2003"]:
             ws = semester.tSemester.now()
             if ws.Term == "s":
                 ws = ws.previous()
@@ -147,13 +148,16 @@ class tGlobalReportHandler(tReportHandler):
                  "form_data": form_data,
                  "drs_map": self.DRSMap},
                 ["header.tex", "variables.tex"])
-        elif report_id == "statistik-temahdalt":
+        elif report_id.startswith("statistik-tema-hd-"):
+            prefix = report_id.replace("statistik-", "")
+            drs = self.DRSMap[prefix.replace("1983", "alt")]
+
             stud_deg = []
             for student in self.StudentDB.values():
                 for degree in student.Degrees.values():
                     if degree.FinishedDate \
                          and form_data.From <= degree.FinishedDate <= form_data.To\
-                         and degree.DegreeRuleSet == "tema-hd-alt":
+                         and degree.DegreeRuleSet == drs.id():
 
                         drs = self.DRSMap[degree.DegreeRuleSet]
                         da = drs.getDiplomarbeit(student, degree)
@@ -238,7 +242,7 @@ class tGlobalReportHandler(tReportHandler):
                  if countExamSource(sd.Degree, "ausland") != 0])
 
             return tools.runLatexOnTemplate(
-                "statistik-temahdalt.tex",
+                "%s-statistik.tex" % prefix,
                 {"stud_deg": stud_deg,
                  "form_data": form_data,
                  "drs_map": self.DRSMap,

@@ -1,0 +1,58 @@
+\newpage
+\begin{center}
+  \textbf{Studiengang TECHNOMATHEMATIK (Diplom)}
+
+  Statistik f\"ur den Zeitraum 
+  $h.formatDate($form_data.From)
+  --
+  $h.formatDate($form_data.To)
+\end{center}
+
+\begin{tabular}{llll}
+  \textbf{Anzahl der Abschl\"usse:} 
+  & insgesamt & $h.len($stud_deg) \\\\
+  & m\"annlich & $m_w.__getitem__("m") \\\\
+  & weiblich & $m_w.__getitem__("w") \\\\
+  \\\\
+  \textbf{Gesamtnote:}
+  & mit Auszeichnung & $gesamt_hist.__getitem__("mit Auszeichnung") \\\\
+  & sehr gut & $gesamt_hist.__getitem__("sehr gut") \\\\
+  & gut & $gesamt_hist.__getitem__("gut") \\\\
+  & befriedigend & $gesamt_hist.__getitem__("befriedigend") \\\\
+  \\\\
+  \textbf{Note der Diplomarbeit:}
+  #foreach ($da_grade in $h.sort($da_hist.keys())) ##
+    & $h.formatNumber("%.1f", $da_grade) 
+    & $da_hist.__getitem__($da_grade) \\\\
+  #end ##
+  \\\\
+  \textbf{Notendurchschnitt der vier Pr\"ufungen:}
+  #foreach ($pn in $h.sort($pn_hist.keys())) ##
+    & $h.formatNumber("%.1f", $pn) 
+    & $pn_hist.__getitem__($pn) \\\\
+  #end ##
+  \\\\
+  \textbf{Studiendauer:}
+    & Median & $sem_median & Semester \\\\
+  \\\\
+  \textbf{Pr\"ufungszeitraum:}
+    & Median & $pz_median & Monate \\\\
+  \\\\
+  \textbf{Nebenfach:}
+  #foreach ($nf in $h.sort($nf_hist.keys())) ##
+    & $nf
+    & $nf_hist.__getitem__($nf) \\\\
+  #end ##
+  \\\\
+  \textbf{Anzahl der gewerteten studienbegl. Pr\"ufungen:}
+  #foreach ($sb in $h.sort($sb_hist.keys())) ##
+    & $sb Pr\"ufungen
+    & $sb_hist.__getitem__($sb)
+    & Studierende(r) \\\\
+  #end ##
+  \\\\
+  \textbf{Pr\"ufungen aus dem Ausland:}
+    & brachte ein
+    & $ausland_count
+    & Studierende(r)
+\end{tabular}
