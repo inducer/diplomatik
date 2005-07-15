@@ -38,7 +38,7 @@ Degrees:
                     year: 2005
                 DegreeComponent: diplomarbeit
                 Description: "On the Distribution of Body Parts in Danish Splatter Movies"
-                Examiner: 'Harald '
+                Examiner: Harald
                 NativeResult: ''
                 Remarks: ''
                 Source: "uni"
@@ -127,23 +127,23 @@ Degrees:
                 Counted: True
                 CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 12
                     month: 7
                     year: 2005
-                DegreeComponent: "analysis"
+                DegreeComponent: analysis
                 Description: "Funktionalanalysis I"
-                Examiner: "Schmoeger"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Schmoeger
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
         FinishedDate:
             day: 12
             month: 7
             year: 2005
-        MinorSubject: ''
+        MinorSubject: PHYSIK
         Remark: ''
     '2329806': !!datamodel.tDegree
         DegreeRuleSet: tema-vd-2003
@@ -155,7 +155,7 @@ Degrees:
             day: 12
             month: 9
             year: 2003
-        MinorSubject: ''
+        MinorSubject: PHYSIK
         Remark: ''
 Email: "hunde@china.de"
 FirstName: Arvid

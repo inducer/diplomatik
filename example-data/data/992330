@@ -143,18 +143,18 @@ Degrees:
                 Counted: True
                 CountedResult: 1.0
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 7
                     month: 3
                     year: 2001
-                DegreeComponent: "rein"
+                DegreeComponent: rein
                 Description: "Funktionalanalysis I"
-                Examiner: "Lemmert"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Lemmert
+                NativeResult: ''
+                Remarks: ''
                 Source: "freischuss"
-                SourceDescription: ""
+                SourceDescription: ''
             '4382490': !!datamodel.tExam
                 Counted: True
                 CountedResult: ~

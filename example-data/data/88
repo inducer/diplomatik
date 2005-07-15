@@ -15,18 +15,18 @@ Degrees:
                 Counted: False
                 CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 16
                     month: 2
                     year: 2005
-                DegreeComponent: "rein"
+                DegreeComponent: rein
                 Description: "Funktionalanalysis I"
-                Examiner: "Schmoeger"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Schmoeger
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '4785646': !!datamodel.tExam
                 Counted: True
                 CountedResult: 2.0

@@ -55,6 +55,7 @@
 
     \def\ABSCH${dletter}NF{$h.escapeTeX($degree.MinorSubject)}
     \def\ABSCH${dletter}REGELN{$h.escapeTeX($degree.DegreeRuleSet)}
+    \def\ABSCH${dletter}PONAME{$h.escapeTeX($drs.description())}
     \def\ABSCH${dletter}BEMERKUNG{$h.escapeTeX($degree.Remark)}
     #set ($exams = $h.sortBy($degree.Exams.values(), "Date"))##
     #set ($components = $drs.degreeComponents().keys())##
@@ -123,6 +124,4 @@
 \def\TECHFACH{\ABSCHaNF}
 \def\Semesterzahl{\HOCHSCHULSEMESTER}
 \def\Abschlussdatum{\ABSCHbENDE}
-\def\PRUEFORDDAT{\ABSCHbPODATUM}
-\def\PRUEFORDPARA{\S 10 (2)}
 
