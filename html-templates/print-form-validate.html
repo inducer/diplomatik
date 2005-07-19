@@ -11,7 +11,7 @@ $doctype
     aufgetreten. Bitte korrigieren Sie die 
     hervorgehobenen Felder.</p>
 
-    <form method="POST" accept-charset="UTF-8">
+    <form method="POST" accept-charset="UTF-8" name="InputForm">
       <table>
         #foreach ($field in $fields)
           <tr>
@@ -23,8 +23,16 @@ $doctype
         #end
       </table>
       <p>
-        <input type="submit" name="save" value="OK">
+        <input type="submit" name="save" value="OK" accesskey="o">
+        <span class="AccessKey">(Alt+O)</span>
       </p>
     </form>
+
+    <script type="text/javascript">
+    <!--
+    document.forms["InputForm"].elements[0].focus()
+    //-->
+    </script>
+
   </body>
 </html>

@@ -245,7 +245,7 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             return "Studierendendatenbank"
 
         if element == "extra-commands":
-            return '&middot; <a href="/quit">Diplomatik beenden</a> ' + \
+            return '&middot; <a href="/quit" accesskey="b">Diplomatik <b>b</b>eenden</a> ' + \
                    '&middot; <a href="/export-all">Exporte aktualisieren</a>'
 
         if element == "header":

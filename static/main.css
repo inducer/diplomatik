@@ -63,3 +63,12 @@ td.InvalidEntry {
 .ActiveFilter a:visited {
   color: white;
 }
+
+input:focus, select:focus, textarea:focus { 
+  background : #ffd; color : black; 
+}
+
+.AccessKey {
+  font-size: x-small;
+}
+  

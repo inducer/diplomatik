@@ -485,19 +485,15 @@ class tTemaHDPerDegreeReportHandler(tPerDegreeReportHandler):
                 ["header.tex", "variables.tex"])
 
         elif report_id == "overview":
-            data = {}
-            data.update(self.getZeugnisData())
+            data = self.getZeugnisData()
             counted_exams = [ex
                              for ex in self.Degree.Exams.values()
                              if ex.Counted]
             data["exams"] = tools.sortBy(counted_exams, "Date")
 
-            data["math_complete"] = data["rein"] and data["angewandt"] \
-                                    and (data["rein"].Credits + data["angewandt"].Credits) >= 28 \
-                                    and min(data["rein"].Credits, data["angewandt"].Credits) >= 12
 
             return tools.runLatexOnTemplate(
-                "%s-overview.tex" % self.prefix(),
+                "%s-uebersicht.tex" % self.prefix(),
                 data,
                 ["header.tex", "variables.tex"])
 
@@ -515,9 +511,8 @@ class tTemaHDPerDegreeReportHandler(tPerDegreeReportHandler):
 
         def getRemark(exam):
             if exam.Source == "ausland":
-                return u"""
-                (*) Teile der Prüfung wurden 
-                an der %s abgelegt.""" % exam.SourceDescription
+                return u"(*) Teile der Prüfung wurden an der %s abgelegt."\
+                       % exam.SourceDescription
             else:
                 return None
 
@@ -598,10 +593,14 @@ class tTema1983HDPerDegreeReportHandler(tTemaHDPerDegreeReportHandler):
         except tSubjectError, e:
             data["overall_grade"] = None
 
-        data.update({"student": self.Student,
-                     "degree": self.Degree,
-                     "remarks": remarks,
-                     })
+        data["math_complete"] = data["rein"] and data["angewandt"] \
+                                and (data["rein"].Credits + data["angewandt"].Credits) >= 28 \
+                                and min(data["rein"].Credits, data["angewandt"].Credits) >= 12
+
+        data["student"] = self.Student
+        data["degree"] = self.Degree
+        data["remarks"] = remarks
+
         return data
 
 
@@ -615,10 +614,14 @@ class tTema2003HDPerDegreeReportHandler(tTemaHDPerDegreeReportHandler):
         all_remarks = []
 
         data = {}
+        math_components = {}
+
         for component in ["alggeo", "analysis", "numerik", "stochastik",
                           "techfach", "info", "zusatz"]:
             try:
                 data[component] = comp_data = self.gatherComponentData(component)
+                if component in ["alggeo", "analysis", "numerik", "stochastik"]:
+                    math_components[component] = comp_data
                 all_remarks += comp_data.Remarks
             except tSubjectError:
                 data[component] = None
@@ -637,10 +640,14 @@ class tTema2003HDPerDegreeReportHandler(tTemaHDPerDegreeReportHandler):
             print "ERROR", unicode(e).encode("latin1")
             data["overall_grade"] = None
 
-        data.update({"student": self.Student,
-                     "degree": self.Degree,
-                     "remarks": remarks,
-                     })
+        math_credits = [comp.Credits for comp in math_components.values()]
+        data["math_complete"] = len(math_credits) == 3 and \
+                                min(math_credits) >= 8 and \
+                                max(math_credits) >= 12
+
+        data["student"] = self.Student
+        data["degree"] = self.Degree
+        data["remarks"] = remarks
         return data
 
 

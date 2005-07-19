@@ -1,0 +1,153 @@
+\input header
+
+\def\sheetheader{
+\begin{center}
+  {\bf\large Teilnoten Techno-Mathematik Hauptdiplom}
+\end{center}
+\bigskip\bigskip
+
+Name, Vorname: \makebox[7.0cm]{\dotfill\qh{\tt $h.escapeTeX($student.LastName),
+ $h.escapeTeX($student.FirstName)}\qh\dotfill}\hspace{0.25cm}
+ Matrikelnummer: \hfill{\tt $student.ID}\\\\
+Studienf\"acher: {\tt $h.escapeTeX($degree.MinorSubject),
+ Angewandte Informatik#if ($zusatz), $h.escapeTeX($zusatz.Exams)#end}
+\bigskip\bigskip
+}
+
+#macro (printexam $exam)
+  $h.formatDate($exam.Date) &
+  $h.escapeTeX($exam.Examiner) &
+  #if ($exam.CountedResult)##
+    #if ($exam.NativeResult)##
+      $h.escapeTeX($exam.NativeResult) (=$h.formatNumber("%.1f", $exam.CountedResult))##
+    #else ##
+      $h.formatNumber("%.1f", $exam.CountedResult)##
+    #end
+  #else ##
+    #if ($exam.NativeResult)##
+      $h.escapeTeX($exam.NativeResult)##
+    #else##
+      - ##
+    #end##
+  #end &
+  #if ($exam.Credits)##
+    #if ($exam.CreditsPrintable)##
+      $h.escapeTeX($exam.CreditsPrintable) ##
+    #else ##
+      $h.formatNumber("%.0f", $exam.Credits) ##
+    #end ##
+  #else
+    - ##
+  #end &
+  #if ($exam.Credits)##
+    #if ($exam.CountedResult)##
+      $h.formatNumber("%.1f", $h.multiply($exam.Credits, $exam.CountedResult))
+    #else##
+      - ##
+    #end##
+  #else
+    - ##
+  #end \\\\
+#end
+
+#macro (emptyspace)##
+ & & & &\\\\
+ & & & &\\\\
+#end
+
+\begin{document}
+\sheetheader
+
+#macro (component $name $comp_data $comp_id $finished)
+Teilpr\"ufungen\hspace*{0.4cm} {\tt $name}
+\medskip
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}\hline
+  \hspace*{0.4cm}Datum\hspace*{0.4cm}&
+  \hspace*{1.5cm}Pr\"ufer\hspace*{1.5cm}&
+  \hspace*{0.2cm}Note\hspace*{0.2cm}&
+  \hspace*{0.2cm}SWS\hspace*{0.2cm}&
+  Note$*$SWS\\\\ \hline
+  #foreach ($exam in $h.filterBy($exams, "DegreeComponent", $comp_id))##
+    #printexam($exam)
+  #end ##
+  #emptyspace() ##
+\hline
+\end{tabular}
+\end{center}
+
+\hspace*{8cm}Gewichtetes Mittel
+#if ($finished)##
+  $h.formatNumber("%.1f", $comp_data.WeightedGradeSum)
+  {\bf :} $h.formatNumber("%.1f", $comp_data.Credits)
+  {\bf = }$h.formatNumber("%.1f", $comp_data.AvgGrade)
+#else##
+  \hspace{2cm}{\bf :}\hspace{1cm}{\bf = }\underline{\hspace{2cm}}
+#end
+
+Bewertung\hspace*{0.4cm} {\tt $name}
+\medskip
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}\hline
+\hspace*{0.4cm}Note\hspace*{0.4cm}&
+\hspace*{0.4cm}Datum\hspace*{0.4cm}&
+\hspace*{3.0cm}Pr\"ufer\hspace*{3.0cm}\\\\ 
+\hline
+#if ($finished) ##
+ & & \\\\
+ $h.formatNumber("%.1f", $comp_data.AvgGrade) &
+ $h.formatDate($comp_data.EndDate) & 
+ $h.escapeTeX($comp_data.Examiners) \\\\
+ & & \\\\
+#else ##
+ & & \\\\
+ & & \\\\
+ & & \\\\ 
+#end ##
+ \hline
+\end{tabular}
+\end{center}
+#end
+
+#macro (component_end $count)
+#if ($h.isDivisibleBy($count,2))##
+  \newpage\sheetheader
+#else##
+  \bigskip\bigskip\bigskip
+#end##
+#end
+
+#set ($component_count = 0)
+#if ($alggeo)
+#component("Algebra/Geometrie" $alggeo "alggeo" $math_complete)
+#set ($component_count = $h.add($component_count, 1))
+#component_end($component_count)
+#end
+%----------------------------------------------
+#if ($analysis)
+#component("Analysis" $analysis "analysis" $math_complete)
+#set ($component_count = $h.add($component_count, 1))
+#component_end($component_count)
+#end
+%----------------------------------------------
+#if ($numerik)
+#component("Numerik/Wissenschaftliches Rechnen" $numerik "numerik" $math_complete)
+#set ($component_count = $h.add($component_count, 1))
+#component_end($component_count)
+#end
+%----------------------------------------------
+#if ($stochastik)
+#component("Stochastik" $stochastik "stochastik" $math_complete)
+#set ($component_count = $h.add($component_count, 1))
+#end
+
+\newpage
+\sheetheader
+
+#component($h.escapeTeX($degree.MinorSubject) $techfach "techfach" $h.greaterOrEqual($techfach.Credits, 12))
+\bigskip\bigskip\bigskip
+#component("Angewandte Informatik" $info "info" $h.greaterOrEqual($info.Credits, 10))
+
+\end{document}

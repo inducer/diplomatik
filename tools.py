@@ -253,11 +253,23 @@ def _expandTemplate(dir, filename, globals_dict):
             print "*** DEBUG DUMP", repr(value)
             return ""
 
-        def add(self, value, value2):
-            return value + value2
+        def add(self, *values):
+            return sum(values)
 
         def multiply(self, value, value2):
             return value * value2
+
+        def and_(self, *values):
+            for v in values:
+                if not v:
+                    return False
+            return True
+
+        def greaterOrEqual(self, value1, value2):
+            return value1 >= value2
+
+        def isDivisibleBy(self, value1, value2):
+            return value1 % value2 == 0
 
         def sort(self, list):
             result = list[:]

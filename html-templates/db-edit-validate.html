@@ -13,7 +13,7 @@ $doctype
     aufgetreten. Bitte korrigieren Sie die 
     hervorgehobenen Felder.</p>
 
-    <form method="POST" accept-charset="UTF-8">
+    <form method="POST" accept-charset="UTF-8" name="InputForm">
       <table>
         #foreach ($field in $fields)
           <tr>
@@ -25,10 +25,19 @@ $doctype
         #end
       </table>
       <p>
-        <input type="submit" name="save" value="Speichern">
-        <input type="submit" name="cancel" value="Abbrechen">
+        <input type="submit" name="save" value="Speichern" accesskey="s">
+        <span class="AccessKey">(Alt+S)</span>
+        <input type="submit" name="cancel" value="Abbrechen" accesskey="A">
+        <span class="AccessKey">(Alt+A)</span>
       </p>
     </form>
+
+    <script type="text/javascript">
+    <!--
+    document.forms["InputForm"].elements[0].focus()
+    //-->
+    </script>
+
     $handler.getCustomization("footer", "validate", $key)
   </body>
 </html>
