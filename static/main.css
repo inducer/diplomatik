@@ -71,4 +71,30 @@ input:focus, select:focus, textarea:focus {
 .AccessKey {
   font-size: x-small;
 }
-  
+
+.Toolbar {
+  border-style: outset;
+  border-width: 1px;
+  background-color: #eeeeee;
+  padding: 8px;
+}
+.Toolbar a {
+  border-style: outset;
+  border-width: 2px;
+  padding: 4px;
+  text-decoration: none;
+  color: black;
+  text-size: small;
+  white-space: nowrap;
+  line-height:200%
+}
+.Toolbar a:active {
+  border-style: inset;
+  text-decoration: none;
+}
+
+.Toolbar a img { 
+  border: 0;
+  vertical-align:middle;
+}
+

@@ -245,8 +245,8 @@ class tStudentDatabaseHandler(appserver.tDatabaseHandler):
             return "Studierendendatenbank"
 
         if element == "extra-commands":
-            return '&middot; <a href="/quit" accesskey="b">Diplomatik <b>b</b>eenden</a> ' + \
-                   '&middot; <a href="/export-all">Exporte aktualisieren</a>'
+            return '<a href="/quit" accesskey="b"><img src="/static/stop.gif"/> Diplomatik <b>b</b>eenden</a> ' + \
+                   '<a href="/export-all"><img src="/static/export.gif"/>Exporte aktualisieren</a>'
 
         if element == "header":
             result = expandHTMLTemplate("main-header.html")

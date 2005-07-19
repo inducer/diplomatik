@@ -15,7 +15,7 @@ Degrees:
                 Counted: True
                 CountedResult: 2.0
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 19
                     month: 7
@@ -23,10 +23,10 @@ Degrees:
                 DegreeComponent: "numerik"
                 Description: "Numerik II"
                 Examiner: "D\xf6rfler"
-                NativeResult: ""
-                Remarks: ""
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '1903763': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.0
@@ -79,66 +79,66 @@ Degrees:
                 Counted: True
                 CountedResult: 1.7
                 Credits: 4.0
-                CreditsPrintable: "3+1"
+                CreditsPrintable: '3+1'
                 Date:
                     day: 12
                     month: 7
                     year: 2005
-                DegreeComponent: "techfach"
+                DegreeComponent: techfach
                 Description: "Festk\xf6rperphysik I"
-                Examiner: "Schnabel"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Schnabel
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '5384173': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 12
                     month: 7
                     year: 2005
                 DegreeComponent: "zusatz"
                 Description: "Kulturelle Interaktionen mit Hindus"
-                Examiner: "Albers"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Albers
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '6189569': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.7
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 19
                     month: 7
                     year: 2005
                 DegreeComponent: "numerik"
                 Description: "Numerik mit Ergebnisverifikation I"
-                Examiner: "Alefeld"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Alefeld
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '6398357': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 19
                     month: 7
                     year: 2005
-                DegreeComponent: "analysis"
-                Description: "Dynamische Systeme I"
-                Examiner: "Lemmert"
-                NativeResult: ""
-                Remarks: ""
+                DegreeComponent: analysis
+                Description: Dynamische Systeme I
+                Examiner: Lemmert
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '660773': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.0
@@ -159,18 +159,18 @@ Degrees:
                 Counted: True
                 CountedResult: 1.0
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 19
                     month: 7
                     year: 2005
-                DegreeComponent: "info"
-                Description: "Kognitive Systeme"
+                DegreeComponent: info
+                Description: Kognitive Systeme
                 Examiner: "Hurz"
-                NativeResult: ""
-                Remarks: ""
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '8060758': !!datamodel.tExam
                 Counted: True
                 CountedResult: 2.0
@@ -207,18 +207,18 @@ Degrees:
                 Counted: True
                 CountedResult: 1.7
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 19
                     month: 7
                     year: 2005
-                DegreeComponent: "info"
-                Description: "Logik"
-                Examiner: "Schnitter"
-                NativeResult: ""
-                Remarks: ""
+                DegreeComponent: info
+                Description: Logik
+                Examiner: Schnitter
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '9371555': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.3
@@ -239,34 +239,34 @@ Degrees:
                 Counted: True
                 CountedResult: 3.7
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 19
                     month: 7
                     year: 2005
-                DegreeComponent: "techfach"
+                DegreeComponent: techfach
                 Description: "Quantenphysik II"
-                Examiner: "Olszewski"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Olszewski
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
             '9722190': !!datamodel.tExam
                 Counted: True
                 CountedResult: 1.3
                 Credits: 4.0
-                CreditsPrintable: ""
+                CreditsPrintable: ''
                 Date:
                     day: 19
                     month: 7
                     year: 2005
-                DegreeComponent: "techfach"
+                DegreeComponent: techfach
                 Description: "Quantenphysik I"
-                Examiner: "Olszewski"
-                NativeResult: ""
-                Remarks: ""
+                Examiner: Olszewski
+                NativeResult: ''
+                Remarks: ''
                 Source: "uni"
-                SourceDescription: ""
+                SourceDescription: ''
         FinishedDate:
             day: 12
             month: 7

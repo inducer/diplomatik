@@ -7,6 +7,10 @@ $doctype
   <body>
     <h1>$handler.getCustomization("title", "overview", $none)</h1>
     $handler.getCustomization("header", "overview", $none)
+    <p class="Toolbar"> 
+      <a href="new/create" accesskey="n"><img src="/static/add.gif"/>
+        <b>N</b>euen Datensatz anlegen</a> $handler.getCustomization("extra-commands", "overview", $none)
+    </p>
     #if ($h.len($filter_groups) > 0)
       <p>
         Filter:
@@ -61,10 +65,6 @@ $doctype
       #set ($row_number = $h.add($row_number,1))
     #end
     </table>
-    <p>
-      <a href="new/create" accesskey="n"><b>N</b>euen Datensatz anlegen</a>
-      $handler.getCustomization("extra-commands", "overview", $none)
-    </p>
     $handler.getCustomization("footer", "overview", $none)
   </body>
 </html>
