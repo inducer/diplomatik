@@ -1,7 +1,8 @@
 #parse ("tema-hd-statistik-kopf.tex")
 \begin{document}
   \begin{center}
-    \textbf{Studienabschl\"usse in TECHNOMATHEMATIK (Diplom)}
+    \textbf{Studienabschl\"usse in}\\\\
+    \textbf{$h.escapeTeX($drs.description())}
 
     im Zeitraum 
     $h.formatDate($form_data.From)
@@ -10,16 +11,14 @@
   \end{center}
 
 
-  \begin{longtable}[l]{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+  \begin{longtable}[l]{|c|c|c|c|c|c|c|c|c|c|c|}
   \hline
   \textit{Name}
   & \textit{Nr}
   & \textit{GN}
   & \textit{DA}
   & \textit{Betreuer}
-  & \textit{PN}
-  & \textit{RM}
-  & \textit{AM}
+  & \textit{MATH}
   & \textit{Info.}
   & \multicolumn{2}{|c|}{\textit{Tech.Fach}}
   & \textit{Pr\"ufz.}
@@ -34,12 +33,10 @@
     & $h.formatNumber("%.1f", $sd.Gesamt)
     & $h.formatNumber("%.1f", $sd.Diplomarbeit.CountedResult)
     & $sd.Diplomarbeit.Examiner
-    & $h.formatNumber("%.1f", $sd.Pruefungsnoten)
-    & $h.formatNumber("%.1f", $sd.Rein)
-    & $h.formatNumber("%.1f", $sd.Angewandt)
-    & $h.formatNumber("%.1f", $sd.NF2)
-    & $h.formatNumber("%.1f", $sd.NF1)
-    & $sd.NF1Name
+    & $h.formatNumber("%.1f", $sd.Mathematik)
+    & $h.formatNumber("%.1f", $sd.TechFach)
+    & $h.formatNumber("%.1f", $sd.Informatik)
+    & $sd.TechFachName
     & $sd.Pruefungszeitraum
     & $sd.Semesters#if ($sd.SpecialSemesters)+$sd.SpecialSemesters#end
     \\\\
@@ -53,8 +50,7 @@
   \begin{tabular}{lcl}
     \textit{GN} & = & Gesamtnote \\\\
     \textit{DA} & = & Diplomarbeit \\\\
-    \textit{PN} & = & Durchschnittsnote der vier 
-      Pr\"ufungen \\\\
+    \textit{MATH} & = & Durchschnittsnote der drei mathematischen F\"acher \\\\
     \textit{RM} & = & Reine Mathematik \\\\
     \textit{AM} & = & Angewandte Mathematik \\\\
     \textit{Info.} & = & Angewandte Informatik \\\\

@@ -1,7 +1,8 @@
 #parse ("tema-hd-statistik-kopf.tex")
 \begin{document}
   \begin{center}
-    \textbf{Studienabschl\"usse in TECHNOMATHEMATIK (Diplom)}
+    \textbf{Studienabschl\"usse in}\\\\
+    \textbf{$h.escapeTeX($drs.description())}
 
     im Zeitraum 
     $h.formatDate($form_data.From)
@@ -34,12 +35,12 @@
     & $h.formatNumber("%.1f", $sd.Gesamt)
     & $h.formatNumber("%.1f", $sd.Diplomarbeit.CountedResult)
     & $sd.Diplomarbeit.Examiner
-    & $h.formatNumber("%.1f", $sd.Pruefungsnoten)
+    & $h.formatNumber("%.1f", $sd.Mathematik)
     & $h.formatNumber("%.1f", $sd.Rein)
     & $h.formatNumber("%.1f", $sd.Angewandt)
     & $h.formatNumber("%.1f", $sd.NF2)
     & $h.formatNumber("%.1f", $sd.NF1)
-    & $sd.NF1Name
+    & $sd.TechFachName
     & $sd.Pruefungszeitraum
     & $sd.Semesters#if ($sd.SpecialSemesters)+$sd.SpecialSemesters#end
     \\\\

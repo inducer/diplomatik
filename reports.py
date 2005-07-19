@@ -5,6 +5,7 @@ import datetime
 import math
 
 import datamodel
+import degreeruleset
 import semester
 import appserver
 import tools
@@ -159,38 +160,42 @@ class tGlobalReportHandler(tReportHandler):
                          and form_data.From <= degree.FinishedDate <= form_data.To\
                          and degree.DegreeRuleSet == drs.id():
 
-                        drs = self.DRSMap[degree.DegreeRuleSet]
                         da = drs.getDiplomarbeit(student, degree)
-                        rm = drs.getComponentAverageGrade(student, degree, "rein")
-                        am = drs.getComponentAverageGrade(student, degree, "angewandt")
-                        nf1 = drs.getComponentAverageGrade(student, degree, "ing")
-                        nf2 = drs.getComponentAverageGrade(student, degree, "inf")
-                        pn = (rm+am+nf1+nf2)/4.
-                        gesamt = drs.getOverallGrade(student, degree)
-
+                        pz = degree.FinishedDate - da.Date
                         sem = semester.countSemesters(
                             drs.getVordiplom(student).EnrolledSemester,
                             semester.tSemester.fromDate(
                             degree.FinishedDate))
 
-                        pz = degree.FinishedDate - da.Date
-
-                        stud_deg.append(tools.makeObject(
-                            {"Student": student,
+                        data = {"Student": student,
                              "Degree": degree,
                              "Diplomarbeit": da,
-                             "DRS": drs,
-                             "Rein": rm,
-                             "Angewandt": am,
-                             "NF1": nf1,
-                             "NF1Name": degree.MinorSubject[:2],
-                             "NF2": nf2,
-                             "Pruefungsnoten": pn,
-                             "Gesamt": gesamt,
+                             "Gesamt": drs.getOverallGrade(student, degree),
                              "Pruefungszeitraum": int(math.ceil(pz.days/30.)),
                              "Semesters": sem-len(student.SpecialSemesters),
                              "SpecialSemesters": len(student.SpecialSemesters),
-                             }))
+                             "TechFachName": degree.MinorSubject[:2],
+                             }
+                        if isinstance(drs, degreeruleset.tTema2003HDDegreeRuleSet):
+                            data["Mathematik"] = drs.getMathGrade(student, degree)
+                            data["TechFach"] = drs.getComponentAverageGrade(student, degree, "techfach")
+                            data["Informatik"] = drs.getComponentAverageGrade(student, degree, "info")
+
+                        elif isinstance(drs, degreeruleset.tTema1983HDDegreeRuleSet):
+                            rm = drs.getComponentAverageGrade(student, degree, "rein")
+                            am = drs.getComponentAverageGrade(student, degree, "angewandt")
+                            nf1 = drs.getComponentAverageGrade(student, degree, "ing")
+                            nf2 = drs.getComponentAverageGrade(student, degree, "inf")
+                            pn = tools.roundGrade((rm+am+nf1+nf2)/4.)
+                        
+                            data["Rein"] = rm
+                            data["Angewandt"] = am
+                            data["NF1"] = nf1
+                            data["NF2"] = nf2
+                            data["Mathematik"] = pn
+                        else:
+                            raise RuntimeError, "Wrong tDegreeRuleSet type for statistics"
+                        stud_deg.append(tools.makeObject(data))
 
 
             def cmp_func(a, b):
@@ -220,7 +225,7 @@ class tGlobalReportHandler(tReportHandler):
                  for sd in stud_deg])
 
             pn_hist = tools.histogram(
-                [tools.unifyGrade(sd.Pruefungsnoten)
+                [tools.unifyGrade(sd.Mathematik)
                  for sd in stud_deg])
 
             nf_hist = tools.histogram(
@@ -255,6 +260,7 @@ class tGlobalReportHandler(tReportHandler):
                  "sem_median": sem_median,
                  "pz_median": pz_median,
                  "ausland_count": ausland_count,
+                 "drs": drs,
                  })
         elif report_id == "what-became-of":
             year = int(form_data.Year)

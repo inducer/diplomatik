@@ -387,7 +387,7 @@ class tTema2003HDDegreeRuleSet(tTemaHDDegreeRuleSet):
         else:
             return 1
 
-    def getOverallGrade(self, student, degree):
+    def getMathPool(self, student, degree):
         assert degree.DegreeRuleSet == self.id()
 
         math_pool = []
@@ -397,9 +397,17 @@ class tTema2003HDDegreeRuleSet(tTemaHDDegreeRuleSet):
             except tSubjectError:
                 pass
 
-        if len(math_pool) < 3:
-            raise tSubjectError, u"Student %s: Weniger als drei mathematische Fächer" \
+        if len(math_pool) != 3:
+            raise tSubjectError, u"Student %s: Anzhal mathematischer Fächer ungleich drei" \
                   % student.LastName
+        return math_pool
+
+    def getMathGrade(self, student, degree):
+        math_pool = self.getMathPool(student, degree)
+        return tools.roundGrade((sum(math_pool))/3.,1)
+
+    def getOverallGrade(self, student, degree):
+        math_pool = self.getMathPool(student, degree)
 
         techfach = self.getComponentAverageGrade(student, degree, "techfach")
         info = self.getComponentAverageGrade(student, degree, "info")
