@@ -12,7 +12,7 @@ cp -R tex-templates/unibrief/* $DESTDIR/tex-templates/unibrief
 mkdir $DESTDIR/html-templates
 cp html-templates/*.html $DESTDIR/html-templates
 mkdir $DESTDIR/static
-cp static/*.{html,css,png} $DESTDIR/static
+cp static/*.{html,css,png,gif} $DESTDIR/static
 mkdir $DESTDIR/yaml
 cp yaml/*.py $DESTDIR/yaml
 mkdir -p $DESTDIR/example-data/data
