@@ -235,7 +235,7 @@ class tTemaHDDegreeRuleSet(tDegreeRuleSet):
             return "% degree-specific export failed"
 
     def getVordiplom(self, student):
-        vd_drs_id = self.id().replace("vd", "hd")
+        vd_drs_id = self.id().replace("hd", "vd")
         vds = [degree
                for degree in student.Degrees.values()
                if degree.DegreeRuleSet == vd_drs_id
