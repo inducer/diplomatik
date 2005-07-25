@@ -608,7 +608,6 @@ class tTema1983HDPerDegreeReportHandler(tTemaHDPerDegreeReportHandler):
 
 class tTema2003HDPerDegreeReportHandler(tTemaHDPerDegreeReportHandler):
     def getZeugnisData(self):
-
         drs = self.DegreeRuleSet
 
         all_remarks = []
