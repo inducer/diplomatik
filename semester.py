@@ -67,7 +67,7 @@ def countSemesters(start, stop):
     if start.Term == stop.Term:
         return (stop.Year - start.Year) * 2 + 1
     elif start.Term == "w":
-        return (stop.Year - start.Year - 1) * 2
+        return (stop.Year - start.Year) * 2
     elif start.Term == "s":
         return (stop.Year - start.Year + 1) * 2
 

@@ -1,13 +1,53 @@
 --- !!datamodel.tStudent
 Active: True
 DateOfBirth: ~
-Degrees: {}
-Email: ''
-FirstName: "\u6bcf\u6708\u6709"
-Gender: w
-ID: '324223'
-LastName: "\u826f\u597d\u7684\u793e\u4f1a"
-MiddleName: ''
-Notes: ''
-PlaceOfBirth: ''
+Degrees:
+    '1034063': !!datamodel.tDegree
+        DegreeRuleSet: "tema-vd-alt"
+        EnrolledSemester: !!semester.tSemester
+            Term: "w"
+            Year: 1999
+        Exams: {}
+        FinishedDate:
+            day: 28
+            month: 9
+            year: 2001
+        MinorSubject: ""
+        Remark: ""
+    '6446948': !!datamodel.tDegree
+        DegreeRuleSet: "tema-hd-alt"
+        EnrolledSemester: !!semester.tSemester
+            Term: "w"
+            Year: 2001
+        Exams:
+            '4123721': !!datamodel.tExam
+                Counted: True
+                CountedResult: 1.0
+                Credits: 4.0
+                CreditsPrintable: ""
+                Date:
+                    day: 21
+                    month: 11
+                    year: 2005
+                DegreeComponent: "rein"
+                Description: "a"
+                Examiner: "b"
+                NativeResult: ""
+                Remarks: ""
+                Source: "uni"
+                SourceDescription: ""
+        FinishedDate:
+            day: 21
+            month: 9
+            year: 2005
+        MinorSubject: ""
+        Remark: ""
+Email: ""
+FirstName: "Yo"
+Gender: "w"
+ID: "324223"
+LastName: "Mama"
+MiddleName: ""
+Notes: ""
+PlaceOfBirth: ""
 SpecialSemesters: {}
